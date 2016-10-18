@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -42,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntity.cs" />
+    <Compile Include="CommonHelper.cs" />
     <Compile Include="Configuration\ISettings.cs" />
     <Compile Include="Configuration\NopConfig.cs" />
     <Compile Include="Domain\Localization\ILocalizedEntity.cs" />
@@ -60,7 +62,13 @@
     <Compile Include="IStoreContext.cs" />
     <Compile Include="IWebHelper.cs" />
     <Compile Include="IWorkContext.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="NopException.cs" />
+    <Compile Include="NopVersion.cs" />
+    <Compile Include="PagedList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebHelper.cs" />
+    <Compile Include="XmlHelper.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

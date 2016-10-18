@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -54,6 +57,16 @@ namespace Nop.Core.Tests
     {
         static void Main(string[] args)
         {
+            string str = "\"Helo&quot;";
+            using (var sw = new StringWriter())
+            using (var xwr = new XmlTextWriter(sw))
+            {
+                xwr.WriteString(str);
+                Console.WriteLine(sw.ToString());
+            }
+
+            return;
+
             Type t = typeof(PropertyClass);
             // Get the public properties.
             PropertyInfo[] propInfos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
