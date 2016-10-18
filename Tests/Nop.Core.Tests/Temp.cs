@@ -18,7 +18,10 @@ namespace Nop.Core.Tests
         static void Main(string[] args)
         {
             BaseEntity1 be1 = new BaseEntity1();
-            BaseEntity1 be11 = new BaseEntity1();
+            BaseEntity1 be11 = new BaseEntity1(); 
+            Console.WriteLine(be1.GetHashCode());
+            Console.WriteLine(be11.GetHashCode());
+            return;
             BaseEntity2 be2 = new BaseEntity2();
             Dictionary<BaseEntity1, int> dic = new Dictionary<BaseEntity1, int>();
             dic.Add(be1, 1);
