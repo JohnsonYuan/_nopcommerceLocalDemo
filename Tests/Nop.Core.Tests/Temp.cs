@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -51,12 +53,55 @@ namespace Nop.Core.Tests
     }
     class BaseEntity2 : BaseEntity
     {
+    }// Define a class with a property.
+    public class TestClass
+    {
+        private string caption = "A Default caption";
+        public string Caption
+        {
+            get { return caption; }
+            set
+            {
+                if (caption != value)
+                {
+                    caption = value;
+                }
+            }
+        }
     }
+
+
 
     class Program
     {
+        public static int GenerateRandomInteger(int min = 0, int max = int.MaxValue)
+        {
+            var randomNumberBuffer = new byte[10];
+            new RNGCryptoServiceProvider().GetBytes(randomNumberBuffer);
+            return new Random(BitConverter.ToInt32(randomNumberBuffer, 0)).Next(min, max);
+        }
+
+ 
         static void Main(string[] args)
         {
+            long x = 123123;
+            Console.WriteLine((x is int) ? "is int" : "not int");
+
+            Console.WriteLine(System.ComponentModel.TypeDescriptor.GetConverter(typeof(int)));
+            string[] arr2 = new string[1];
+            Console.WriteLine(arr2.Any());
+            return;
+
+            TestClass t = new TestClass();
+
+            // Get the type and PropertyInfo.
+            Type myType = t.GetType();
+            PropertyInfo pinfo = myType.GetProperty("Caption");
+
+            pinfo.SetValue(t, "HEllo WORK", new object[1]);
+            Console.WriteLine(pinfo.GetValue(t));
+            return;
+
             string str = "\"Helo&quot;";
             using (var sw = new StringWriter())
             using (var xwr = new XmlTextWriter(sw))
@@ -66,15 +111,10 @@ namespace Nop.Core.Tests
             }
 
             return;
-
-            Type t = typeof(PropertyClass);
-            // Get the public properties.
-            PropertyInfo[] propInfos = t.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-            Console.WriteLine(propInfos.Length);
-            return;
+             
 
             BaseEntity1 be1 = new BaseEntity1();
-            BaseEntity1 be11 = new BaseEntity1(); 
+            BaseEntity1 be11 = new BaseEntity1();
             Console.WriteLine(be1.GetHashCode());
             Console.WriteLine(be11.GetHashCode());
             return;
