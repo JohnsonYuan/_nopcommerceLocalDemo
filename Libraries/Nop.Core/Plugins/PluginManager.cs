@@ -160,7 +160,28 @@ namespace Nop.Core.Plugins
 
         private static IEnumerable<KeyValuePair<FileInfo, PluginDescriptor>> GetDescriptionFilesAndDescriptors(DirectoryInfo pluginFolder)
         {
-            throw new NotImplementedException();
+            if (pluginFolder == null)
+                throw new ArgumentNullException("pluginFolder");
+
+            //create list (<file info, parsed plugin descriptor>)
+            var result = new List<KeyValuePair<FileInfo, PluginDescriptor>>();
+            //add display order and path to list
+            foreach (var descriptionFile in pluginFolder.GetFiles("Description.txt", SearchOption.AllDirectories))
+            {
+                if (!IsPackagePluginFolder(descriptionFile.Directory))
+                    continue;
+
+                //parse file
+                var pluginDescription = PluginFileParser.ParsePluginDescriptionFile(descriptionFile.FullName);
+
+                //populate list
+                result.Add(new KeyValuePair<FileInfo, PluginDescriptor>(descriptionFile, pluginDescription));
+            }
+
+            //sort list by display order. NOTE: Lowest DisplayOrder will be first i.e 0 , 1, 1, 1, 5, 10
+            //it's required: http://www.nopcommerce.com/boards/t/17455/load-plugins-based-on-their-displayorder-on-startup.aspx
+            result.Sort((firstPair, nextPair) => firstPair.Value.DisplayOrder.CompareTo(nextPair.Value.DisplayOrder));
+            return result;
         }
 
         /// <summary>
@@ -211,8 +232,7 @@ namespace Nop.Core.Plugins
                                                     " file exists in a folder outside of the allowed nopCommerce folder hierarchy");
 
             FileInfo shadowCopiedPlug;
-
-            if (CommonHelper.GetTrustLevel() != AspNetHostingPermissionLevel.Unrestricted)
+            if(CommonHelper.GetTrustLevel() != AspNetHostingPermissionLevel.Unrestricted)
             {
                 //all plugins will need to be copied to ~/Plugins/bin/
                 //this is absolutely required because all of this relies on probingPaths being set statically in the web.config
@@ -225,7 +245,6 @@ namespace Nop.Core.Plugins
             {
                 var directory = AppDomain.CurrentDomain.DynamicDirectory;
                 Debug.WriteLine(plug.FullName + " to " + directory);
-                //were running in full trust so copy to standard dynamic folder
                 shadowCopiedPlug = InitializeFullTrust(plug, new DirectoryInfo(directory));
             }
 

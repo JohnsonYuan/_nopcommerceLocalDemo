@@ -1,15 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nop.Core.Plugins
 {
     public class PluginDescriptor : IComparable<PluginDescriptor>
     {
+        public PluginDescriptor()
+        {
+            this.SupportedVersions = new List<string>();
+            this.LimitedToStores = new List<int>();
+        }
+
+        public PluginDescriptor(Assembly referencedAssembly, FileInfo originalAssemblyFile, Type pluginType)
+            : this()
+        {
+
+            this.ReferencedAssembly = referencedAssembly;
+            this.OriginalAssemblyFile = originalAssemblyFile;
+            this.PluginType = pluginType;
+        }
+
         /// <summary>
         /// Plugin file name
         /// </summary>
@@ -18,7 +30,7 @@ namespace Nop.Core.Plugins
         /// <summary>
         /// Plugin Type
         /// </summary>
-        public virtual Type PluinType { get; set; }
+        public virtual Type PluginType { get; set; }
 
         /// <summary>
         /// The assembly that has been shadow copied that is active in the application
