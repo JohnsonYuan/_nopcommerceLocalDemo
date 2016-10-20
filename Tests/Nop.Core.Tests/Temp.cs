@@ -84,11 +84,29 @@ namespace Nop.Core.Tests
  
         static void Main(string[] args)
         {
-            Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory);
-            var path = AppDomain.CurrentDomain.BaseDirectory + ("\\global.asax");
-            File.SetLastWriteTimeUtc(path, DateTime.UtcNow);
+            AssemblyName an = AssemblyName.GetAssemblyName(@"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Tests\Nop.Core.Tests\bin\Debug\Nop.Core.dll");
+            Console.WriteLine(an);
+            Console.WriteLine(an.FullName);
+            return;
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Console.WriteLine(item.FullName);
+            }
+            Console.WriteLine("================");
+            System.Web.Compilation.BuildManager.AddReferencedAssembly(Assembly.Load(an));
 
-            File.SetLastWriteTime(path, DateTime.UtcNow.AddYears(12));
+
+            Console.WriteLine(Guid.NewGuid().ToString("N"));
+            Console.WriteLine(Guid.NewGuid().ToString());
+            var path = AppDomain.CurrentDomain.BaseDirectory + ("\\global.asax");
+            var path2 = AppDomain.CurrentDomain.BaseDirectory + ("\\global2.asax");
+
+            File.Copy(path, path2, true);
+
+            var shadowCopiedPlug = new FileInfo(path);
+            Console.WriteLine(shadowCopiedPlug.CreationTime);
+            shadowCopiedPlug = new FileInfo(path2);
+            Console.WriteLine(shadowCopiedPlug.CreationTime);
 
             return;
 
