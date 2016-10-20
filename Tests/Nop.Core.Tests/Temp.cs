@@ -84,6 +84,22 @@ namespace Nop.Core.Tests
  
         static void Main(string[] args)
         {
+            Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory);
+            var path = AppDomain.CurrentDomain.BaseDirectory + ("\\global.asax");
+            File.SetLastWriteTimeUtc(path, DateTime.UtcNow);
+
+            File.SetLastWriteTime(path, DateTime.UtcNow.AddYears(12));
+
+            return;
+
+            foreach (var item in Environment.NewLine)
+            {
+                Console.WriteLine((int)item);
+            }
+
+            Nop.Core.Data.DataSettings setting = new Data.DataSettings();
+            Console.WriteLine(setting.DataProvider == null);
+            return;
             long x = 123123;
             Console.WriteLine((x is int) ? "is int" : "not int");
 
