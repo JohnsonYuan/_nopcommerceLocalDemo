@@ -81,9 +81,24 @@ namespace Nop.Core.Tests
             return new Random(BitConverter.ToInt32(randomNumberBuffer, 0)).Next(min, max);
         }
 
+        public static void Demo1(int x)
+        {
+            Console.WriteLine(x) ;
+        }
+
+        public static void Demo1<T>(int x)
+        {
+            Console.WriteLine("Generic");
+            Console.WriteLine(x);
+        }
  
         static void Main(string[] args)
         {
+            Demo1(22);
+            Demo1<string>(22);
+            Console.WriteLine();
+            return;
+
             AssemblyName an = AssemblyName.GetAssemblyName(@"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Tests\Nop.Core.Tests\bin\Debug\Nop.Core.dll");
             Console.WriteLine(an);
             Console.WriteLine(an.FullName);
