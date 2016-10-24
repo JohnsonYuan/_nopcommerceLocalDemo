@@ -6,11 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+// 我的注释 : autofac 文档
 // autofac 基本用法
 // var builder = new ContainerBuilder(); builder.RegisterType<ConsoleOutput>().As<IOutput>();
 // container = builder.Build();  //构建容器
 // using (var scope = container.BeginLifetimeScope()) {IDateWriter datawriter = container.Resolve<IDateWriter>();}
 
+/// resolve optional
+/// http://docs.autofac.org/en/latest/resolve/index.html?highlight=ResolveOptional
+/// resolve keyed, named(ComponentNotRegisteredException will throw when resolve if you don't specify key or name)
+/// (identify services by a string name or by an object key.)
+/// Named services are simply keyed services that use a string as a key, so the techniques described in the next section apply equally to named services.
+/// builder.Register<OnlineState>().Named<IDeviceState>("online"); => var r = container.ResolveNamed<IDeviceState>("online");
+/// public enum DeviceState { Online, Offline } builder.RegisterType<OnlineState>().Keyed<IDeviceState>(DeviceState.Online); => var r = container.ResolveKeyed<IDeviceState>(DeviceState.Online);
+/// http://docs.autofac.org/en/latest/advanced/keyed-services.html
 namespace Nop.Core.Infrastructure.DependencyManagement
 {
     public class ContainerManager
