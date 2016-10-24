@@ -91,9 +91,33 @@ namespace Nop.Core.Tests
             Console.WriteLine("Generic");
             Console.WriteLine(x);
         }
- 
+        public static void mymethod(
+              int int1m, out string str2m, ref string str3m)
+        {
+            str2m = "in mymethod";
+        }
+
         static void Main(string[] args)
         {
+            Console.WriteLine("\nReflection.Parameterinfo");
+            Type Mytype = Type.GetType("Nop.Core.Tests.Program");
+            Console.WriteLine(Mytype);
+
+            //Get and display the method.
+            MethodBase Mymethodbase = Mytype.GetMethod("mymethod");
+            Console.Write("\nMymethodbase = " + Mymethodbase);
+
+            //Get the ParameterInfo array.
+            ParameterInfo[] Myarray = Mymethodbase.GetParameters();
+
+            //Get and display the ParameterInfo of each parameter.
+            foreach (ParameterInfo Myparam in Myarray)
+            {
+                Console.Write("\nFor param eter # " + Myparam.Position
+                   + ", the ParameterType is - " + Myparam.ParameterType + ", " + Myparam.GetType());
+            }
+            return;
+
             Demo1(22);
             Demo1<string>(22);
             Console.WriteLine();
