@@ -119,11 +119,13 @@
     <Compile Include="Events\EntityInserted.cs" />
     <Compile Include="Events\EntityUpdated.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />
     <Compile Include="Infrastructure\DependencyManagement\ContainerManager.cs" />
     <Compile Include="Infrastructure\DependencyManagement\IDependencyRegister.cs" />
     <Compile Include="Infrastructure\IEngine.cs" />
     <Compile Include="Infrastructure\IStartupTask.cs" />
     <Compile Include="Infrastructure\ITypeFinder.cs" />
+    <Compile Include="Infrastructure\NopStarter.cs" />
     <Compile Include="Infrastructure\Singleton.cs" />
     <Compile Include="IPagedList.cs" />
     <Compile Include="IStoreContext.cs" />

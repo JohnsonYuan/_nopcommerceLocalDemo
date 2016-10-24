@@ -70,8 +70,6 @@ namespace Nop.Core.Tests
         }
     }
 
-
-
     class Program
     {
         public static int GenerateRandomInteger(int min = 0, int max = int.MaxValue)
@@ -99,6 +97,10 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            var gInt = typeof(List<int>).GetGenericTypeDefinition();
+            //Console.WriteLine(gInt.gen);
+            return;
+
             Console.WriteLine("\nReflection.Parameterinfo");
             Type Mytype = Type.GetType("Nop.Core.Tests.Program");
             Console.WriteLine(Mytype);
