@@ -119,6 +119,17 @@
     <Compile Include="Events\EntityInserted.cs" />
     <Compile Include="Events\EntityUpdated.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Html\CodeFormatter\CLikeFormat.cs" />
+    <Compile Include="Html\CodeFormatter\CodeFormat.cs" />
+    <Compile Include="Html\CodeFormatter\CodeFormatHelper.cs" />
+    <Compile Include="Html\CodeFormatter\CSharpFormat.cs" />
+    <Compile Include="Html\CodeFormatter\HighlightOptions.cs" />
+    <Compile Include="Html\CodeFormatter\HtmlFormat.cs" />
+    <Compile Include="Html\CodeFormatter\JavaScriptFormat.cs" />
+    <Compile Include="Html\CodeFormatter\MshFormat.cs" />
+    <Compile Include="Html\CodeFormatter\SourceFormat.cs" />
+    <Compile Include="Html\CodeFormatter\TsqlFormat.cs" />
+    <Compile Include="Html\CodeFormatter\VisualBasicFormat.cs" />
     <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />
     <Compile Include="Infrastructure\DependencyManagement\ContainerManager.cs" />
     <Compile Include="Infrastructure\DependencyManagement\IDependencyRegister.cs" />
@@ -127,6 +138,7 @@
     <Compile Include="Infrastructure\ITypeFinder.cs" />
     <Compile Include="Infrastructure\NopStarter.cs" />
     <Compile Include="Infrastructure\Singleton.cs" />
+    <Compile Include="Infrastructure\WebAppTypeFInder.cs" />
     <Compile Include="IPagedList.cs" />
     <Compile Include="IStoreContext.cs" />
     <Compile Include="IWebHelper.cs" />
@@ -155,6 +167,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="notes.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

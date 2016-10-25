@@ -44,15 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseEntity.cs" />
     <Compile Include="DataSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Temp.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">
-      <Project>{defea0e4-7ec7-4855-81ea-f965469ddab0}</Project>
-      <Name>Nop.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Core.Infrastructure
 {
+    [Obsolete("This work is performed in NopEngine", true)]
     class NopStarter
     {
     }

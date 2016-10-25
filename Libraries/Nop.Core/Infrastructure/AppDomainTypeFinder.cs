@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Nop.Core.Infrastructure
 {
@@ -29,7 +28,7 @@ namespace Nop.Core.Infrastructure
         #region Properties
 
         /// <summary>The app domain to look for types in.</summary>
-        public virtual AppDomain App 
+        public virtual AppDomain App
         {
             get { return AppDomain.CurrentDomain; }
         }
@@ -69,31 +68,87 @@ namespace Nop.Core.Infrastructure
 
         public IEnumerable<Type> FindClassesOfType<T>(bool onlyConcreteClasses = true)
         {
-            throw new NotImplementedException();
+            return FindClassesOfType(typeof(T), onlyConcreteClasses);
         }
 
         public IEnumerable<Type> FindClassesOfType(Type assignTypeFrom, bool onlyConcreteClasses = true)
         {
-            throw new NotImplementedException();
+            return FindClassesOfType(assignTypeFrom, GetAssemblies(), onlyConcreteClasses);
         }
 
         public IEnumerable<Type> FindClassesOfType<T>(IEnumerable<Assembly> assemblies, bool onlyConcreteClasses = true)
         {
-            throw new NotImplementedException();
+            return FindClassesOfType(typeof(T), assemblies, onlyConcreteClasses);
         }
 
         public IEnumerable<Type> FindClassesOfType(Type assignTypeFrom, IEnumerable<Assembly> assemblies, bool onlyConcreteClasses = true)
         {
+            var result = new List<Type>();
+            try
+            {
+                foreach (var a in assemblies)
+                {
+                    Type[] types = null;
+                    try
+                    {
+                        types = a.GetTypes();
+                    }
+                    catch (Exception)
+                    {
+                        //Entity Framework 6 doesn't allow getting types (throws an exception)
+                        if (!ignoreReflectionErrors)
+                        {
+                            throw;
+                        }
+                    }
 
+                    if (types != null)
+                    {
+                        foreach (var t in types)
+                        {
+                            if(assignTypeFrom.IsAssignableFrom(t) 
+                                || (assignTypeFrom.IsGenericType && DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
+                            {
+                                if (!t.IsInterface)
+                                {
+                                    if(onlyConcreteClasses)
+                                    {
+                                        if (t.IsClass && !t.IsAbstract)
+                                        {
+                                            result.Add(t);
+                                        }
+                                        else
+                                        {
+                                            result.Add(t);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                var msg = string.Empty;
+                foreach (var e in ex.LoaderExceptions)
+                    msg += e.Message + Environment.NewLine;
+                var fail = new Exception(msg, ex);
+                Debug.WriteLine(fail.Message, fail);
+
+                throw fail;
+            }
+            return result;
         }
 
         /// <summary>
         /// Gets the assemblies related to the current implementation.
+        /// 我的注释 得到当前AppDomain下的Assembly和AssemblyNames属性赋值的Assembly
         /// </summary>
         /// <returns>
         /// A list of assemblies that should be loaded by the Nop factory.
         /// </returns>
-        public IList<Assembly> GetAssemblies()
+        public virtual IList<Assembly> GetAssemblies()
         {
             var addedAssemblyNames = new List<string>();
             var assemblies = new List<Assembly>();
@@ -115,7 +170,17 @@ namespace Nop.Core.Infrastructure
         /// <param name="assemblies"></param>
         private void AddAssembliesInAppDomain(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
-
+            foreach (Assembly assembly in App.GetAssemblies())
+            {
+                if (Matches(assembly.FullName))
+                {
+                    if (!addedAssemblyNames.Contains(assembly.FullName))
+                    {
+                        addedAssemblyNames.Add(assembly.FullName);
+                        assemblies.Add(assembly);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -125,7 +190,15 @@ namespace Nop.Core.Infrastructure
         /// <param name="assemblies"></param>
         protected virtual void AddConfiguredAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
-
+            foreach (string assemblyName in AssemblyNames)
+            {
+                Assembly assembly = Assembly.Load(assemblyName);
+                if (!addedAssemblyNames.Contains(assemblyName))
+                {
+                    addedAssemblyNames.Add(assemblyName);
+                    assemblies.Add(assembly);
+                }
+            }
         }
 
         /// <summary>
@@ -168,7 +241,39 @@ namespace Nop.Core.Infrastructure
         /// </param>
         protected virtual void LoadMatchingAssemblies(string directoryBin)
         {
+            var loadedAssemblies = new List<string>();
+            foreach (Assembly a in GetAssemblies())
+            {
+                loadedAssemblies.Add(a.FullName);
+            }
 
+            if (!Directory.Exists(directoryBin))
+            {
+                return;
+            }
+
+            foreach (string dllPath in Directory.GetFiles(directoryBin, "*.dll"))
+            {
+                try
+                {
+                    var an = AssemblyName.GetAssemblyName(dllPath);
+                    if (Matches(an.FullName) && !loadedAssemblies.Contains(an.FullName))
+                    {
+                        App.Load(an);
+                    }
+
+                    //old loading stuff
+                    //Assembly a = Assembly.ReflectionOnlyLoadFrom(dllPath);
+                    //if (Matches(a.FullName) && !loadedAssemblyNames.Contains(a.FullName))
+                    //{
+                    //    App.Load(a.FullName);
+                    //}
+                }
+                catch (BadImageFormatException ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+            }
         }
 
         /// <summary>
@@ -179,7 +284,22 @@ namespace Nop.Core.Infrastructure
         /// <returns></returns>
         protected virtual bool DoesTypeImplementOpenGeneric(Type type, Type openGeneric)
         {
-
+            try
+            {
+                var genericTypeDefinition = openGeneric.GetGenericTypeDefinition();
+                foreach (var implementedInterface in type.FindInterfaces((objType, objCriteria) => true, null))
+                {
+                    if (!implementedInterface.IsGenericType)
+                        continue;
+                    var isMatch = genericTypeDefinition.IsAssignableFrom(implementedInterface.GetGenericTypeDefinition());
+                    return isMatch;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion

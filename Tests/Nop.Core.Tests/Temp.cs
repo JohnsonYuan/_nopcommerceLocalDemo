@@ -8,7 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
-using System.Xml.Serialization;
+
+using System.Text.RegularExpressions;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -69,7 +70,7 @@ namespace Nop.Core.Tests
             }
         }
     }
-
+ 
     class Program
     {
         public static int GenerateRandomInteger(int min = 0, int max = int.MaxValue)
@@ -95,37 +96,80 @@ namespace Nop.Core.Tests
             str2m = "in mymethod";
         }
 
-        static void Main(string[] args)
+        /// <summary>
+        /// The list of C# keywords.
+        /// </summary>
+        protected static string Keywords
         {
-            var gInt = typeof(List<int>).GetGenericTypeDefinition();
-            //Console.WriteLine(gInt.gen);
-            return;
-
-            Console.WriteLine("\nReflection.Parameterinfo");
-            Type Mytype = Type.GetType("Nop.Core.Tests.Program");
-            Console.WriteLine(Mytype);
-
-            //Get and display the method.
-            MethodBase Mymethodbase = Mytype.GetMethod("mymethod");
-            Console.Write("\nMymethodbase = " + Mymethodbase);
-
-            //Get the ParameterInfo array.
-            ParameterInfo[] Myarray = Mymethodbase.GetParameters();
-
-            //Get and display the ParameterInfo of each parameter.
-            foreach (ParameterInfo Myparam in Myarray)
+            get
             {
-                Console.Write("\nFor param eter # " + Myparam.Position
-                   + ", the ParameterType is - " + Myparam.ParameterType + ", " + Myparam.GetType());
+                return "abstract as base bool break byte case catch char "
+                + "checked class const continue decimal default delegate do double else "
+                + "enum event explicit extern false finally fixed float for foreach goto "
+                + "if implicit in int interface internal is lock long namespace new null "
+                + "object operator out override partial params private protected public readonly "
+                + "ref return sbyte sealed short sizeof stackalloc static string struct "
+                + "switch this throw true try typeof uint ulong unchecked unsafe ushort "
+                + "using value virtual void volatile where while yield";
             }
+        }
+
+        /// <summary>
+        /// The list of C# preprocessors.
+        /// </summary>
+        protected static string Preprocessors
+        {
+            get
+            {
+                return "#if #else #elif #endif #define #undef #warning "
+                    + "#error #line #region #endregion #pragma";
+            }
+        }
+
+        static void Main(string[] args)
+        {  
+
             return;
 
-            Demo1(22);
-            Demo1<string>(22);
+
+        Regex r;
+            r = new Regex(@"\w+|-\w+|#\w+|@@\w+|#(?:\\(?:s|w)(?:\*|\+)?\w+)+|@\\w\*+");
+            string regKeyword = r.Replace(Keywords, @"(?<=^|\W)$0(?=\W)");
+            string regPreproc = r.Replace(Preprocessors, @"(?<=^|\s)$0(?=\s|$)");
+            Console.WriteLine(regKeyword);
             Console.WriteLine();
-            return;
+            Console.WriteLine(regPreproc);
 
-            AssemblyName an = AssemblyName.GetAssemblyName(@"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Tests\Nop.Core.Tests\bin\Debug\Nop.Core.dll");
+            return;
+            //Console.WriteLine("\nReflection.Parameterinfo");
+            //Type Mytype = Type.GetType("Nop.Core.Tests.Program");
+            //Console.WriteLine(Mytype);
+
+            ////Get and display the method.
+            //MethodBase Mymethodbase = Mytype.GetMethod("mymethod");
+            //Console.Write("\nMymethodbase = " + Mymethodbase);
+
+            ////Get the ParameterInfo array.
+            //ParameterInfo[] Myarray = Mymethodbase.GetParameters();
+
+            ////Get and display the ParameterInfo of each parameter.
+            //foreach (ParameterInfo Myparam in Myarray)
+            //{
+            //    Console.Write("\nFor param eter # " + Myparam.Position
+            //       + ", the ParameterType is - " + Myparam.ParameterType + ", " + Myparam.GetType());
+            //}
+            //return;
+
+            //Demo1(22);
+            //Demo1<string>(22);
+            //Console.WriteLine();
+            //return;
+            string an2 = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Tests\Nop.Core.Tests\bin\Debug\Nop.Core.dll";
+            string an1 = @"E:\Source\Repos\nopCommerce_3.80_Beta_Source\Libraries\Nop.Core\bin\Debug\Autofac.dll";
+            Console.WriteLine(AppDomain.CurrentDomain.GetAssemblies().Count());
+            AssemblyName an = AssemblyName.GetAssemblyName(an1);
+            Assembly.Load(an);
+            Console.WriteLine(AppDomain.CurrentDomain.GetAssemblies().Count());
             Console.WriteLine(an);
             Console.WriteLine(an.FullName);
             return;

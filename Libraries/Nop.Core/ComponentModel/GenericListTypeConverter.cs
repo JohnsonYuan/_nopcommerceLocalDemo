@@ -97,7 +97,7 @@ namespace Nop.Core.ComponentModel
                         var str1 = Convert.ToString(((IList<T>)value)[i], CultureInfo.InvariantCulture);
                         result += str1;
                         //don't add comma after the last element
-                        if (i == ((IList<T>)value).Count - 1)
+                        if (i != ((IList<T>)value).Count - 1)
                             result += ",";
                     }
                 }
