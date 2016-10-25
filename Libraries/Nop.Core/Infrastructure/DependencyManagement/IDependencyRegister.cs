@@ -6,7 +6,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
     /// <summary>
     /// Dependency registrar interface
     /// </summary>
-    public interface IDependencyRegistrar
+    public interface IDependencyRegister
     {
         /// <summary>
         /// Register services and interfaces

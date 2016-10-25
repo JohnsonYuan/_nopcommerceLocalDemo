@@ -10,6 +10,7 @@ using System.Web;
 using System.Xml;
 
 using System.Text.RegularExpressions;
+using Autofac;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -70,7 +71,22 @@ namespace Nop.Core.Tests
             }
         }
     }
- 
+
+    public interface IFinder
+    { void Log(string value); }
+
+    public class AppFinder : IFinder
+    { public void Log(string value) { Console.WriteLine(value); } }
+    public class AppFinder2 : IFinder
+    { public void Log(string value) { Console.WriteLine(value); } }
+
+    public interface IRepo<T>
+    { void Init(); }
+
+    public class EfRepo<T> : IRepo<T>
+    { public void Init() { Console.WriteLine("Ef repo"); } }
+
+
     class Program
     {
         public static int GenerateRandomInteger(int min = 0, int max = int.MaxValue)
@@ -127,8 +143,23 @@ namespace Nop.Core.Tests
         }
 
         static void Main(string[] args)
-        {  
-
+        {
+            var builder = new ContainerBuilder();
+            var typeFinder = new AppFinder2();
+            // builder.Register(c => typeFinder);
+            //builder.RegisterType<EfRepo<int>>().As<IRepo<int>>();
+            //builder.RegisterType(typeof(EfRepo<>)).As(typeof(IRepo<>));
+            //Console.WriteLine(typeof(EfRepo<>));
+            builder.Register(c => typeFinder);
+            builder.RegisterGeneric(typeof(EfRepo<>)).As(typeof(IRepo<>));
+            var container = builder.Build();
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var finder = scope.Resolve<AppFinder>();
+                finder.Log("hello");
+                var efRepo = scope.Resolve<IRepo<int>>();
+                efRepo.Init();
+            }
             return;
 
 

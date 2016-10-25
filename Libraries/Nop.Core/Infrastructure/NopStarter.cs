@@ -12,16 +12,83 @@
 // Contributor(s): _______. 
 //------------------------------------------------------------------------------
 
+using Autofac;
+using Nop.Core.Infrastructure.DependencyManagement;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Nop.Core.Infrastructure
 {
     [Obsolete("This work is performed in NopEngine", true)]
-    class NopStarter
+    public class NopStarter
     {
+        private readonly object _locker = new object();
+        private bool _configured;
+        private IContainer _container;
+
+        public IContainer BuildContainer()
+        {
+            lock (_locker)
+            {
+                if (_configured)
+                    return _container;
+
+                var builder = new ContainerBuilder();
+
+                // type finder
+                var typeFinder = new TypeFinder();
+                builder.Register((c, p) => typeFinder);
+
+                //find IDependencyRegistar implementations
+                var drTypes = typeFinder.FindClassesOfType<IDependencyRegister>();
+                foreach (var t in drTypes)
+                {
+                    dynamic dependencyRegistar = Activator.CreateInstance(t);
+                    dependencyRegistar.Register(builder, typeFinder);
+                }
+
+                //event
+                OnContainerBuilding(new ContainerBuilderEventArgs());
+                _container = builder.Build();
+                //event
+                OnContainerBuildingComplete(new ContainerBuilderEventArgs());
+
+                _configured = true;
+                return _container;
+            }
+        }
+
+        /// <summary>
+        /// Execute startup tasks
+        /// </summary>
+        public void ExecuteStartUpTasks()
+        {
+            var startUpTaskTypes = _container.Resolve<ITypeFinder>().FindClassesOfType<IStartupTask>();
+            foreach (var startUpTaskType in startUpTaskTypes)
+            {
+                var startUpTask = (IStartupTask)Activator.CreateInstance(startUpTaskType);
+                startUpTask.Execute();
+            }
+        }
+
+        private void OnContainerBuilding(ContainerBuilderEventArgs args)
+        {
+            if (ContainerBuilding != null)
+            {
+                ContainerBuilding(this, args);
+            }
+        }
+
+        private void OnContainerBuildingComplete(ContainerBuilderEventArgs args)
+        {
+            if (ContainerBuilding != null)
+            {
+                ContainerBuildingComplete(this, args);
+            }
+        }
+
+        public event EventHandler<ContainerBuilderEventArgs> ContainerBuilding;
+        public event EventHandler<ContainerBuilderEventArgs> ContainerBuildingComplete;
     }
 }
