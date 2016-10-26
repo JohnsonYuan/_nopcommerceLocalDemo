@@ -135,6 +135,15 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            Nop.Core.Html.HtmlHelper.EnsureOnlyAllowedHtml("<bbb>Helloworld</bbb><bfd />");
+            Uri baseUri = new Uri("http://www.contoso.com/");
+            Uri myUri = new Uri(baseUri, "catalog/shownew.htm?date=today");
+
+            Console.WriteLine(myUri.PathAndQuery);
+            Console.WriteLine(myUri.AbsolutePath);
+
+            return;
+
             DemoValue value = new DemoValue();
             value.MyProperty = 123;
 

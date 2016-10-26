@@ -116,7 +116,7 @@ namespace Nop.Core.Plugins
                             throw new Exception(string.Format("A plugin with '{0}' system name is already defined", pluginDescriptor.SystemName));
 
                         //set 'Installed' property
-                        pluginDescriptor.Installed = installedPluginSystemNames.FirstOrDefault(x => x.Equals(pluginDescriptor.SystemName, StringComparer.InvariantCultureIgnoreCase)) != null;
+                        pluginDescriptor.Installed = installedPluginSystemNames.FirstOrDefault(x => x.Equals(pluginDescriptor.SystemName, StringComparison.InvariantCultureIgnoreCase)) != null;
 
                         try
                         {
@@ -134,7 +134,7 @@ namespace Nop.Core.Plugins
                                 FirstOrDefault(x => x.Name.Equals(pluginDescriptor.PluginFileName,
                                  StringComparison.InvariantCultureIgnoreCase));
                             pluginDescriptor.OriginalAssemblyFile = mainPluginFile;
-                             
+
                             //shadow copy main plugin file
                             pluginDescriptor.ReferencedAssembly = PerformFileDeploy(mainPluginFile);
 
@@ -146,9 +146,9 @@ namespace Nop.Core.Plugins
 
                             //init plugin type (only one plugin per assembly is allowed)
                             foreach (var t in pluginDescriptor.ReferencedAssembly.GetTypes())
-                                if(typeof(IPlugin).IsAssignableFrom(t))
-                                    if(!t.IsInterface)
-                                        if(t.IsClass && !t.IsAbstract)
+                                if (typeof(IPlugin).IsAssignableFrom(t))
+                                    if (!t.IsInterface)
+                                        if (t.IsClass && !t.IsAbstract)
                                         {
                                             pluginDescriptor.PluginType = t;
                                             break;
@@ -194,7 +194,7 @@ namespace Nop.Core.Plugins
                 throw new ArgumentNullException("systemName");
 
             var filePath = CommonHelper.MapPath(InstalledPluginsFilePath);
-            if(!File.Exists(filePath))
+            if (!File.Exists(filePath))
                 using (File.Create(filePath))
                 {
                     //we use 'using' to close the file after it's created
@@ -218,7 +218,7 @@ namespace Nop.Core.Plugins
                 throw new ArgumentNullException("systemName");
 
             var filePath = CommonHelper.MapPath(InstalledPluginsFilePath);
-            if(!File.Exists(filePath))
+            if (!File.Exists(filePath))
                 using (File.Create(filePath))
                 {
                     //we use 'using' to close the file after it's created
@@ -297,7 +297,7 @@ namespace Nop.Core.Plugins
             try
             {
                 string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileInfo.FullName);
-                if(fileNameWithoutExt == null)
+                if (fileNameWithoutExt == null)
                     throw new Exception(string.Format("Cannot get file extension for {0}", fileInfo.Name));
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                 {
@@ -327,7 +327,7 @@ namespace Nop.Core.Plugins
                                                     " file exists in a folder outside of the allowed nopCommerce folder hierarchy");
 
             FileInfo shadowCopiedPlug;
-            if(CommonHelper.GetTrustLevel() != AspNetHostingPermissionLevel.Unrestricted)
+            if (CommonHelper.GetTrustLevel() != AspNetHostingPermissionLevel.Unrestricted)
             {
                 //all plugins will need to be copied to ~/Plugins/bin/
                 //this is absolutely required because all of this relies on probingPaths being set statically in the web.config

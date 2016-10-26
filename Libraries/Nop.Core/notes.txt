@@ -1,7 +1,8 @@
 ﻿Convert code to HTML 4.01
 Nop.Core\Html\CodeFormatter使用的是:
 http://www.manoli.net/csharpformat/format.aspx
-可以学习很多正则, cmd格式可以学习
+可以学习很多正则 (?<inner>(.*?)) 捕获(.*?)group名字为inner（roupg） regexCode2 = new Regex(@"\[code\](?<inner>(.*?))\[/code\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+build.cmd =》 cmd格式可以学习
 
 lock:
 [MethodImpl(MethodImplOptions.Synchronized)]

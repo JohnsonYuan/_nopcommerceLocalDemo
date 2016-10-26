@@ -261,7 +261,7 @@ namespace Nop.Core
         /// <param name="value">The value to convert.</param>
         /// <param name="destinationType">The type to convert the value to.</param>
         /// <returns>The converted value.</returns>
-        public static object To(object value, Type descinationType)
+        public static object To(object value, Type destinationType)
         {
             return To(value, destinationType, CultureInfo.InvariantCulture);
         }

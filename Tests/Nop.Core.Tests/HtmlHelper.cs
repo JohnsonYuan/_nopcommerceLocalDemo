@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Nop.Core.Html
 {
@@ -18,7 +22,7 @@ namespace Nop.Core.Html
 
         #region Utilities
 
-        private static string EnsureOnlyAllowedHtml(string text)
+        public static string EnsureOnlyAllowedHtml(string text)
         {
             if (String.IsNullOrEmpty(text))
                 return string.Empty;
@@ -48,9 +52,9 @@ namespace Nop.Core.Html
 
             var endchars = new[] { ' ', '>', '/', '\t' };
 
-            int pos = tag.IndexOfAny(endchars, 1);
-            if (pos > 0) tag = tag.Substring(0, pos);
-            if (tag[0] == '/') tag = tag.Substring(1);
+            int pos = tag.IndexOfAny(endchars, 1);      // 假设传过来的标签是 /bbb>
+            if (pos > 0) tag = tag.Substring(0, pos);  
+            if (tag[0] == '/') tag = tag.Substring(1); // /bbb => bbb
 
             foreach (string aTag in allowedTags)
             {

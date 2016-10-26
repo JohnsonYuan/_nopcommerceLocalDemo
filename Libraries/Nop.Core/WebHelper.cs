@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Nop.Core.Data;
+using Nop.Core.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -93,6 +95,21 @@ namespace Nop.Core
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Get URL referrer
+        /// </summary>
+        /// <returns>URL referrer</returns>
+        public virtual string GetUrlReferrer()
+        {
+            string referrerUrl = string.Empty;
+
+            //URL referrer is null in some case (for example, in IE 8)
+            if (IsRequestAvailable(_httpContext) && _httpContext.Request.UrlReferrer != null)
+                referrerUrl = _httpContext.Request.UrlReferrer.PathAndQuery;
+
+            return referrerUrl;
+        }
 
         /// <summary>
         /// Get context IP address
@@ -271,12 +288,46 @@ namespace Nop.Core
 
             if (DataSettingsHelper.DatabaseIsInstalled())
             {
-                // TODO: implements EngineContext
                 #region Database is installed
 
                 //let's resolve IWorkContext  here.
                 //Do not inject it via constructor  because it'll cause circular references
+                var storeContext = EngineContext.Current.Resolve<IStoreContext>();
+                var currentStore = storeContext.CurrentStore;
+                if (currentStore == null)
+                    throw new Exception("Current store cannot be loaded");
 
+                if (String.IsNullOrEmpty(httpHost))
+                {
+                    //HTTP_HOST variable is not available.
+                    //This scenario is possible only when HttpContext is not available (for example, running in a schedule task)
+                    //in this case use URL of a store entity configured in admin area
+                    result = currentStore.Url;
+                    if (!result.EndsWith("/"))
+                        result += "/";
+                }
+
+                if (useSsl)
+                {
+                    result = !String.IsNullOrWhiteSpace(currentStore.SecureUrl) ?
+                        //Secure URL specified.
+                        //So a store owner don't want it to be detected automatically
+                        //In this case let's use the specified secure URL
+                        currentStore.SecureUrl :
+                        //Secure URL is not specified.
+                        //So a store owner wants it to be detected automatically
+                        result.Replace("http:/", "https://");
+                }
+                else
+                {
+                    if (currentStore.SslEnabled && !String.IsNullOrWhiteSpace(currentStore.SecureUrl))
+                    {
+                        //SSL is enabled in this store and secure URL is specified.
+                        //So a store owner don't want it to be detected automatically.
+                        //In this case let's use the specified non-secure URL
+                        result = currentStore.Url;
+                    }
+                }
                 #endregion
             }
             else
