@@ -157,7 +157,7 @@ namespace Nop.Core.Plugins
             keyValues.Add(new KeyValuePair<string, string>("FriendlyName", plugin.FriendlyName));
             keyValues.Add(new KeyValuePair<string, string>("SystemName", plugin.SystemName));
             keyValues.Add(new KeyValuePair<string, string>("Version", plugin.Version));
-            keyValues.Add(new KeyValuePair<string, string>("SupportedVersions", string.Join(",", plugin.SupportedVersions));
+            keyValues.Add(new KeyValuePair<string, string>("SupportedVersions", string.Join(",", plugin.SupportedVersions)));
             keyValues.Add(new KeyValuePair<string, string>("Author", plugin.Author));
             keyValues.Add(new KeyValuePair<string, string>("DisplayOrder", plugin.DisplayOrder.ToString()));
             keyValues.Add(new KeyValuePair<string, string>("FileName", plugin.PluginFileName));

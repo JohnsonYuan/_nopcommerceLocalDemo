@@ -357,31 +357,6 @@ namespace Nop.Core
             return _staticFileExtensions.Contains(extension);
         }
 
-        /// <summary>
-        /// Modifies query string
-        /// </summary>
-        /// <param name="url">Url to modify</param>
-        /// <param name="queryStringModification">Query string modification</param>
-        /// <param name="anchor">Anchor</param>
-        /// <returns>New url</returns>
-        public virtual string ModifyQueryString(string url, string queryStringModification, string anchor)
-        {
-            if (url == null)
-                url = string.Empty;
-            url = url.ToLowerInvariant();
-
-            if (queryStringModification == null)
-                queryStringModification = string.Empty;
-            queryStringModification = queryStringModification.ToLowerInvariant();
-
-            if (anchor == null)
-                anchor = string.Empty;
-            anchor = anchor.ToLowerInvariant();
-
-            string str = string.Empty;
-            string str2 = string.Empty;
-        }
-
         public virtual void RestartAppDomain(bool makeRedirect = false, string redirectUrl = "")
         {
             if (CommonHelper.GetTrustLevel() > AspNetHostingPermissionLevel.Medium)

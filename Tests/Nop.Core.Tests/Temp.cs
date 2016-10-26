@@ -10,7 +10,6 @@ using System.Web;
 using System.Xml;
 
 using System.Text.RegularExpressions;
-using Autofac;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -112,66 +111,39 @@ namespace Nop.Core.Tests
             str2m = "in mymethod";
         }
 
-        /// <summary>
-        /// The list of C# keywords.
-        /// </summary>
-        protected static string Keywords
+        public class DemoValue
         {
-            get
+            public int MyProperty { get; set; }
+
+            public override string ToString()
             {
-                return "abstract as base bool break byte case catch char "
-                + "checked class const continue decimal default delegate do double else "
-                + "enum event explicit extern false finally fixed float for foreach goto "
-                + "if implicit in int interface internal is lock long namespace new null "
-                + "object operator out override partial params private protected public readonly "
-                + "ref return sbyte sealed short sizeof stackalloc static string struct "
-                + "switch this throw true try typeof uint ulong unchecked unsafe ushort "
-                + "using value virtual void volatile where while yield";
+                return MyProperty.ToString();
             }
         }
 
-        /// <summary>
-        /// The list of C# preprocessors.
-        /// </summary>
-        protected static string Preprocessors
+        public class DemoClass
         {
-            get
+            private DemoValue _value;
+
+            public DemoClass(DemoValue value)
             {
-                return "#if #else #elif #endif #define #undef #warning "
-                    + "#error #line #region #endregion #pragma";
+                this._value = value;
             }
+
+            public DemoValue MyProperty { get { return _value; } set { _value = value; } }
         }
 
         static void Main(string[] args)
         {
-            var builder = new ContainerBuilder();
-            var typeFinder = new AppFinder2();
-            // builder.Register(c => typeFinder);
-            //builder.RegisterType<EfRepo<int>>().As<IRepo<int>>();
-            //builder.RegisterType(typeof(EfRepo<>)).As(typeof(IRepo<>));
-            //Console.WriteLine(typeof(EfRepo<>));
-            builder.Register(c => typeFinder);
-            builder.RegisterGeneric(typeof(EfRepo<>)).As(typeof(IRepo<>));
-            var container = builder.Build();
-            using (var scope = container.BeginLifetimeScope())
-            {
-                var finder = scope.Resolve<AppFinder>();
-                finder.Log("hello");
-                var efRepo = scope.Resolve<IRepo<int>>();
-                efRepo.Init();
-            }
+            DemoValue value = new DemoValue();
+            value.MyProperty = 123;
+
+            DemoClass classV = new DemoClass(value);
+            Console.WriteLine(classV.MyProperty);
+
+
             return;
 
-
-        Regex r;
-            r = new Regex(@"\w+|-\w+|#\w+|@@\w+|#(?:\\(?:s|w)(?:\*|\+)?\w+)+|@\\w\*+");
-            string regKeyword = r.Replace(Keywords, @"(?<=^|\W)$0(?=\W)");
-            string regPreproc = r.Replace(Preprocessors, @"(?<=^|\s)$0(?=\s|$)");
-            Console.WriteLine(regKeyword);
-            Console.WriteLine();
-            Console.WriteLine(regPreproc);
-
-            return;
             //Console.WriteLine("\nReflection.Parameterinfo");
             //Type Mytype = Type.GetType("Nop.Core.Tests.Program");
             //Console.WriteLine(Mytype);

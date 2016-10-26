@@ -11,7 +11,7 @@ namespace Nop.Core.Infrastructure
     /// Optionally this class can look at all assemblies in the bin folder.
     /// 我的注释 重写 GetAssemblies(), 读取~\bin文件下dll
     /// </summary>
-    public class WebAppTypeFInder : AppDomainTypeFinder
+    public class WebAppTypeFinder : AppDomainTypeFinder
     {
         #region Fields
 
