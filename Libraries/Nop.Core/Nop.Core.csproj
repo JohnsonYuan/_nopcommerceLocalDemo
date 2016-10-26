@@ -119,6 +119,7 @@
     <Compile Include="Events\EntityInserted.cs" />
     <Compile Include="Events\EntityUpdated.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Html\BBCodeHelper.cs" />
     <Compile Include="Html\CodeFormatter\CLikeFormat.cs" />
     <Compile Include="Html\CodeFormatter\CodeFormat.cs" />
     <Compile Include="Html\CodeFormatter\CodeFormatHelper.cs" />
@@ -130,6 +131,8 @@
     <Compile Include="Html\CodeFormatter\SourceFormat.cs" />
     <Compile Include="Html\CodeFormatter\TsqlFormat.cs" />
     <Compile Include="Html\CodeFormatter\VisualBasicFormat.cs" />
+    <Compile Include="Html\HtmlHelper.cs" />
+    <Compile Include="Html\ResolveLinksHelper.cs" />
     <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />
     <Compile Include="Infrastructure\DependencyManagement\ContainerManager.cs" />
     <Compile Include="Infrastructure\DependencyManagement\IDependencyRegister.cs" />
