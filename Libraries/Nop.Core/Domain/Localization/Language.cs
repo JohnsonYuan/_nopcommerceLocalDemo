@@ -29,7 +29,7 @@ namespace Nop.Core.Domain.Localization
         /// <summary>
         /// Gets or sets the flag image file name
         /// </summary>
-        public string FlagIamgeFileName { get; set; }
+        public string FlagImageFileName { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the language support "Right-to-left"

@@ -10,6 +10,7 @@ using System.Web;
 using System.Xml;
 
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -85,7 +86,6 @@ namespace Nop.Core.Tests
     public class EfRepo<T> : IRepo<T>
     { public void Init() { Console.WriteLine("Ef repo"); } }
 
-
     class Program
     {
         public static int GenerateRandomInteger(int min = 0, int max = int.MaxValue)
@@ -135,7 +135,25 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            Hashtable ht = new Hashtable();
+            BaseEntity search111 = new BaseEntity() { Id = 111 };
+            BaseEntity search222 = new BaseEntity() { Id = 222 };
 
+            Console.WriteLine(search111.GetHashCode());
+            Console.WriteLine(search222.GetHashCode());
+            ht.Add(search111, 100);
+            ht.Add(search222, 200);
+
+
+            if (ht.ContainsKey(new BaseEntity() { Id = 111 }))
+            {
+                Console.WriteLine("contains");
+            }
+            else
+            {
+                Console.WriteLine("not contains");
+            }
+            return;
             Console.WriteLine(System.Web.Mvc.HttpVerbs.Get);
             return;
             string path_ = @"E:\Source\Repos\nopCommerce_3.80_Beta_Source\Libraries\Nop.Core\Html\1.txt";
