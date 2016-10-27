@@ -119,6 +119,12 @@
     <Compile Include="Events\EntityInserted.cs" />
     <Compile Include="Events\EntityUpdated.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Fakes\FakeHttpContext.cs" />
+    <Compile Include="Fakes\FakeHttpRequest.cs" />
+    <Compile Include="Fakes\FakeHttpResponse.cs" />
+    <Compile Include="Fakes\FakeHttpSessionState.cs" />
+    <Compile Include="Fakes\FakeIdentity.cs" />
+    <Compile Include="Fakes\FakePrincipal.cs" />
     <Compile Include="Html\BBCodeHelper.cs" />
     <Compile Include="Html\CodeFormatter\CLikeFormat.cs" />
     <Compile Include="Html\CodeFormatter\CodeFormat.cs" />

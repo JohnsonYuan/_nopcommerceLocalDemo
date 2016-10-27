@@ -135,6 +135,9 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+
+            Console.WriteLine(System.Web.Mvc.HttpVerbs.Get);
+            return;
             string path_ = @"E:\Source\Repos\nopCommerce_3.80_Beta_Source\Libraries\Nop.Core\Html\1.txt";
 
             File.WriteAllText(path_, "1231\n123\n12\r1123" + Environment.NewLine + "helo\r\n");

@@ -1,0 +1,30 @@
+﻿using System;
+using System.Security.Principal;
+
+namespace Nop.Core.Fakes
+{
+    public class FakeIdentity : IIdentity
+    {
+        private readonly string _name;
+
+        public FakeIdentity(string name)
+        {
+            _name = name;
+        }
+
+        public string AuthenticationType
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsAuthenticated
+        {
+            get { return !string.IsNullOrEmpty(_name); }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
+    }
+}
