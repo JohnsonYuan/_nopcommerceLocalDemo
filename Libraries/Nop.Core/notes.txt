@@ -4,8 +4,7 @@ http://www.manoli.net/csharpformat/format.aspx
 可以学习很多正则 (?<inner>(.*?)) 捕获(.*?)group名字为inner（roupg） regexCode2 = new Regex(@"\[code\](?<inner>(.*?))\[/code\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 build.cmd =》 cmd格式可以学习
 
-lock:
-[MethodImpl(MethodImplOptions.Synchronized)]
+[MethodImpl(MethodImplOptions.Synchronized)]属性加到方法 相当于lock(this)
 
 Autofac MVC (Install-Package  Autofac.Mvc5)
 register your controllers, and set the dependency resolver
