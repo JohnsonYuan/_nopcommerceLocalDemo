@@ -109,6 +109,7 @@
     <Compile Include="Domain\Blogs\BlogPost.cs" />
     <Compile Include="Domain\Blogs\BlogPostTag.cs" />
     <Compile Include="Domain\Blogs\BlogSettings.cs" />
+    <Compile Include="Domain\Cms\WidgetSettings.cs" />
     <Compile Include="Domain\Common\Address.cs" />
     <Compile Include="Domain\Common\AddressAttribute.cs" />
     <Compile Include="Domain\Common\AddressAttributeValue.cs" />
@@ -120,7 +121,17 @@
     <Compile Include="Domain\Common\PdfSettings.cs" />
     <Compile Include="Domain\Common\SearchTerm.cs" />
     <Compile Include="Domain\Common\SearchTermReportLine.cs" />
+    <Compile Include="Domain\Configuration\Setting.cs" />
     <Compile Include="Domain\Customers\Customer.cs" />
+    <Compile Include="Domain\Directory\Country.cs" />
+    <Compile Include="Domain\Directory\Currency.cs" />
+    <Compile Include="Domain\Directory\CurrencySettings.cs" />
+    <Compile Include="Domain\Directory\ExchangeRate.cs" />
+    <Compile Include="Domain\Directory\MeasureDimension.cs" />
+    <Compile Include="Domain\Directory\MeasureSettings.cs" />
+    <Compile Include="Domain\Directory\MeasureWeight.cs" />
+    <Compile Include="Domain\Directory\StateProvince.cs" />
+    <Compile Include="Domain\Forums\EditorType.cs" />
     <Compile Include="Domain\Localization\ILocalizedEntity.cs" />
     <Compile Include="Domain\Localization\ILocalizedEnum.cs" />
     <Compile Include="Domain\Localization\Language.cs" />
@@ -201,9 +212,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Domain\TODOItems.txt" />
     <Content Include="notes.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Domain\Catalog\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

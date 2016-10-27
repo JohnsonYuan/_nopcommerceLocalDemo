@@ -1,0 +1,9 @@
+﻿Catalog
+Customers
+
+Directory: Currency,State,MeasureDimension,MeasureWeight
+    ExchangeRate - no table
+    MeasureSettings -> BaseDimension, BaseWeight
+    CurrencySettings -> CurrencyId,ExchangeRateCurrencyId
+
+Discount: 可作用于Category Manufacturer Product
