@@ -104,6 +104,11 @@
     <Compile Include="Data\IDataProvider.cs" />
     <Compile Include="Data\IRepository.cs" />
     <Compile Include="Domain\Affiliates\Affiliate.cs" />
+    <Compile Include="Domain\Blogs\BlogComment.cs" />
+    <Compile Include="Domain\Blogs\BlogExtensions.cs" />
+    <Compile Include="Domain\Blogs\BlogPost.cs" />
+    <Compile Include="Domain\Blogs\BlogPostTag.cs" />
+    <Compile Include="Domain\Blogs\BlogSettings.cs" />
     <Compile Include="Domain\Common\Address.cs" />
     <Compile Include="Domain\Common\AddressAttribute.cs" />
     <Compile Include="Domain\Common\AddressAttributeValue.cs" />
