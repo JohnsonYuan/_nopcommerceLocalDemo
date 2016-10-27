@@ -135,13 +135,22 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
-            Nop.Core.Html.HtmlHelper.EnsureOnlyAllowedHtml("<bbb>Helloworld</bbb><bfd />");
-            Uri baseUri = new Uri("http://www.contoso.com/");
-            Uri myUri = new Uri(baseUri, "catalog/shownew.htm?date=today");
+            string path_ = @"E:\Source\Repos\nopCommerce_3.80_Beta_Source\Libraries\Nop.Core\Html\1.txt";
 
-            Console.WriteLine(myUri.PathAndQuery);
-            Console.WriteLine(myUri.AbsolutePath);
+            File.WriteAllText(path_, "1231\n123\n12\r1123" + Environment.NewLine + "helo\r\n");
+            string value_ = File.ReadAllText(path_);
 
+            return;
+
+            string text = @"<b>Hellosdf>>>>sdfsdf</b>123";
+            var result = Regex.Replace(text, "(<[^>]*>)([^<]*)", "$2");
+            Console.WriteLine("result: " + result);
+
+            foreach (Match item in Regex.Matches(text, "(<[^>]*>)([^<]*)"))
+            {
+                Console.WriteLine("group1: " + item.Groups[1].Value);
+                Console.WriteLine("group2: " + item.Groups[2].Value);
+            }
             return;
 
             DemoValue value = new DemoValue();
