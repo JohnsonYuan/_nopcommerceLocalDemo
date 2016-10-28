@@ -7,4 +7,4 @@ Directory: Currency,State,MeasureDimension,MeasureWeight
     CurrencySettings -> CurrencyId,ExchangeRateCurrencyId
 
 Discount: 可作用于Category Manufacturer Product
-Product 属性最多
+Product 属性最多,可参考Nop.Core.Domain.Catalog\Product
