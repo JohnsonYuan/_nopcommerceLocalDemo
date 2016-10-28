@@ -6,8 +6,17 @@ Directory: Currency,State,MeasureDimension,MeasureWeight
     MeasureSettings -> BaseDimension, BaseWeight
     CurrencySettings -> CurrencyId,ExchangeRateCurrencyId
 
+几个重要的inerface:
+ILocalizedEntity	(Localization)
+ISlugSupported	(Seo)
+IStoreMappingSupported (Store)
+IAclSupported (Security)
+
 Discount: 可作用于Category Manufacturer Product
 	折扣类型(DiscountType): AssignedToOrderTotal AssignedToSkus AssignedToCategories AssignedToManufacturers ...(enum 取值为1,2,5,6,10,20 ?)
 	DiscountLimitationType: Unlimited NTimesOnly NTimesPerCustomer(N Times Per Customer)
 Product 属性最多,可参考Nop.Core.Domain.Catalog\Product
-Orders
+Orders ---
+Shipping ---
+
+SecuritySettings: honeypot input name?
