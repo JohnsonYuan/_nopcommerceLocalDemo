@@ -7,3 +7,4 @@ Directory: Currency,State,MeasureDimension,MeasureWeight
     CurrencySettings -> CurrencyId,ExchangeRateCurrencyId
 
 Discount: 可作用于Category Manufacturer Product
+Product 属性最多

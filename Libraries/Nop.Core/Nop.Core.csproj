@@ -109,6 +109,49 @@
     <Compile Include="Domain\Blogs\BlogPost.cs" />
     <Compile Include="Domain\Blogs\BlogPostTag.cs" />
     <Compile Include="Domain\Blogs\BlogSettings.cs" />
+    <Compile Include="Domain\Catalog\AttributeControlType.cs" />
+    <Compile Include="Domain\Catalog\AttributeValueType.cs" />
+    <Compile Include="Domain\Catalog\BackInStockSubscription.cs" />
+    <Compile Include="Domain\Catalog\BackorderMode.cs" />
+    <Compile Include="Domain\Catalog\CatalogSettings.cs" />
+    <Compile Include="Domain\Catalog\Category.cs" />
+    <Compile Include="Domain\Catalog\CategoryTemplate.cs" />
+    <Compile Include="Domain\Catalog\CrossSellProduct.cs" />
+    <Compile Include="Domain\Catalog\DownloadActivationType.cs" />
+    <Compile Include="Domain\Catalog\Events.cs" />
+    <Compile Include="Domain\Catalog\GiftCardType.cs" />
+    <Compile Include="Domain\Catalog\LowStockActivity.cs" />
+    <Compile Include="Domain\Catalog\ManageInventoryMethod.cs" />
+    <Compile Include="Domain\Catalog\Manufacturer.cs" />
+    <Compile Include="Domain\Catalog\ManufacturerTemplate.cs" />
+    <Compile Include="Domain\Catalog\PredefinedProductAttributeValue.cs" />
+    <Compile Include="Domain\Catalog\PriceRange.cs" />
+    <Compile Include="Domain\Catalog\Product.cs" />
+    <Compile Include="Domain\Catalog\ProductAttribute.cs" />
+    <Compile Include="Domain\Catalog\ProductAttributeCombination.cs" />
+    <Compile Include="Domain\Catalog\ProductAttributeMapping.cs" />
+    <Compile Include="Domain\Catalog\ProductAttributeValue.cs" />
+    <Compile Include="Domain\Catalog\ProductCategory.cs" />
+    <Compile Include="Domain\Catalog\ProductEditorSettings.cs" />
+    <Compile Include="Domain\Catalog\ProductExtensions.cs" />
+    <Compile Include="Domain\Catalog\ProductManufacturer.cs" />
+    <Compile Include="Domain\Catalog\ProductPicture.cs" />
+    <Compile Include="Domain\Catalog\ProductReview.cs" />
+    <Compile Include="Domain\Catalog\ProductReviewHelpfulness.cs" />
+    <Compile Include="Domain\Catalog\ProductSortingEnum.cs" />
+    <Compile Include="Domain\Catalog\ProductSpecificationAttribute.cs" />
+    <Compile Include="Domain\Catalog\ProductTag.cs" />
+    <Compile Include="Domain\Catalog\ProductTemplate.cs" />
+    <Compile Include="Domain\Catalog\ProductType.cs" />
+    <Compile Include="Domain\Catalog\ProductWarehouseInventory.cs" />
+    <Compile Include="Domain\Catalog\RecurringProductCyclePeriod.cs" />
+    <Compile Include="Domain\Catalog\RelatedProduct.cs" />
+    <Compile Include="Domain\Catalog\RentalPricePeriod.cs" />
+    <Compile Include="Domain\Catalog\SpecificationAttribute.cs" />
+    <Compile Include="Domain\Catalog\SpecificationAttributeOption.cs" />
+    <Compile Include="Domain\Catalog\SpecificationAttributeOptionFilter.cs" />
+    <Compile Include="Domain\Catalog\SpecificationAttributeType.cs" />
+    <Compile Include="Domain\Catalog\TierPrice.cs" />
     <Compile Include="Domain\Cms\WidgetSettings.cs" />
     <Compile Include="Domain\Common\Address.cs" />
     <Compile Include="Domain\Common\AddressAttribute.cs" />
@@ -215,9 +258,7 @@
     <Content Include="Domain\TODOItems.txt" />
     <Content Include="notes.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\Catalog\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
