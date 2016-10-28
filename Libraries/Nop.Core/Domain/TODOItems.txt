@@ -7,4 +7,6 @@ Directory: Currency,State,MeasureDimension,MeasureWeight
     CurrencySettings -> CurrencyId,ExchangeRateCurrencyId
 
 Discount: 可作用于Category Manufacturer Product
+	折扣类型(DiscountType): AssignedToOrderTotal AssignedToSkus AssignedToCategories AssignedToManufacturers ...(enum 取值为1,2,5,6,10,20 ?)
+	DiscountLimitationType: Unlimited NTimesOnly NTimesPerCustomer(N Times Per Customer)
 Product 属性最多,可参考Nop.Core.Domain.Catalog\Product
