@@ -1,4 +1,5 @@
 ﻿using System;
+using Nop.Core.Domain.Orders;
 
 namespace Nop.Core.Domain.Discounts
 {
