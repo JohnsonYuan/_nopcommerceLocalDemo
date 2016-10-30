@@ -1,0 +1,24 @@
+﻿Entity Framework Config File Settings:
+https://msdn.microsoft.com/en-us/data/jj556606.aspx
+有Connection Strings， Default Connection Factory， Database Initializers
+
+Database.SetInitializer<TContext> Method （https://msdn.microsoft.com/en-us/library/gg679461(v=vs.113).aspx）
+Sets the database initializer to use for the given context type. The database initializer is called when a the given DbContext type is used to access a database for the first time. The default strategy for Code First contexts is an instance of CreateDatabaseIfNotExists<TContext>.
+
+Code First Model Configuration Classes（EntityTypeConfiguration）
+http://www.codeproject.com/Articles/165720/Using-the-Code-First-Model-Configuration-Classes
+
+Database initializer: 
+https://github.com/aspnet/EntityFramework6/blob/527ae18fe23f7649712e9461de0c90ed67c3dca9/src/EntityFramework/CreateDatabaseIfNotExists%60.cs
+EF CreateDatabaseIfNotExists.cs 源码
+// Either the database doesn't exist, or exists and is considered empty
+                context.Database.Create(existence);
+                Seed(context);
+                context.SaveChanges();
+
+
+如果自己写initializer， 需要记得创建Database
+CreateCeDatabaseIfNotExists.cs -> IDatabaseInitializer代码
+                context.Database.Create();
+                Seed(context);
+                context.SaveChanges();

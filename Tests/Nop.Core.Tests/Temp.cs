@@ -135,6 +135,12 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            Console.WriteLine(Assembly.GetExecutingAssembly());
+            Console.WriteLine();
+            Nop.Data.DemoDemo.Demo();
+
+            return;
+
             Hashtable ht = new Hashtable();
             BaseEntity search111 = new BaseEntity() { Id = 111 };
             BaseEntity search222 = new BaseEntity() { Id = 222 };
