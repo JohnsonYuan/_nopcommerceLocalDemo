@@ -1,4 +1,9 @@
-﻿Entity Framework Config File Settings:
+﻿需要引用System.Transactions
+需要的package:
+EntityFramework
+Microsoft.SqlServer.Compact     (SqlCeConnectionStringBuilder需要)
+
+Entity Framework Config File Settings:
 https://msdn.microsoft.com/en-us/data/jj556606.aspx
 有Connection Strings， Default Connection Factory， Database Initializers
 
@@ -22,3 +27,17 @@ CreateCeDatabaseIfNotExists.cs -> IDatabaseInitializer代码
                 context.Database.Create();
                 Seed(context);
                 context.SaveChanges();
+
+
+SQL Server Connection Strings for ASP.NET Web Applications
+https://msdn.microsoft.com/en-us/library/jj653752(v=vs.110).aspx
+<add name="ConnectionStringName"
+    providerName="System.Data.SqlServerCe.4.0"
+    connectionString="Data Source=|DataDirectory|\DatabaseFileName.sdf" />
+
+DbContext执行sql
+context.Database.SqlQuery<ReturnType>(command);
+context.Database.ExecuteSqlCommand(command);
+
+TransactionScope（*）
+http://www.codeproject.com/Articles/690136/All-About-TransactionScope#hHowToUse

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,7 +12,9 @@ namespace Nop.WebApp.Demo
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            var builder = new SqlConnectionStringBuilder(@"Data Source=|DataDirectory|\DatabaseFileName.sdf");
 
+            Response.Write(builder.DataSource + "<br/><br/>");
         }
     }
 }

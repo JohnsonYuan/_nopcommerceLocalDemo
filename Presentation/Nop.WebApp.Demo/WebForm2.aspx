@@ -10,6 +10,13 @@
     <form id="form1" runat="server">
     <div>
     <%=HttpRuntime.BinDirectory %>
+        <br />
+        <%=AppDomain.CurrentDomain.GetData("DataDirectory") as string %>
+        <br />
+        <%=AppDomain.CurrentDomain.BaseDirectory %>
+        <br />
+        <%=Environment.CurrentDirectory %>
+    <br />
     </div>
     </form>
 </body>
