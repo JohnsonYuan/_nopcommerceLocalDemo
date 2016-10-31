@@ -66,6 +66,8 @@
     <Compile Include="Initializers\DropCreateCeDatabaseAlways.cs" />
     <Compile Include="Initializers\DropCreateCeDatabaseIfModelChanges.cs" />
     <Compile Include="Initializers\SqlCeInitializer.cs" />
+    <Compile Include="Mapping\AffiliateMap\AffiliateMap.cs" />
+    <Compile Include="Mapping\Blogs\BlogCommentMap.cs" />
     <Compile Include="Mapping\NopEntityTypeConfiguration.cs" />
     <Compile Include="NopObjectContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
