@@ -10,7 +10,7 @@ namespace Nop.Core.Data
         /// <summary>
         /// Initialize connection factory
         /// </summary>
-        void InitConnectionFacotry();
+        void InitConnectionFactory();
 
         /// <summary>
         /// Set database initializer

@@ -32,6 +32,7 @@ namespace Nop.Data.Initializers
             {
                 dbExists = context.Database.Exists();
             }
+
             if (dbExists)
             {
                 bool createTables;

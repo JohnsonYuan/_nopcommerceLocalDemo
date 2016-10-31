@@ -1,7 +1,11 @@
-﻿需要引用System.Transactions
+﻿需要引用System.Transactions， Nop.Core
 需要的package:
 EntityFramework
 Microsoft.SqlServer.Compact     (SqlCeConnectionStringBuilder需要)
+
+?
+//EfStartUpTask 中调用： 问题=> 找到在哪里注册的DataSettings
+var settings = EngineContext.Current.Resolve<DataSettings>();
 
 Entity Framework Config File Settings:
 https://msdn.microsoft.com/en-us/data/jj556606.aspx
@@ -41,3 +45,12 @@ context.Database.ExecuteSqlCommand(command);
 
 TransactionScope（*）
 http://www.codeproject.com/Articles/690136/All-About-TransactionScope#hHowToUse
+
+Execute stored procedure:(https://msdn.microsoft.com/en-us/library/gg679117(v=vs.113).aspx)
+context.Database.SqlQuery<myEntityType>(
+    "mySpName @param1, @param2, @param3",
+    new SqlParameter("param1", param1),
+    new SqlParameter("param2", param2),
+    new SqlParameter("param3", param3)
+);
+context.Database.SqlQuery<int>("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = {0}", tableName).Any<int>()
