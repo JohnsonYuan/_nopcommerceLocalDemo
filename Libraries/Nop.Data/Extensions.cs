@@ -1,7 +1,6 @@
-﻿using Nop.Core;
-using System;
-using System.Data.Entity;
+﻿using System;
 using System.Data.Entity.Core.Objects;
+using Nop.Core;
 
 namespace Nop.Data
 {

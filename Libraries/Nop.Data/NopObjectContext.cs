@@ -5,6 +5,8 @@ using System.Data.Entity.Infrastructure;
 using Nop.Core;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
+using Nop.Data.Mapping;
 
 namespace Nop.Data
 {
@@ -24,6 +26,50 @@ namespace Nop.Data
         #endregion
 
         #region Utilities
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //dynamically load all configuration
+            //System.Type configType = typeof(LanguageMap);   //any of your configuration classes here
+            //var typesToRegister = Assembly.GetAssembly(configType).GetTypes()
+
+            var typesToResiter = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(type => !String.IsNullOrEmpty(type.Namespace))
+                .Where(type => type.BaseType != null && type.BaseType.IsGenericType &&
+                type.BaseType.GetGenericTypeDefinition() == typeof(NopEntityTypeConfiguration<>));
+            foreach (var type in typesToResiter)
+            {
+                dynamic configurationInstance = Activator.CreateInstance(type);
+                modelBuilder.Configurations.Add(configurationInstance);
+            }
+            //...or do it manually below. For example,
+            //modelBuilder.Configurations.Add(new LanguageMap());
+
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+        /// <summary>
+        /// Attach an entity to the context or return an already attached entity (if it was already attached)
+        /// </summary>
+        /// <typeparam name="TEntity">TEntity</typeparam>
+        /// <param name="entity">Entity</param>
+        /// <returns>Attached entity</returns>
+        protected virtual TEntity AttachEntityToContext<TEntity>(TEntity entity) where TEntity : BaseEntity
+        {
+            //little hack here until Entity Framework really supports stored procedures
+            //otherwise, navigation properties of loaded entities are not loaded until an entity is attached to the context
+            var alreadyAttached = Set<TEntity>().Local.FirstOrDefault(x => x.Id == entity.Id);
+            if (alreadyAttached == null)
+            {
+                //attach new entity
+                Set<TEntity>().Attach(entity);
+                return entity;
+            }
+
+            //entity is already loaded
+            return alreadyAttached;
+        }
 
         #endregion
 
@@ -69,7 +115,7 @@ namespace Nop.Data
                     commandText += i == 0 ? " " : ", ";
 
                     commandText += "@" + p.ParameterName;
-                    if(p.Direction == System.Data.ParameterDirection.InputOutput || p.Direction == System.Data.ParameterDirection.Output)
+                    if (p.Direction == System.Data.ParameterDirection.InputOutput || p.Direction == System.Data.ParameterDirection.Output)
                     {
                         //output parameter
                         commandText += " output";
@@ -78,23 +124,73 @@ namespace Nop.Data
             }
 
             var result = this.Database.SqlQuery<TEntity>(commandText, parameters).ToList();
+            //performance hack applied as described here - http://www.nopcommerce.com/boards/t/25483/fix-very-important-speed-improvement.aspx
+            bool acd = this.Configuration.AutoDetectChangesEnabled;
+            try
+            {
+                this.Configuration.AutoDetectChangesEnabled = false;
 
+                for (int i = 0; i < result.Count; i++)
+                    result[i] = AttachEntityToContext(result[i]);
+            }
+            finally
+            {
+                this.Configuration.AutoDetectChangesEnabled = acd;
+            }
+
+            return result;
         }
 
         public IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters)
         {
-            throw new NotImplementedException();
+            return this.Database.SqlQuery<TElement>(sql, parameters);
         }
+
+        /// <summary>
+        /// Executes the given DDL/DML command against the database.
+        /// </summary>
+        /// <param name="sql">The command string</param>
+        /// <param name="doNotEnsureTransaction">false - the transaction creation is not ensured; true - the transaction creation is ensured.</param>
+        /// <param name="timeout">Timeout value, in seconds. A null value indicates that the default value of the underlying provider will be used</param>
+        /// <param name="parameters">The parameters to apply to the command string.</param>
+        /// <returns>The result returned by the database after executing the command.</returns>
+
         public int ExecuteSqlCommand(string sql, bool dbNotEnsureTransaction = false, int? timeout = default(int?), params object[] parameters)
         {
-            throw new NotImplementedException();
+            int? previousTimeout = null;
+            if (timeout.HasValue)
+            {
+                //store previous timeout
+                previousTimeout = ((IObjectContextAdapter)this).ObjectContext.CommandTimeout;
+                ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = timeout;
+            }
+
+            var transactionalBehavior = dbNotEnsureTransaction
+                ? TransactionalBehavior.DoNotEnsureTransaction
+                : TransactionalBehavior.EnsureTransaction;
+            var result = this.Database.ExecuteSqlCommand(transactionalBehavior, sql, parameters);
+
+            if (timeout.HasValue)
+            {
+                //set previous timeout back
+                ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = previousTimeout;
+            }
+
+            //return result;
+            return result;
         }
+
+        /// <summary>
+        /// Detach an entity
+        /// </summary>
+        /// <param name="entity">Entity</param>
         public void Detach(object entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
+            ((IObjectContextAdapter)this).ObjectContext.Detach(entity);
         }
-
-
 
         #endregion
 
