@@ -1,0 +1,10 @@
+﻿Reference
+System.Web.Mvc (UrlHelper in ISitemapGenerator)
+Nop.Core
+
+Seo -> Localization
+
+\Seo:
+实现ISlugSupported
+
+Sitemap: http://en.wikipedia.org/wiki/Sitemaps

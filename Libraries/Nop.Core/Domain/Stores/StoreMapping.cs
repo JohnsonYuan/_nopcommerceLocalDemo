@@ -13,7 +13,7 @@
         /// <summary>
         /// Gets or sets the entity name
         /// </summary>
-        public int EntityName { get; set; }
+        public string EntityName { get; set; }
 
         /// <summary>
         /// Gets or sets the store identifier

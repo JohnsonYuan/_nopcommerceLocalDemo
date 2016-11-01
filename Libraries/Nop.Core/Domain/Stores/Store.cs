@@ -44,6 +44,11 @@ namespace Nop.Core.Domain.Stores
         public int DisplayOrder { get; set; }
 
         /// <summary>
+        /// Gets or sets the company name
+        /// </summary>
+        public string CompanyName { get; set; }
+
+        /// <summary>
         /// Gets or sets the company address.
         /// </summary>
         public string CompanyAddress { get; set; }

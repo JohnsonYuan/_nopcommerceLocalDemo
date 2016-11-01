@@ -102,7 +102,7 @@ namespace Nop.Data
             customCommands.AddRange(ParseCommands(CommonHelper.MapPath("~/App_Data/Install/SqlServer.Indexes.sql"), false));
             customCommands.AddRange(ParseCommands(CommonHelper.MapPath("~/App_Data/Install/SqlServer.StoredProcedures.sql"), false));
 
-            var initializer = new CreateTablesIfNotExist<NopObjectContext>(tablesToValidate, customCommands);
+            var initializer = new CreateTablesIfNotExist<NopObjectContext>(tablesToValidate, customCommands.ToArray());
             Database.SetInitializer(initializer);
         }
 

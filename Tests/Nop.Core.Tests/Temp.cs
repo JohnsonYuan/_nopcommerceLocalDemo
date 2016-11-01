@@ -11,6 +11,7 @@ using System.Xml;
 
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Globalization;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -133,11 +134,29 @@ namespace Nop.Core.Tests
             public DemoValue MyProperty { get { return _value; } set { _value = value; } }
         }
 
+        private static string ToUnichar(string hexString)
+        {
+            var b = new byte[2];
+
+            // Take hexadecimal as text and make a Unicode char number
+            b[0] = Convert.ToByte(hexString.Substring(2, 2), 16);
+            b[1] = Convert.ToByte(hexString.Substring(0, 2), 16);
+            // Get the character the number represents
+            var returnChar = Encoding.Unicode.GetString(b);
+            return returnChar;
+        }
+
         static void Main(string[] args)
         {
-            Console.WriteLine(Assembly.GetExecutingAssembly());
-            Console.WriteLine();
-            Nop.Data.DemoDemo.Demo();
+            File.WriteAllText(@"unicode2.txt", ToUnichar("01F6"), Encoding.Unicode);
+             
+            return;
+
+            char cc = '中';
+            Console.WriteLine(CharUnicodeInfo.GetUnicodeCategory(cc));
+
+            Console.WriteLine(typeof(Nop.Data.EfDataProviderManager));
+            Console.WriteLine(typeof(Nop.Data.EfDataProviderManager).Name);
 
             return;
 
