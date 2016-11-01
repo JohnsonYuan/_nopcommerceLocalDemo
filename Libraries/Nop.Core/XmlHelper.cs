@@ -22,6 +22,12 @@ namespace Nop.Core
         /// </summary>
         /// <param name="str">String</param>
         /// <returns>Encoded string</returns>
+        /// <remarks>
+        /// 我的注释 XML Valid characters （https://en.wikipedia.org/wiki/XML#Valid_characters）
+        /// U+0009 (Horizontal Tab), U+000A (Line Feed), U+000D (Carriage Return)
+        /// U+0020–U+D7FF, U+E000–U+FFFD
+        /// U+10000–U+10FFFF surrogates pair  (超出char范围 不考虑)
+        /// </remarks>
         public static string XmlEncode(string str)
         {
             if (str == null)
@@ -35,6 +41,17 @@ namespace Nop.Core
         /// </summary>
         /// <param name="str">String</param>
         /// <returns>Encoded string</returns>
+        /// <remarks>
+        /// 我的注释: WriteString does the following (MSDN: WriteString)
+        /// The characters &, <, and > are replaced with &amp;, &lt;, and &gt;, respectively.
+        /// Character values in the range 0x-0x1F (excluding white space characters 0x9, 0xA, and 0xD) are replaced with numeric character entities (&#0; through &#0x1F).
+        /// If WriteString is called in the context of an attribute value, double and single quotes are replaced with &quot; and &apos; respectively.
+        /// 
+        /// For example, this input string 
+        /// "test<item>test"
+        /// is written as
+        /// "test&lt;item&gt;test"
+        /// </remarks>
         public static string XmlEncodeAsIs(string str)
         {
             if (str == null)
