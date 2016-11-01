@@ -1,4 +1,3 @@
-﻿using System;
 using Nop.Core.Domain.Blogs;
 
 namespace Nop.Data.Mapping.Blogs
@@ -14,9 +13,9 @@ namespace Nop.Data.Mapping.Blogs
                 .WithMany(bp => bp.BlogComments)
                 .HasForeignKey(bc => bc.BlogPostId);
 
-            this.HasRequired(bc => bc.Customer)
+            this.HasRequired(cc => cc.Customer)
                 .WithMany()
-                .HasForeignKey(bc => bc.CustomerId);
+                .HasForeignKey(cc => cc.CustomerId);
         }
     }
 }
