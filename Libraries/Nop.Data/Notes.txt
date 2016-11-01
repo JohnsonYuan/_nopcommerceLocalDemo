@@ -59,3 +59,10 @@ if (context.Database.SqlQuery<int>("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHER
 
 var existingTableNames = new List<string>(context.Database.SqlQuery<string>("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_type = 'BASE TABLE'"));
 context.Database.SqlQuery<int>("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = {0}", tableName).Any<int>()
+
+
+FluentAPI:
+
+实际上不使用.WithMany()也是可以的, 使用.WithMany()一般用来后面继续跟其它的api
+HasRequired(j => j.Account).WithMany(); = HasRequired(j => j.Account)
+https://forums.asp.net/t/1779574.aspx?Navigation+Properties+using+WithMany+
