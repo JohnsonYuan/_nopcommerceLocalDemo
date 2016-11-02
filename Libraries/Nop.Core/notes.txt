@@ -31,3 +31,6 @@ Also, if you register controllers manually and choose to specify lifetimes, you 
   // Set the dependency resolver to be Autofac.
   var container = builder.Build();
   DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+Use MemoryCache:(System.Web.Caching.Cache can only works in ASP.NET)
+http://www.codeproject.com/Articles/290935/Using-MemoryCache-in-Net-4-0

@@ -12,6 +12,7 @@ using System.Xml;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Globalization;
+using System.Runtime.Caching;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -98,7 +99,7 @@ namespace Nop.Core.Tests
 
         public static void Demo1(int x)
         {
-            Console.WriteLine(x) ;
+            Console.WriteLine(x);
         }
 
         public static void Demo1<T>(int x)
@@ -148,8 +149,23 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            var caching = System.Runtime.Caching.MemoryCache.Default;
+            int cacheTime = 10;
+            CacheItemPolicy policy = new CacheItemPolicy();
+            policy.AbsoluteExpiration = DateTime.Now + TimeSpan.FromMinutes(cacheTime);
+            caching.Add(new System.Runtime.Caching.CacheItem("123", null), policy);
+
+            if (caching.Contains("123"))
+            {
+                if (caching["123"] == null)
+                {
+                    Console.WriteLine("is null");
+                }
+            }
+
+            return;
             File.WriteAllText(@"unicode2.txt", ToUnichar("01F6"), Encoding.Unicode);
-             
+
             return;
 
             char cc = '中';
@@ -297,7 +313,7 @@ namespace Nop.Core.Tests
             }
 
             return;
-             
+
 
             BaseEntity1 be1 = new BaseEntity1();
             BaseEntity1 be11 = new BaseEntity1();

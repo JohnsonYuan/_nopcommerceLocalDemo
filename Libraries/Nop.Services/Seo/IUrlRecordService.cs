@@ -64,7 +64,6 @@ namespace Nop.Services.Seo
         /// <returns>Found URL record</returns>
         UrlRecordService.UrlRecordForCaching GetBySlugCached(string slug);
 
-
         /// <summary>
         /// Gets all URL records
         /// </summary>

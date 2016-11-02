@@ -225,7 +225,6 @@ namespace Nop.Data
             }
         }
 
-
         #endregion
     }
 }

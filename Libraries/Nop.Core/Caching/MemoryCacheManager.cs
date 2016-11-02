@@ -36,7 +36,7 @@ namespace Nop.Core.Caching
         /// </summary>
         /// <param name="key">Key</param>
         /// <param name="data">Data</param>
-        /// <param name="cacheTime">Cache time</param>
+        /// <param name="cacheTime">Cache time, in minutes</param>
         public void Set(string key, object data, int cacheTime)
         {
             if (data == null)
