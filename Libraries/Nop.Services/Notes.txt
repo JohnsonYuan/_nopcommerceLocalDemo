@@ -7,4 +7,7 @@ Seo -> Localization
 \Seo:
 实现ISlugSupported
 
+没有在数据中， Nop.Services特有的
+Events, Logging
+
 Sitemap: http://en.wikipedia.org/wiki/Sitemaps

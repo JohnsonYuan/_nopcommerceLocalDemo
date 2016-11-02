@@ -135,7 +135,7 @@ namespace Nop.Services.Seo
         /// Deletes an URL record
         /// </summary>
         /// <param name="urlRecord">URL record</param>
-        public void DeleteUrlRecord(UrlRecord urlRecord)
+        public virtual void DeleteUrlRecord(UrlRecord urlRecord)
         {
             if (urlRecord == null)
                 throw new ArgumentNullException("urlRecord");
@@ -150,7 +150,7 @@ namespace Nop.Services.Seo
         /// Deletes an URL records
         /// </summary>
         /// <param name="urlRecords">URL records</param>
-        public void DeleteUrlRecords(IList<UrlRecord> urlRecords)
+        public virtual void DeleteUrlRecords(IList<UrlRecord> urlRecords)
         {
             if (urlRecords == null)
                 throw new ArgumentNullException("urlRecord");
@@ -166,7 +166,7 @@ namespace Nop.Services.Seo
         /// </summary>
         /// <param name="urlRecordIds">URL record identifiers</param>
         /// <returns>URL record</returns>
-        public IList<UrlRecord> GetUrlRecordsByIds(int[] urlRecordIds)
+        public virtual IList<UrlRecord> GetUrlRecordsByIds(int[] urlRecordIds)
         {
             var query = _urlRecordRepository.Table;
 
@@ -178,7 +178,7 @@ namespace Nop.Services.Seo
         /// </summary>
         /// <param name="urlRecordId">URL record identifier</param>
         /// <returns>URL record</returns>
-        public UrlRecord GetUrlRecordById(int urlRecordId)
+        public virtual UrlRecord GetUrlRecordById(int urlRecordId)
         {
             if (urlRecordId == 0)
                 return null;
@@ -190,7 +190,7 @@ namespace Nop.Services.Seo
         /// Inserts an URL record
         /// </summary>
         /// <param name="urlRecord">URL record</param>
-        public void InsertUrlRecord(UrlRecord urlRecord)
+        public virtual void InsertUrlRecord(UrlRecord urlRecord)
         {
             if (urlRecord == null)
                 throw new ArgumentNullException("urlRecord");
@@ -205,7 +205,7 @@ namespace Nop.Services.Seo
         /// Updates the URL record
         /// </summary>
         /// <param name="urlRecord">URL record</param>
-        public void UpdateUrlRecord(UrlRecord urlRecord)
+        public virtual void UpdateUrlRecord(UrlRecord urlRecord)
         {
             if (urlRecord == null)
                 throw new ArgumentNullException("urlRecord");
@@ -221,7 +221,7 @@ namespace Nop.Services.Seo
         /// </summary>
         /// <param name="slug">Slug</param>
         /// <returns>Found URL record</returns>
-        public UrlRecord GetBySlug(string slug)
+        public virtual UrlRecord GetBySlug(string slug)
         {
             if (String.IsNullOrEmpty(slug))
                 return null;
@@ -242,7 +242,7 @@ namespace Nop.Services.Seo
         /// </summary>
         /// <param name="slug">Slug</param>
         /// <returns>Found URL record</returns>
-        public UrlRecordService.UrlRecordForCaching GetBySlugCached(string slug)
+        public virtual UrlRecordService.UrlRecordForCaching GetBySlugCached(string slug)
         {
             if (String.IsNullOrEmpty(slug))
                 return null;
@@ -280,7 +280,7 @@ namespace Nop.Services.Seo
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>URL records</returns>
-        public IPagedList<UrlRecord> GetAllUrlRecords(string slug = "", int pageIndex = 0, int pageSize = int.MaxValue)
+        public virtual IPagedList<UrlRecord> GetAllUrlRecords(string slug = "", int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var query = _urlRecordRepository.Table;
             if (!String.IsNullOrWhiteSpace(slug))
@@ -298,7 +298,7 @@ namespace Nop.Services.Seo
         /// <param name="entityName">Entity name</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>Found slug</returns>
-        public string GetActiveSlug(int entityId, string entityName, int languageId)
+        public virtual string GetActiveSlug(int entityId, string entityName, int languageId)
         {
             if (_localizationSettings.LoadAllUrlRecordsOnStartup)
             {
@@ -349,7 +349,7 @@ namespace Nop.Services.Seo
         /// <param name="entity">Entity</param>
         /// <param name="slug">Slug</param>
         /// <param name="languageId">Language ID</param>
-        public void SaveSlug<T>(T entity, string slug, int languageId) where T : BaseEntity, ISlugSupported
+        public virtual void SaveSlug<T>(T entity, string slug, int languageId) where T : BaseEntity, ISlugSupported
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");

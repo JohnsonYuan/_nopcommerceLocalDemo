@@ -47,7 +47,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         /// <param name="key">key</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
         /// <returns>Resolved service</returns>
-        public virtual T Resolve<T>(string key = "", ILifetimeScope scope = null) where T :class
+        public virtual T Resolve<T>(string key = "", ILifetimeScope scope = null) where T : class
         {
             if (scope == null)
             {
@@ -87,12 +87,12 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         /// <returns>Resolved services</returns>
         public virtual T[] ResolveAll<T>(string key = "", ILifetimeScope scope = null)
         {
-            if(scope == null)
+            if (scope == null)
             {
                 //no scope specified
                 scope = Scope();
             }
-            if(string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key))
             {
                 return scope.Resolve<IEnumerable<T>>().ToArray();
             }
