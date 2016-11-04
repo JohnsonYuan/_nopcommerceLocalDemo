@@ -86,10 +86,6 @@
     <Compile Include="Seo\UpdateFrequency.cs" />
     <Compile Include="Seo\UrlRecordService.cs" />
     <Compile Include="Stores\IStoreMappingService.cs" />
-    <Compile Include="Topics\ITopicService.cs" />
-    <Compile Include="Topics\ITopicTemplateService.cs" />
-    <Compile Include="Topics\TopicService.cs" />
-    <Compile Include="Topics\TopicTemplateService.cs" />
     <Compile Include="Tax\CalculateTaxRequest.cs" />
     <Compile Include="Tax\CalculateTaxResult.cs" />
     <Compile Include="Tax\ITaxCategoryService.cs" />
@@ -98,7 +94,9 @@
     <Compile Include="Tax\TaxCategoryService.cs" />
     <Compile Include="Tax\TaxService.cs" />
     <Compile Include="Topics\ITopicService.cs" />
+    <Compile Include="Topics\ITopicTemplateService.cs" />
     <Compile Include="Topics\TopicService.cs" />
+    <Compile Include="Topics\TopicTemplateService.cs" />
     <Compile Include="Vendors\IVendorService.cs" />
     <Compile Include="Vendors\VendorExtensions.cs" />
     <Compile Include="Vendors\VendorService.cs" />

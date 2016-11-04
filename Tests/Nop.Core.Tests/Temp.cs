@@ -147,8 +147,58 @@ namespace Nop.Core.Tests
             return returnChar;
         }
 
+        class Pet
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+        }
+
         static void Main(string[] args)
         {
+            List<Pet> pets =
+             new List<Pet>{ new Pet { Name="Barley", Age=8 },
+                                new Pet { Name="Boots", Age=4 },
+                                new Pet { Name="Whiskers", Age=1 } };
+
+
+            List<Pet> pets2 = new List<Pet>();
+
+            foreach (Pet pet in pets2.DefaultIfEmpty())
+            {
+                Console.WriteLine(pet.Name);
+            }
+
+            return; 
+
+
+            var a = new int[] { 1, 3, 4, 5, 7,99,123123 };
+            DemoValue[] b = {
+                new DemoValue { MyProperty = 3 },
+                new DemoValue { MyProperty = 7 },
+                new DemoValue { MyProperty = 99 },
+                new DemoValue { MyProperty = 13212 },
+                new DemoValue { MyProperty = 567 },
+            };
+
+
+
+            var resultff = from b1 in b
+                           join a1 in a
+                           on b1.MyProperty equals a1
+                           //select b1;
+                           into ab
+                           //from sm in ab.DefaultIfEmpty()
+                           from sm in ab.DefaultIfEmpty()
+                           select sm;
+
+            var query = from ax in resultff
+                        select ax;
+            foreach (var item in resultff)
+            {
+                Console.WriteLine(item.GetType() + " " + item);
+            }
+
+            return;
             var caching = System.Runtime.Caching.MemoryCache.Default;
             int cacheTime = 10;
             CacheItemPolicy policy = new CacheItemPolicy();
