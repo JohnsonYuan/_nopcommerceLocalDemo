@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -9,11 +10,9 @@ using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Topics;
 using Nop.Services.Events;
 using Nop.Services.Stores;
-using System.Collections.Generic;
 
 namespace Nop.Services.Topics
 {
-
     /// <summary>
     /// Topic service
     /// </summary>
@@ -54,7 +53,6 @@ namespace Nop.Services.Topics
         private readonly CatalogSettings _catalogSettings;
         private readonly IEventPublisher _eventPublisher;
         private readonly ICacheManager _cacheManager;
-        private string t;
 
         #endregion
 
@@ -165,16 +163,32 @@ namespace Nop.Services.Topics
                         query = from c in query
                                 join acl in _aclRepository.Table
                                 on new { c1 = c.Id, c2 = "Topic" } equals new { c1 = acl.EntityId, c2 = acl.EntityName } into c_acl
-                                
+                                from acl in c_acl.DefaultIfEmpty()
+                                where !c.SubjectToAcl || allowedCustomerRolesIds.Contains(acl.CustomerRoleId)
+                                select c;
                     }
 
-                    if (storeId > 0 && !_catalogSettings.IgnoreStoreLimitations)
+                    if (!_catalogSettings.IgnoreStoreLimitations && storeId > 0)
                     {
-
+                        //Store mapping
+                        query = from c in query
+                                join sm in _storeMappingRepository.Table
+                                on new { c1 = c.Id, c2 = "Topic" } equals new { c1 = sm.EntityId, c2 = sm.EntityName } into c_sm
+                                from sm in c_sm.DefaultIfEmpty()
+                                where !c.LimitedToStores || storeId == sm.StoreId
+                                select c;
                     }
 
                     //only distinct topics (group by ID)
+                    query = from t in query
+                            group t by t.Id
+                            into tGroup
+                            orderby tGroup.Key
+                            select tGroup.FirstOrDefault();
+                    query = query.OrderBy(t => t.DisplayOrder).ThenBy(t => t.SystemName);
                 }
+
+                return query.ToList();
             });
         }
 
