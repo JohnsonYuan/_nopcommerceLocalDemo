@@ -74,7 +74,7 @@ namespace Nop.Services.Vendors
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
-        /// <returns>Vendors</returns>
+        /// <returns>Vendors</  returns>
         public virtual IPagedList<Vendor> GetAllVendors(string name = "",
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
         {

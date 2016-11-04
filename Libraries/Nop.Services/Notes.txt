@@ -2,6 +2,25 @@
 System.Web.Mvc (UrlHelper in ISitemapGenerator)
 Nop.Core
 
+Linq:两个from=>相当于嵌套from, e.g.:
+char[] upperCase = { 'A', 'B', 'C'};
+char[] lowerCase = { 'x', 'y', 'z'};
+var joinQuery2 =
+            from lower in lowerCase
+            where lower != 'x'
+            from upper in upperCase
+            select new { lower, upper };
+==> result:
+        y is matched to A
+        y is matched to B
+        y is matched to C
+        z is matched to A
+        z is matched to B
+        z is matched to C
+
+
+
+
 Seo -> Localization
 
 \Seo:
