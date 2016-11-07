@@ -86,6 +86,9 @@
     <Compile Include="Seo\UpdateFrequency.cs" />
     <Compile Include="Seo\UrlRecordService.cs" />
     <Compile Include="Stores\IStoreMappingService.cs" />
+    <Compile Include="Tasks\IScheduleTaskService.cs" />
+    <Compile Include="Tasks\ITask.cs" />
+    <Compile Include="Tasks\ScheduleTaskService.cs" />
     <Compile Include="Tax\CalculateTaxRequest.cs" />
     <Compile Include="Tax\CalculateTaxResult.cs" />
     <Compile Include="Tax\ITaxCategoryService.cs" />

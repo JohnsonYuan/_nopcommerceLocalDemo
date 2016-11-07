@@ -155,6 +155,11 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            double price = 200;
+            double percent = 40;
+            var resultxx = price - (price) / (100 + percent) * percent;
+            Console.WriteLine(resultxx);
+            return;
             List<Pet> pets =
              new List<Pet>{ new Pet { Name="Barley", Age=8 },
                                 new Pet { Name="Boots", Age=4 },
