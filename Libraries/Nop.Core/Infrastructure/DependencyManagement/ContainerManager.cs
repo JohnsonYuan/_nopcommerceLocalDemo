@@ -138,7 +138,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
                         if (service == null) throw new NopException("Unknown dependency");
                         parametersInstance.Add(service);
                     }
-                    Activator.CreateInstance(type, parametersInstance.ToArray());
+                    return Activator.CreateInstance(type, parametersInstance.ToArray());
                 }
                 catch (NopException)
                 {
