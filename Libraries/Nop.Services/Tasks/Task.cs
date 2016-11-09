@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using Nop.Core.Configuration;
 using Nop.Core.Domain.Tasks;
 using Nop.Core.Infrastructure;
 

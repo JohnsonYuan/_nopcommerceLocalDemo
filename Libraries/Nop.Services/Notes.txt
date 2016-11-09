@@ -1,6 +1,7 @@
 ﻿Reference
 System.Web.Mvc (UrlHelper in ISitemapGenerator)
 Nop.Core
+Nop.Data (Logging\CustomerActivityService.cs, _dbContext)
 Autofac(Tasks/Task.cs: private ITask CreateTask(ILifetimeScope scope))
 
 Linq:两个from=>相当于嵌套from, e.g.:

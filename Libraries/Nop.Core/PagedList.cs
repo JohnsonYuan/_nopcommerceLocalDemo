@@ -44,7 +44,7 @@ namespace Nop.Core
         {
             if (source == null)
                 throw new ArgumentNullException("source");
-            if(pageSize <= 0)
+            if (pageSize <= 0)
                 throw new ArgumentException("pageSize must be greater than zero");
 
             TotalCount = totalCount ?? source.Count();

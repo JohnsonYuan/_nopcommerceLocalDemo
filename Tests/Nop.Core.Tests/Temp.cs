@@ -153,8 +153,47 @@ namespace Nop.Core.Tests
             public int Age { get; set; }
         }
 
+        public sealed class Singleton
+        {
+            public static string x = EchoAndReturn("In type initializer");
+
+            public static string EchoAndReturn(string s)
+            {
+                Console.WriteLine(s);
+                return s;
+            }
+
+            private static readonly Singleton instance = new Singleton();
+
+            // Explicit static constructor to tell C# compiler
+            // not to mark type as beforefieldinit
+            //static Singleton()
+            //{
+            //    Console.WriteLine("in static ctor");
+            //}
+
+            private Singleton()
+            {
+                Console.WriteLine("in ctor");
+            }
+
+            public static Singleton Instance
+            {
+                get
+                {
+                    return instance;
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
+
+            Console.WriteLine("main");
+            var xxx2 = Singleton.Instance;
+            var xxx = Singleton.x;
+
+            return;
             double price = 200;
             double percent = 40;
             var resultxx = price - (price) / (100 + percent) * percent;

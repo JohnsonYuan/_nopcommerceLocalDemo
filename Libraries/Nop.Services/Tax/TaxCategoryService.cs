@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Caching;
@@ -75,7 +75,7 @@ namespace Nop.Services.Tax
 
             _cacheManager.RemoveByPattern(TAXCATEGORIES_PATTERN_KEY);
 
-            //event publisher
+            //event notification
             _eventPublisher.EntityDeleted(taxCategory);
         }
 
@@ -91,8 +91,8 @@ namespace Nop.Services.Tax
                 var query = from tc in _taxCategoryRepository.Table
                             orderby tc.DisplayOrder
                             select tc;
-                var taxCagegories = query.ToList();
-                return taxCagegories;
+                var taxCategories = query.ToList();
+                return taxCategories;
             });
         }
 
@@ -105,7 +105,7 @@ namespace Nop.Services.Tax
         {
             if (taxCategoryId == 0)
                 return null;
-
+            
             string key = string.Format(TAXCATEGORIES_BY_ID_KEY, taxCategoryId);
             return _cacheManager.Get(key, () => _taxCategoryRepository.GetById(taxCategoryId));
         }
@@ -113,11 +113,11 @@ namespace Nop.Services.Tax
         /// <summary>
         /// Inserts a tax category
         /// </summary>
-        /// <param name="taxCategory">Tax cagegory</param>
+        /// <param name="taxCategory">Tax category</param>
         public virtual void InsertTaxCategory(TaxCategory taxCategory)
         {
             if (taxCategory == null)
-                throw new ArgumentNullException("taxCagegory");
+                throw new ArgumentNullException("taxCategory");
 
             _taxCategoryRepository.Insert(taxCategory);
 
@@ -128,13 +128,13 @@ namespace Nop.Services.Tax
         }
 
         /// <summary>
-        /// Updates the tax cagegory
+        /// Updates the tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        public void UpdateTaxCategory(TaxCategory taxCategory)
+        public virtual void UpdateTaxCategory(TaxCategory taxCategory)
         {
             if (taxCategory == null)
-                throw new ArgumentNullException("taxCagory");
+                throw new ArgumentNullException("taxCategory");
 
             _taxCategoryRepository.Update(taxCategory);
 
@@ -143,7 +143,6 @@ namespace Nop.Services.Tax
             //event notification
             _eventPublisher.EntityUpdated(taxCategory);
         }
-
         #endregion
     }
 }

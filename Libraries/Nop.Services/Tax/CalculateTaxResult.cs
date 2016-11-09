@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Nop.Services.Tax
@@ -31,9 +31,9 @@ namespace Nop.Services.Tax
         /// </summary>
         public bool Success
         {
-            get
-            {
-                return !this.Errors.Any();
+            get 
+            { 
+                return !this.Errors.Any(); 
             }
         }
 
