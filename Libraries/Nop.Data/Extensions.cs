@@ -17,7 +17,7 @@ namespace Nop.Data
         /// </remarks>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public static Type GetUnProxiedEntityType(this BaseEntity entity)
+        public static Type GetUnproxiedEntityType(this BaseEntity entity)
         {
             var userType = ObjectContext.GetObjectType(entity.GetType());
             return userType;

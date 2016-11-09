@@ -1,12 +1,10 @@
-﻿using Nop.Core.Domain.Catalog;
+using System;
+using System.Collections.Generic;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Tax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nop.Services.Tax
 {
@@ -33,6 +31,9 @@ namespace Nop.Services.Tax
         /// </summary>
         /// <returns>Tax providers</returns>
         IList<ITaxProvider> LoadAllTaxProviders();
+        
+
+
 
 
 
@@ -85,6 +86,8 @@ namespace Nop.Services.Tax
             bool priceIncludesTax, out decimal taxRate);
 
 
+
+
         /// <summary>
         /// Gets shipping price
         /// </summary>
@@ -114,6 +117,8 @@ namespace Nop.Services.Tax
 
 
 
+
+
         /// <summary>
         /// Gets payment method additional handling fee
         /// </summary>
@@ -140,6 +145,12 @@ namespace Nop.Services.Tax
         /// <param name="taxRate">Tax rate</param>
         /// <returns>Price</returns>
         decimal GetPaymentMethodAdditionalFee(decimal price, bool includingTax, Customer customer, out decimal taxRate);
+
+
+
+
+
+
 
         /// <summary>
         /// Gets checkout attribute value price
@@ -178,6 +189,10 @@ namespace Nop.Services.Tax
             bool includingTax, Customer customer, out decimal taxRate);
 
 
+
+
+        
+
         /// <summary>
         /// Gets VAT Number status
         /// </summary>
@@ -201,7 +216,7 @@ namespace Nop.Services.Tax
         /// <param name="vatNumber">VAT number</param>
         /// <returns>VAT Number status</returns>
         VatNumberStatus GetVatNumberStatus(string twoLetterIsoCode, string vatNumber);
-
+        
         /// <summary>
         /// Gets VAT Number status
         /// </summary>
@@ -210,7 +225,7 @@ namespace Nop.Services.Tax
         /// <param name="name">Name (if received)</param>
         /// <param name="address">Address (if received)</param>
         /// <returns>VAT Number status</returns>
-        VatNumberStatus GetVatNumberStatus(string twoLetterIsoCode, string vatNumber,
+        VatNumberStatus GetVatNumberStatus(string twoLetterIsoCode, string vatNumber, 
             out string name, out string address);
 
         /// <summary>
@@ -222,8 +237,11 @@ namespace Nop.Services.Tax
         /// <param name="address">Address</param>
         /// <param name="exception">Exception</param>
         /// <returns>VAT number status</returns>
-        VatNumberStatus DoVatCheck(string twoLetterIsoCode, string vatNumber,
+        VatNumberStatus DoVatCheck(string twoLetterIsoCode, string vatNumber, 
             out string name, out string address, out Exception exception);
+
+
+
 
 
         /// <summary>

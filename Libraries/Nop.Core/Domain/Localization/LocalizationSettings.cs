@@ -12,7 +12,7 @@ namespace Nop.Core.Domain.Localization
         /// <summary>
         /// Use images for language selection
         /// </summary>
-        public bool UseImageForLanguageSelection { get; set; }
+        public bool UseImagesForLanguageSelection { get; set; }
 
         /// <summary>
         /// A value indicating whether we should detect the current language by a customer region (browser settings)

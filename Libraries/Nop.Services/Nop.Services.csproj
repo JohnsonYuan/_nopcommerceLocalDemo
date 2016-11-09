@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -93,9 +94,48 @@
     <Compile Include="Blogs\BlogExtensions.cs" />
     <Compile Include="Blogs\BlogService.cs" />
     <Compile Include="Blogs\IBlogService.cs" />
+    <Compile Include="Caching\ClearCacheTask.cs" />
+    <Compile Include="Catalog\BackInStockSubscriptionService.cs" />
+    <Compile Include="Catalog\Cache\PriceCacheEventConsumer.cs" />
+    <Compile Include="Catalog\CategoryExtensions.cs" />
+    <Compile Include="Catalog\CategoryService.cs" />
+    <Compile Include="Catalog\CategoryTemplateService.cs" />
+    <Compile Include="Catalog\CompareProductsService.cs" />
+    <Compile Include="Catalog\CopyProductService.cs" />
+    <Compile Include="Catalog\IBackInStockSubscriptionService.cs" />
     <Compile Include="Catalog\ICategoryService.cs" />
+    <Compile Include="Catalog\ICategoryTemplateService.cs" />
+    <Compile Include="Catalog\ICompareProductsService.cs" />
+    <Compile Include="Catalog\ICopyProductService.cs" />
     <Compile Include="Catalog\IManufacturerService.cs" />
+    <Compile Include="Catalog\IManufacturerTemplateService.cs" />
+    <Compile Include="Catalog\IPriceCalculationService.cs" />
+    <Compile Include="Catalog\IPriceFormatter.cs" />
+    <Compile Include="Catalog\IProductAttributeFormatter.cs" />
+    <Compile Include="Catalog\IProductAttributeParser.cs" />
+    <Compile Include="Catalog\IProductAttributeService.cs" />
     <Compile Include="Catalog\IProductService.cs" />
+    <Compile Include="Catalog\IProductTagService.cs" />
+    <Compile Include="Catalog\IProductTemplateService.cs" />
+    <Compile Include="Catalog\IRecentlyViewedProductsService.cs" />
+    <Compile Include="Catalog\ISpecificationAttributeService.cs" />
+    <Compile Include="Catalog\ManufacturerExtensions.cs" />
+    <Compile Include="Catalog\ManufacturerService.cs" />
+    <Compile Include="Catalog\ManufacturerTemplateService.cs" />
+    <Compile Include="Catalog\PriceCalculationService.cs" />
+    <Compile Include="Catalog\PriceFormatter.cs" />
+    <Compile Include="Catalog\ProductAttributeExtensions.cs" />
+    <Compile Include="Catalog\ProductAttributeFormatter.cs" />
+    <Compile Include="Catalog\ProductAttributeParser.cs" />
+    <Compile Include="Catalog\ProductAttributeService.cs" />
+    <Compile Include="Catalog\ProductExtensions.cs" />
+    <Compile Include="Catalog\ProductService.cs" />
+    <Compile Include="Catalog\ProductTagService.cs" />
+    <Compile Include="Catalog\ProductTemplateService.cs" />
+    <Compile Include="Catalog\RecentlyViewedProductsService.cs" />
+    <Compile Include="Catalog\RoundingHelper.cs" />
+    <Compile Include="Catalog\SpecificationAttributeService.cs" />
+    <Compile Include="Catalog\TierPriceExtensions.cs" />
     <Compile Include="Cms\IWidgetPlugin.cs" />
     <Compile Include="Cms\IWidgetService.cs" />
     <Compile Include="Cms\WidgetExtensions.cs" />
@@ -126,6 +166,43 @@
     <Compile Include="Configuration\ISettingService.cs" />
     <Compile Include="Configuration\SettingExtensions.cs" />
     <Compile Include="Configuration\SettingService.cs" />
+    <Compile Include="Customers\ChangePasswordRequest.cs" />
+    <Compile Include="Customers\ChangePasswordResult.cs" />
+    <Compile Include="Customers\CustomerAttributeExtensions.cs" />
+    <Compile Include="Customers\CustomerAttributeParser.cs" />
+    <Compile Include="Customers\CustomerAttributeService.cs" />
+    <Compile Include="Customers\CustomerExtensions.cs" />
+    <Compile Include="Customers\CustomerRegistrationRequest.cs" />
+    <Compile Include="Customers\CustomerRegistrationResult.cs" />
+    <Compile Include="Customers\CustomerRegistrationService.cs" />
+    <Compile Include="Customers\CustomerReportService.cs" />
+    <Compile Include="Customers\CustomerService.cs" />
+    <Compile Include="Customers\DeleteGuestsTask.cs" />
+    <Compile Include="Customers\ICustomerAttributeParser.cs" />
+    <Compile Include="Customers\ICustomerAttributeService.cs" />
+    <Compile Include="Customers\ICustomerRegistrationService.cs" />
+    <Compile Include="Customers\ICustomerReportService.cs" />
+    <Compile Include="Customers\ICustomerService.cs" />
+    <Compile Include="Directory\CountryService.cs" />
+    <Compile Include="Directory\CurrencyService.cs" />
+    <Compile Include="Directory\GeoLookupService.cs" />
+    <Compile Include="Directory\ICountryService.cs" />
+    <Compile Include="Directory\ICurrencyService.cs" />
+    <Compile Include="Directory\IExchangeRateProvider.cs" />
+    <Compile Include="Directory\IGeoLookupService.cs" />
+    <Compile Include="Directory\IMeasureService.cs" />
+    <Compile Include="Directory\IStateProvinceService.cs" />
+    <Compile Include="Directory\MeasureService.cs" />
+    <Compile Include="Directory\StateProvinceService.cs" />
+    <Compile Include="Directory\UpdateExchangeRateTask.cs" />
+    <Compile Include="Discounts\Cache\DiscountRequirementEventConsumer.cs" />
+    <Compile Include="Discounts\DiscountExtensions.cs" />
+    <Compile Include="Discounts\DiscountRequirementValidationRequest.cs" />
+    <Compile Include="Discounts\DiscountRequirementValidationResult.cs" />
+    <Compile Include="Discounts\DiscountService.cs" />
+    <Compile Include="Discounts\DiscountValidationResult.cs" />
+    <Compile Include="Discounts\IDiscountRequirementRule.cs" />
+    <Compile Include="Discounts\IDiscountService.cs" />
     <Compile Include="Events\EventPublisher.cs" />
     <Compile Include="Events\EventPublisherExtensions.cs" />
     <Compile Include="Events\IConsumer.cs" />
@@ -318,10 +395,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Directory\" />
-    <Folder Include="Discounts\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

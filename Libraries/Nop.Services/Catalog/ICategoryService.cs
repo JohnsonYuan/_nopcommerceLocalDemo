@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 
@@ -43,7 +43,7 @@ namespace Nop.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Categories</returns>
         IList<Category> GetAllCategoriesDisplayedOnHomePage(bool showHidden = false);
-
+                
         /// <summary>
         /// Gets a category
         /// </summary>
@@ -62,7 +62,7 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="category">Category</param>
         void UpdateCategory(Category category);
-
+        
         /// <summary>
         /// Deletes a product category mapping
         /// </summary>
@@ -79,6 +79,14 @@ namespace Nop.Services.Catalog
         /// <returns>Product a category mapping collection</returns>
         IPagedList<ProductCategory> GetProductCategoriesByCategoryId(int categoryId,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false);
+
+        /// <summary>
+        /// Gets a product category mapping collection
+        /// </summary>
+        /// <param name="productId">Product identifier</param>
+        /// <param name="showHidden">A value indicating whether to show hidden records</param>
+        /// <returns>Product category mapping collection</returns>
+        IList<ProductCategory> GetProductCategoriesByProductId(int productId, bool showHidden = false);
         /// <summary>
         /// Gets a product category mapping collection
         /// </summary>

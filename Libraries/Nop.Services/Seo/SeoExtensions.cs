@@ -7,6 +7,7 @@ using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Forums;
 using Nop.Core.Domain.Seo;
 using Nop.Core.Infrastructure;
+using Nop.Services.Localization;
 
 namespace Nop.Services.Seo
 {

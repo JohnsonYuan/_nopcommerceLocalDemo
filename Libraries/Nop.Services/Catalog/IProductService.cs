@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Nop.Core.Domain.Catalog;
 using Nop.Core;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
 
 namespace Nop.Services.Catalog
@@ -30,14 +31,14 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <returns>Products</returns>
         IList<Product> GetAllProductsDisplayedOnHomePage();
-
+        
         /// <summary>
         /// Gets product
         /// </summary>
         /// <param name="productId">Product identifier</param>
         /// <returns>Product</returns>
         Product GetProductById(int productId);
-
+        
         /// <summary>
         /// Gets products by identifier
         /// </summary>
@@ -184,9 +185,9 @@ namespace Nop.Services.Catalog
             bool searchDescriptions = false,
             bool searchManufacturerPartNumber = true,
             bool searchSku = true,
-            bool searchProductTags = false,
+            bool searchProductTags = false, 
             int languageId = 0,
-            IList<int> filteredSpecs = null,
+            IList<int> filteredSpecs = null, 
             ProductSortingEnum orderBy = ProductSortingEnum.Position,
             bool showHidden = false,
             bool? overridePublished = null);
@@ -298,6 +299,14 @@ namespace Nop.Services.Catalog
         void UnblockReservedInventory(Product product, int quantity);
 
         /// <summary>
+        /// Book the reserved quantity
+        /// </summary>
+        /// <param name="product">Product</param>
+        /// <param name="warehouseId">Warehouse identifier</param>
+        /// <param name="quantity">Quantity, must be negative</param>
+        void BookReservedInventory(Product product, int warehouseId, int quantity);
+
+        /// <summary>
         /// Reverse booked inventory (if acceptable)
         /// </summary>
         /// <param name="product">product</param>
@@ -328,7 +337,7 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="relatedProductId">Related product identifier</param>
         /// <returns>Related product</returns>
-        RelatedProduct GetRelatedProductById1(int relatedProductId);
+        RelatedProduct GetRelatedProductById(int relatedProductId);
 
         /// <summary>
         /// Inserts a related product
@@ -378,7 +387,7 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="crossSellProduct">Cross-sell product</param>
         void UpdateCrossSellProduct(CrossSellProduct crossSellProduct);
-
+        
         /// <summary>
         /// Gets a cross-sells
         /// </summary>
@@ -388,7 +397,7 @@ namespace Nop.Services.Catalog
         IList<Product> GetCrosssellProductsByShoppingCart(IList<ShoppingCartItem> cart, int numberOfProducts);
 
         #endregion
-
+        
         #region Tier prices
 
         /// <summary>
@@ -457,7 +466,7 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="productsIds">Products IDs</param>
         /// <returns>All picture identifiers grouped by product ID</returns>
-        IDictionary<int, int[]> GetProductsImagesIds(int[] productsIds);
+        IDictionary<int, int[]> GetProductsImagesIds(int [] productsIds);
 
         #endregion
 
@@ -478,7 +487,7 @@ namespace Nop.Services.Catalog
         /// <returns>Reviews</returns>
         IPagedList<ProductReview> GetAllProductReviews(int customerId, bool? approved,
             DateTime? fromUtc = null, DateTime? toUtc = null,
-            string message = null, int storeId = 0, int productId = 0,
+            string message = null, int storeId = 0, int productId = 0, 
             int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
