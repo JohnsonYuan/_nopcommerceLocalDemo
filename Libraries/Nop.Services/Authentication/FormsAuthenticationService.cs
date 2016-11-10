@@ -129,7 +129,7 @@ namespace Nop.Services.Authentication
             {
                 return null;
             }
-
+             
             var formsIdentity = (FormsIdentity)_httpContext.User.Identity;
             var customer = GetAuthenticatedCustomerFromTicket(formsIdentity.Ticket);
             if (customer != null && customer.Active && !customer.Deleted && customer.IsRegistered())

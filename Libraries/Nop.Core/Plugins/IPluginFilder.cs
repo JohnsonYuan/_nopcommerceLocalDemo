@@ -5,7 +5,7 @@ namespace Nop.Core.Plugins
     /// <summary>
     /// Plugin finder
     /// </summary>
-    public interface IPluginFilder
+    public interface IPluginFinder
     {
         /// <summary>
         /// Check whether the plugin is available in a certain store
