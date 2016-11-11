@@ -7,7 +7,7 @@ namespace Nop.Core.Plugins
     /// <summary>
     /// Plugin Finder
     /// </summary>
-    public class PluginFinder : IPluginFilder
+    public class PluginFinder : IPluginFinder
     {
         #region Fields
 

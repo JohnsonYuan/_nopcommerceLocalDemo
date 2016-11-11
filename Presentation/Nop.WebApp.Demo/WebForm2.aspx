@@ -13,10 +13,14 @@
         <br />
         <%=AppDomain.CurrentDomain.GetData("DataDirectory") as string %>
         <br />
-        <%=AppDomain.CurrentDomain.BaseDirectory %>
+        Base dir <%=AppDomain.CurrentDomain.BaseDirectory %>
         <br />
-        <%=Environment.CurrentDirectory %>
+        Dynamic dir <%=AppDomain.CurrentDomain.DynamicDirectory %>
+        <br />
+        current <%=Environment.CurrentDirectory %>
     <br />
+        <asp:Button Text="text" ID="check" OnClick="check_Click" runat="server" />
+        <asp:Button Text="text" ID="set" OnClick="set_Click" runat="server" />
     </div>
     </form>
 </body>
