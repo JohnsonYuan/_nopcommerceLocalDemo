@@ -176,7 +176,8 @@ namespace Nop.Services.Seo
         }
 
         /// <summary>
-        /// Get SE name
+        /// 我的注释: 检测是否含有非英文字母或非unicode字符
+        /// Get SE name(validation)
         /// </summary>
         /// <param name="name">Name</param>
         /// <returns>Result</returns>
