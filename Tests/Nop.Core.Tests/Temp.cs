@@ -189,10 +189,10 @@ namespace Nop.Core.Tests
         static void Main(string[] args)
         {
 
-            Console.WriteLine("main");
-            var xxx2 = Singleton.Instance;
-            var xxx = Singleton.x;
-
+            List<int> all = new List<int>();
+            List<int> child = new List<int>();
+            all.AddRange(child);
+            Console.WriteLine(all.Count);
             return;
             double price = 200;
             double percent = 40;
