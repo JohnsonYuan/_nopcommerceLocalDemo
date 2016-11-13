@@ -1,4 +1,5 @@
 ﻿Reference
+System.Drawing PictureService (Bitmap)
 System.Web.Mvc (UrlHelper in ISitemapGenerator)
 Nop.Core
 Nop.Data (Logging\CustomerActivityService.cs, _dbContext)
@@ -21,8 +22,6 @@ var joinQuery2 =
         z is matched to C
 
 
-
-
 Seo -> Localization
 
 \Seo:
@@ -32,3 +31,16 @@ Seo -> Localization
 Events, Logging
 
 Sitemap: http://en.wikipedia.org/wiki/Sitemaps
+
+
+
+
+用到的packages:
+ProductService.cs(调图片大小ImageBuilder)
+ImageResizer(Install-Package ImageResizer https://imageresizing.net/)
+
+Azure Blob service(AzurePictureService.cs)
+https://azure.microsoft.com/en-us/documentation/articles/storage-dotnet-how-to-use-blobs/?cdn=disable
+
+Nop.Services.ExportImport\IImportManager.cs (excel中导入导出)
+OfficeOpenXml:Nop.Services.ExportImport (Install-Package EPPlus)

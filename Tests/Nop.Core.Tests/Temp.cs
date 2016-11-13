@@ -188,7 +188,8 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
-
+            Console.WriteLine(3/(float)2);
+            return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();
             all.AddRange(child);
