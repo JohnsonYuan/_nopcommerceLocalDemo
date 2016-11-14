@@ -4,6 +4,11 @@ System.Web.Mvc (UrlHelper in ISitemapGenerator)
 Nop.Core
 Nop.Data (Logging\CustomerActivityService.cs, _dbContext)
 Autofac(Tasks/Task.cs: private ITask CreateTask(ILifetimeScope scope))
+还需要一个web service:http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
+Tax\TaxService.cs
+s = new EuropaCheckVatService.checkVatService();
+s.checkVat(ref twoLetterIsoCode, ref vatNumber, out valid, out name, out address);
+VAT 即是 Value Added Tax/ AD VALOREM tax ，附加税，欧盟的一种税制，即购物时要另加税，是根据商品的价格而征收的。如定价是 inc vat，即已含税， excl vat 是未包税，Zero vat 是税率为0。
 
 Linq:两个from=>相当于嵌套from, e.g.:
 char[] upperCase = { 'A', 'B', 'C'};
@@ -39,8 +44,32 @@ Sitemap: http://en.wikipedia.org/wiki/Sitemaps
 ProductService.cs(调图片大小ImageBuilder)
 ImageResizer(Install-Package ImageResizer https://imageresizing.net/)
 
-Azure Blob service(AzurePictureService.cs)
+Azure Blob service(AzurePictureService.cs) Install-Package WindowsAzure.Storage 
 https://azure.microsoft.com/en-us/documentation/articles/storage-dotnet-how-to-use-blobs/?cdn=disable
 
 Nop.Services.ExportImport\IImportManager.cs (excel中导入导出)
 OfficeOpenXml:Nop.Services.ExportImport (Install-Package EPPlus)
+ExportManager.cs 有点意思： 导出produdc, category, manufacture属性
+
+GeoLocation: (Directory\GeoLookupService.cs) 
+根据ip得到国家信息 Install-Package MaxMind.GeoIP
+先下载数据库（country, city）, 然后reader读取  数据库下载地址： http://dev.maxmind.com/geoip/geoip2/geolite2/
+var reader = new DatabaseReader([path of "GeoLite2-Country.mmdb"]);
+var omni = reader.Country(ipAddress); // reader.City() 如果数据库是city的话
+http://dev.maxmind.com/geoip/geoip2/geolite2/
+//more info: http://maxmind.github.io/GeoIP2-dotnet/
+//more info: https://github.com/maxmind/GeoIP2-dotnet
+//more info: http://dev.maxmind.com/geoip/geoip2/geolite2/
+//Console.WriteLine(omni.Country.IsoCode); // 'US'
+//Console.WriteLine(omni.Country.Name); // 'United States'
+//Console.WriteLine(omni.Country.Names["zh-CN"]); // '美国'
+//Console.WriteLine(omni.MostSpecificSubdivision.Name); // 'Minnesota'
+//Console.WriteLine(omni.MostSpecificSubdivision.IsoCode); // 'MN'
+//Console.WriteLine(omni.City.Name); // 'Minneapolis'
+//Console.WriteLine(omni.Postal.Code); // '55455'
+//Console.WriteLine(omni.Location.Latitude); // 44.9733
+//Console.WriteLine(omni.Location.Longitude); // -93.2323
+
+iTextSharp(http://developers.itextpdf.com/content/itext-7-building-blocks)
+Nop.Services.Common\PdfService.cs
+demo: http://www.4guysfromrolla.com/articles/030911-1.aspx

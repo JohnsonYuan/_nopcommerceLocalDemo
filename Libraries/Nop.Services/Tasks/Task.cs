@@ -1,8 +1,10 @@
 ﻿using System;
 using Autofac;
+using ImageResizer.Configuration.Logging;
 using Nop.Core.Configuration;
 using Nop.Core.Domain.Tasks;
 using Nop.Core.Infrastructure;
+using Nop.Services.Infrastructure;
 
 namespace Nop.Services.Tasks
 {
