@@ -1,0 +1,8 @@
+﻿有意思的属性:
+System.ComponentModel.DisplayNameAttribute
+IModelAttribute
+e.g.: override DisplayName属性, 自定义显示值
+NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute, IModelAttribute
+
+ActionFilterAttribute
+AttributedValidatorFactory (NopValidatorFactory.cs)

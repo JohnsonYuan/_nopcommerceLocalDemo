@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Caching;
+using System.Collections.Specialized;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -188,6 +189,26 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            var _inputValues = new NameValueCollection();
+
+            _inputValues.Add("a", "123123");
+            _inputValues.Add("a", "hello");
+            _inputValues.Add("a", "hello22");
+            _inputValues.Add("sdfs", "sdfsfewr");
+
+            foreach (string item in _inputValues.Keys)
+            {
+                Console.WriteLine(item);
+                string[] values = _inputValues.GetValues(item);
+                foreach (var v in values)
+                {
+                    Console.WriteLine(v);
+                }
+                Console.WriteLine(  );
+            }
+
+            return; 
+
             Console.WriteLine(3/(float)2);
             return;
             List<int> all = new List<int>();
