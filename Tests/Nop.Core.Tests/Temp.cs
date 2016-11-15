@@ -13,8 +13,12 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Caching;
+<<<<<<< HEAD
 using MaxMind.GeoIP2;
 using System.Net;
+=======
+using System.Collections.Specialized;
+>>>>>>> a1cec162820107cb4e096d4f8fbb0260b6d70c21
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -216,6 +220,7 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+<<<<<<< HEAD
             string hostName = Dns.GetHostName(); // Retrive the Name of HOST
 
             Console.WriteLine(hostName);
@@ -248,6 +253,29 @@ namespace Nop.Core.Tests
             //Console.WriteLine(omni.Postal.Code); // '55455'
             //Console.WriteLine(omni.Location.Latitude); // 44.9733
             //Console.WriteLine(omni.Location.Longitude); // -93.2323
+=======
+            var _inputValues = new NameValueCollection();
+
+            _inputValues.Add("a", "123123");
+            _inputValues.Add("a", "hello");
+            _inputValues.Add("a", "hello22");
+            _inputValues.Add("sdfs", "sdfsfewr");
+
+            foreach (string item in _inputValues.Keys)
+            {
+                Console.WriteLine(item);
+                string[] values = _inputValues.GetValues(item);
+                foreach (var v in values)
+                {
+                    Console.WriteLine(v);
+                }
+                Console.WriteLine(  );
+            }
+
+            return; 
+
+            Console.WriteLine(3/(float)2);
+>>>>>>> a1cec162820107cb4e096d4f8fbb0260b6d70c21
             return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();
