@@ -1,3 +1,16 @@
-﻿References:
+﻿﻿References:
 Nop.Core
 Nop.Services
+
+
+﻿有意思的属性:
+System.ComponentModel.DisplayNameAttribute
+IModelAttribute
+e.g.: override DisplayName属性, 自定义显示值
+NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute, IModelAttribute
+
+ActionFilterAttribute
+AttributedValidatorFactory (NopValidatorFactory.cs)
+ActionResult => override ExecuteResult() Enables processing of the result of an action method by a custom type that inherits from the ActionResult class.
+
+public class LocalizedRoute : Route ，  override GetRouteData
