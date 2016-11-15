@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Caching;
+using MaxMind.GeoIP2;
+using System.Net;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -186,9 +188,66 @@ namespace Nop.Core.Tests
             }
         }
 
+        /// <summary>
+        /// Gets IP addresses of the local computer
+        /// </summary>
+        public static string GetLocalIP()
+        {
+            string _IP = null;
+
+            // Resolves a host name or IP address to an IPHostEntry instance.
+            // IPHostEntry - Provides a container class for Internet host address information. 
+            System.Net.IPHostEntry _IPHostEntry = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+
+            // IPAddress class contains the address of a computer on an IP network. 
+            foreach (System.Net.IPAddress _IPAddress in _IPHostEntry.AddressList)
+            {
+                Console.WriteLine(_IPAddress.AddressFamily + " : " + _IPAddress.ToString());
+                // InterNetwork indicates that an IP version 4 address is expected 
+                // when a Socket connects to an endpoint
+                if (_IPAddress.AddressFamily.ToString() == "InterNetwork")
+                {
+                    _IP = _IPAddress.ToString();
+                }
+            }
+            return _IP;
+        }
+
+
         static void Main(string[] args)
         {
-            Console.WriteLine(3/(float)2);
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+
+            Console.WriteLine(hostName);
+
+            // Get the IP
+
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+
+            Console.WriteLine("My IP Address is :" + myIP);
+
+
+
+            string ipAddress = GetLocalIP();
+            ipAddress = "124.205.38.30"; // 北京市北京市 鹏博士宽带 
+            Console.WriteLine(ipAddress);
+
+            var databasePath = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Presentation\Nop.Web\App_Data\GeoLite2-Country.mmdb";
+            var reader = new DatabaseReader(databasePath);
+            var omni = reader.Country(ipAddress);
+
+            //more info: http://maxmind.github.io/GeoIP2-dotnet/
+            //more info: https://github.com/maxmind/GeoIP2-dotnet
+            //more info: http://dev.maxmind.com/geoip/geoip2/geolite2/
+            Console.WriteLine(omni.Country.IsoCode); // 'US'
+            Console.WriteLine(omni.Country.Name); // 'United States'
+            Console.WriteLine(omni.Country.Names["zh-CN"]); // '美国'
+            //Console.WriteLine(omni.MostSpecificSubdivision.Name); // 'Minnesota'
+            //Console.WriteLine(omni.MostSpecificSubdivision.IsoCode); // 'MN'
+            //Console.WriteLine(omni.City.Name); // 'Minneapolis'
+            //Console.WriteLine(omni.Postal.Code); // '55455'
+            //Console.WriteLine(omni.Location.Latitude); // 44.9733
+            //Console.WriteLine(omni.Location.Longitude); // -93.2323
             return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();
