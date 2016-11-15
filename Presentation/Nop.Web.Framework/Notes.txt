@@ -1,0 +1,3 @@
+﻿References:
+Nop.Core
+Nop.Services
