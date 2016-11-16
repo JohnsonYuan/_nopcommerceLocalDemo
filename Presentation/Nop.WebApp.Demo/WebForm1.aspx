@@ -9,6 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
+        <%=Request.AppRelativeCurrentExecutionFilePath %> <br />
         <%=User.Identity.Name %>
         <BR />
     <%= AppDomain.CurrentDomain.BaseDirectory %>
