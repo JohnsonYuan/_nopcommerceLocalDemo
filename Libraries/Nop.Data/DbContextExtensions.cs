@@ -144,6 +144,7 @@ namespace Nop.Data
 
         /// <summary>
         /// Get columns maximum length
+        /// 我的注释： 在Nop.Web.Framework\Vlidators\BaseNopValidator.cs调用
         /// </summary>
         /// <param name="context">Context</param>
         /// <param name="entityTypeName">Entity type name</param>

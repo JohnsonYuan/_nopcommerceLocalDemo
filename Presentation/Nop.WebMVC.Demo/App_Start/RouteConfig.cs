@@ -16,8 +16,20 @@ namespace Nop.WebMVC.Demo
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+                constraints: new { id = "\\d+", controller = new DemoRouteConstraint() }
             );
         }
+
+        public class DemoRouteConstraint : IRouteConstraint
+        {
+            public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
+            {
+                //获取id的值
+                var id = values[parameterName];
+                return id is string;
+            }
+        }
+
     }
 }

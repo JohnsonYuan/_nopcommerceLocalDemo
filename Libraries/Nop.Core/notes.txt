@@ -34,3 +34,22 @@ Also, if you register controllers manually and choose to specify lifetimes, you 
 
 Use MemoryCache:(System.Web.Caching.Cache can only works in ASP.NET)
 http://www.codeproject.com/Articles/290935/Using-MemoryCache-in-Net-4-0
+
+Buildmanger.AddReference只能 
+This method can only be called during the application's pre-start initialization phase. Use PreApplicationStartMethodAttribute to declare a method that will be invoked in that phase. 
+
+// 属性写上class名称， 还有执行的方法， 方法必须是public static
+[assembly: PreApplicationStartMethod(typeof(PluginManager), "Initialize")]
+namespace Nop.WebApp.Demo
+{
+    /// <summary>
+    /// Sets the application up for the plugin referencing
+    /// </summary>
+    public class PluginManager
+    {
+        public static void Initialize()
+        {
+
+        }
+    }
+}

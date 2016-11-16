@@ -14,3 +14,29 @@ AttributedValidatorFactory (NopValidatorFactory.cs)
 ActionResult => override ExecuteResult() Enables processing of the result of an action method by a custom type that inherits from the ActionResult class.
 
 public class LocalizedRoute : Route ，  override GetRouteData
+
+MVC custom constraint: inherit IRouteConstraint, overrite Match
+如果不满足constraint， 则返回404 页面
+routes.MapRoute(//...
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+                constraints: new { id = "\\d+", controller = new DemoRouteConstraint() }
+            );
+
+public class DemoRouteConstraint : IRouteConstraint
+{
+    public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
+    {
+		//parameterName 是MapRoute参数constraints当前属性名
+		//values 是MapRoute参数defaults
+		if (values.ContainsKey(parameterName))
+		{
+			// 获取controller的值
+			var controller = values[parameterName];
+			// 判断controller是否满足
+		}
+    }
+}
+
+
+XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
+https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages

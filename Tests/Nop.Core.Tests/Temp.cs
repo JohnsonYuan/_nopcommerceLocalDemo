@@ -13,12 +13,10 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Caching;
-<<<<<<< HEAD
 using MaxMind.GeoIP2;
 using System.Net;
-=======
 using System.Collections.Specialized;
->>>>>>> a1cec162820107cb4e096d4f8fbb0260b6d70c21
+using System.Web.Compilation;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -218,42 +216,39 @@ namespace Nop.Core.Tests
         }
 
 
+        private string AssemblySkipLoadingPattern = "^System|^mscorlib|^Microsoft|^AjaxControlToolkit|^Antlr3|^Autofac|^AutoMapper|^Castle|^ComponentArt|^CppCodeProvider|^DotNetOpenAuth|^EntityFramework|^EPPlus|^FluentValidation|^ImageResizer|^itextsharp|^log4net|^MaxMind|^MbUnit|^MiniProfiler|^Mono.Math|^MvcContrib|^Newtonsoft|^NHibernate|^nunit|^Org.Mentalis|^PerlRegex|^QuickGraph|^Recaptcha|^Remotion|^RestSharp|^Rhino|^Telerik|^Iesi|^TestDriven|^TestFu|^UserAgentStringLibrary|^VJSharpCodeProvider|^WebActivator|^WebDev|^WebGrease";
+        private string AssemblyRestrictToLoadingPattern = ".*";
+        public virtual bool Matches(string assemblyFullName)
+        {
+            return !Matches(assemblyFullName, AssemblySkipLoadingPattern)
+                && Matches(assemblyFullName, AssemblyRestrictToLoadingPattern);
+        }
+        protected virtual bool Matches(string assemblyFullName, string pattern)
+        {
+            return Regex.IsMatch(assemblyFullName, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        }
+
+
         static void Main(string[] args)
         {
-<<<<<<< HEAD
-            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
 
-            Console.WriteLine(hostName);
+            var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
+            Console.WriteLine(t_);
+            return;
+            Console.WriteLine("ass: ");
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+            Console.WriteLine("ass: 2 ");
+            foreach (var item in BuildManager.GetReferencedAssemblies())
+            {
+                Console.WriteLine(item);
+            }
 
-            // Get the IP
-
-            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
-
-            Console.WriteLine("My IP Address is :" + myIP);
-
-
-
-            string ipAddress = GetLocalIP();
-            ipAddress = "124.205.38.30"; // 北京市北京市 鹏博士宽带 
-            Console.WriteLine(ipAddress);
-
-            var databasePath = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Presentation\Nop.Web\App_Data\GeoLite2-Country.mmdb";
-            var reader = new DatabaseReader(databasePath);
-            var omni = reader.Country(ipAddress);
-
-            //more info: http://maxmind.github.io/GeoIP2-dotnet/
-            //more info: https://github.com/maxmind/GeoIP2-dotnet
-            //more info: http://dev.maxmind.com/geoip/geoip2/geolite2/
-            Console.WriteLine(omni.Country.IsoCode); // 'US'
-            Console.WriteLine(omni.Country.Name); // 'United States'
-            Console.WriteLine(omni.Country.Names["zh-CN"]); // '美国'
-            //Console.WriteLine(omni.MostSpecificSubdivision.Name); // 'Minnesota'
-            //Console.WriteLine(omni.MostSpecificSubdivision.IsoCode); // 'MN'
-            //Console.WriteLine(omni.City.Name); // 'Minneapolis'
-            //Console.WriteLine(omni.Postal.Code); // '55455'
-            //Console.WriteLine(omni.Location.Latitude); // 44.9733
-            //Console.WriteLine(omni.Location.Longitude); // -93.2323
-=======
+            return;
             var _inputValues = new NameValueCollection();
 
             _inputValues.Add("a", "123123");
@@ -274,8 +269,7 @@ namespace Nop.Core.Tests
 
             return; 
 
-            Console.WriteLine(3/(float)2);
->>>>>>> a1cec162820107cb4e096d4f8fbb0260b6d70c21
+            Console.WriteLine(3/(float)2); 
             return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();
