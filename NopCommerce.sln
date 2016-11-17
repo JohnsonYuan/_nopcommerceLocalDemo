@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{7150
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Widgets.NivoSlider", "Plugins\Nop.Plugin.Widgets.NivoSlider\Nop.Plugin.Widgets.NivoSlider.csproj", "{A2D2DD5D-05B2-4BF3-A31E-3473D28EEE12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.WebMVC.Demo", "Presentation\Nop.WebMVC.Demo\Nop.WebMVC.Demo.csproj", "{D41A838E-9D2C-4892-9422-91D6BD08DECA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{A2D2DD5D-05B2-4BF3-A31E-3473D28EEE12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2D2DD5D-05B2-4BF3-A31E-3473D28EEE12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2D2DD5D-05B2-4BF3-A31E-3473D28EEE12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D41A838E-9D2C-4892-9422-91D6BD08DECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D41A838E-9D2C-4892-9422-91D6BD08DECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D41A838E-9D2C-4892-9422-91D6BD08DECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D41A838E-9D2C-4892-9422-91D6BD08DECA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,5 +119,6 @@ Global
 		{8BB09326-5A5F-42CF-BE86-2A70209C0454} = {BF21F38F-C879-468E-BC51-0BDCF337DB50}
 		{9151FEFB-3176-4C97-8A9E-07C2114BBC38} = {7A5E2D67-1025-478D-9ED3-45BE5C92621E}
 		{A2D2DD5D-05B2-4BF3-A31E-3473D28EEE12} = {7150A4B6-0C5B-4624-AD4D-12A208FEAB2F}
+		{D41A838E-9D2C-4892-9422-91D6BD08DECA} = {7A5E2D67-1025-478D-9ED3-45BE5C92621E}
 	EndGlobalSection
 EndGlobal

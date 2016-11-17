@@ -61,8 +61,27 @@ var existingTableNames = new List<string>(context.Database.SqlQuery<string>("SEL
 context.Database.SqlQuery<int>("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = {0}", tableName).Any<int>()
 
 
+EntityTypeConfiguration<T>\
+http://www.codeproject.com/Articles/561584/Repository-Pattern-with-Entity-Framework-using
+继承DbContext的类override OnModelCreating, 增加Entity验证
+protected override void OnModelCreating(DbModelBuilder modelBuilder)
+{
+	modelBuilder.Configurations.Add([EntityTypeConfiguration<T>]);
+}
+
+
 FluentAPI:
 
 实际上不使用.WithMany()也是可以的, 使用.WithMany()一般用来后面继续跟其它的api
 HasRequired(j => j.Account).WithMany(); = HasRequired(j => j.Account)
 https://forums.asp.net/t/1779574.aspx?Navigation+Properties+using+WithMany+
+
+Custom validator(Nop.Web.Framework\Validators\):
+http://fluentvalidation.codeplex.com/wikipage?title=Custom
+2 ways of custom validator:
+create a custom property validator(CreditCardPropertyValidator.cs, ValidatorExtensions.cs)
+make use of the Custom method on AbstractValidator(BaseNopValidator.cs)
+
+
+
+

@@ -13,7 +13,10 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Caching;
+using MaxMind.GeoIP2;
+using System.Net;
 using System.Collections.Specialized;
+using System.Web.Compilation;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -187,8 +190,65 @@ namespace Nop.Core.Tests
             }
         }
 
+        /// <summary>
+        /// Gets IP addresses of the local computer
+        /// </summary>
+        public static string GetLocalIP()
+        {
+            string _IP = null;
+
+            // Resolves a host name or IP address to an IPHostEntry instance.
+            // IPHostEntry - Provides a container class for Internet host address information. 
+            System.Net.IPHostEntry _IPHostEntry = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+
+            // IPAddress class contains the address of a computer on an IP network. 
+            foreach (System.Net.IPAddress _IPAddress in _IPHostEntry.AddressList)
+            {
+                Console.WriteLine(_IPAddress.AddressFamily + " : " + _IPAddress.ToString());
+                // InterNetwork indicates that an IP version 4 address is expected 
+                // when a Socket connects to an endpoint
+                if (_IPAddress.AddressFamily.ToString() == "InterNetwork")
+                {
+                    _IP = _IPAddress.ToString();
+                }
+            }
+            return _IP;
+        }
+
+
+        private string AssemblySkipLoadingPattern = "^System|^mscorlib|^Microsoft|^AjaxControlToolkit|^Antlr3|^Autofac|^AutoMapper|^Castle|^ComponentArt|^CppCodeProvider|^DotNetOpenAuth|^EntityFramework|^EPPlus|^FluentValidation|^ImageResizer|^itextsharp|^log4net|^MaxMind|^MbUnit|^MiniProfiler|^Mono.Math|^MvcContrib|^Newtonsoft|^NHibernate|^nunit|^Org.Mentalis|^PerlRegex|^QuickGraph|^Recaptcha|^Remotion|^RestSharp|^Rhino|^Telerik|^Iesi|^TestDriven|^TestFu|^UserAgentStringLibrary|^VJSharpCodeProvider|^WebActivator|^WebDev|^WebGrease";
+        private string AssemblyRestrictToLoadingPattern = ".*";
+        public virtual bool Matches(string assemblyFullName)
+        {
+            return !Matches(assemblyFullName, AssemblySkipLoadingPattern)
+                && Matches(assemblyFullName, AssemblyRestrictToLoadingPattern);
+        }
+        protected virtual bool Matches(string assemblyFullName, string pattern)
+        {
+            return Regex.IsMatch(assemblyFullName, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        }
+
+
         static void Main(string[] args)
         {
+            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
+
+            var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
+            Console.WriteLine(t_);
+            return;
+            Console.WriteLine("ass: ");
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+            Console.WriteLine("ass: 2 ");
+            foreach (var item in BuildManager.GetReferencedAssemblies())
+            {
+                Console.WriteLine(item);
+            }
+
+            return;
             var _inputValues = new NameValueCollection();
 
             _inputValues.Add("a", "123123");
@@ -209,7 +269,7 @@ namespace Nop.Core.Tests
 
             return; 
 
-            Console.WriteLine(3/(float)2);
+            Console.WriteLine(3/(float)2); 
             return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();

@@ -1,0 +1,20 @@
+﻿6 Tips for ASP.NET MVC Model Binding
+http://odetocode.com/Blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx
+
+ModelBinder
+https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultmodelbinder(v=vs.118).aspx
+http://www.codeproject.com/Tips/806415/Model-Binding-using-IModelBinder-and-DefaultModelB
+http://www.cnblogs.com/artech/archive/2012/05/21/model-binder-provision.html
+
+DataAnnotations and ASP.NET MVC
+http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
+
+
+XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
+https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages
+http://www.tuicool.com/articles/NBbyaum 讲了下自定义生成antiforerty
+	根据值A加密生成B, 
+	form中生成name为_RequestVerificationToken的hidden input, 其value为B
+	页面生成cookie名字为_RequestVerificationToken, httpOnly, 值为A
+	提交form时验证， 如果 解密cookie[_RequestVerificationToken]值 = input[_RequestVerificationToken], 才可提交请求
+http://blog.csdn.net/cpytiger/article/details/8781457

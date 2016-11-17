@@ -9,7 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-    <%=HttpRuntime.BinDirectory %>
+    <%=Request.UserHostAddress %>
         <br />
         <%=AppDomain.CurrentDomain.GetData("DataDirectory") as string %>
         <br />

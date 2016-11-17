@@ -106,12 +106,12 @@ namespace Nop.Core.Infrastructure
                     {
                         foreach (var t in types)
                         {
-                            if(assignTypeFrom.IsAssignableFrom(t) 
+                            if (assignTypeFrom.IsAssignableFrom(t)
                                 || (assignTypeFrom.IsGenericType && DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
                             {
                                 if (!t.IsInterface)
                                 {
-                                    if(onlyConcreteClasses)
+                                    if (onlyConcreteClasses)
                                     {
                                         if (t.IsClass && !t.IsAbstract)
                                         {
@@ -121,6 +121,10 @@ namespace Nop.Core.Infrastructure
                                         {
                                             result.Add(t);
                                         }
+                                    }
+                                    else
+                                    {
+                                        result.Add(t);
                                     }
                                 }
                             }
