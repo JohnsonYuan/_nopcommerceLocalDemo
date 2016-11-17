@@ -231,8 +231,11 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).ToString());
+
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
 
+            return;
             var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
             Console.WriteLine(t_);
             return;
