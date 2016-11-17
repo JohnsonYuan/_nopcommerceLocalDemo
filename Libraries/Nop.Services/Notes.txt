@@ -73,3 +73,15 @@ http://dev.maxmind.com/geoip/geoip2/geolite2/
 iTextSharp(http://developers.itextpdf.com/content/itext-7-building-blocks)
 Nop.Services.Common\PdfService.cs
 demo: http://www.4guysfromrolla.com/articles/030911-1.aspx
+
+\Helpers\UserAgentHelper.cs
+UserAgentHelper.IsSearchEngine() 读取什么文件怎么判断是SE
+
+Authentication\FormsAuthenticationService.cs
+var formsIdentity = (FormsIdentity)_httpContext.User.Identity; //得到当亲 Authenticated 用户的信息
+https://www.asp.net/web-forms/overview/older-versions-security/introduction/an-overview-of-forms-authentication-cs
+
+
+TypeConverter:
+GenericAttributeService 方法SaveAttribute, 把要保存的value用typeconverter转换为string类型
+var valueStr = CommonHelper.To<string>(value);
