@@ -18,6 +18,7 @@ using System.Net;
 using System.Collections.Specialized;
 using System.Web.Compilation;
 using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -229,41 +230,34 @@ namespace Nop.Core.Tests
             return Regex.IsMatch(assemblyFullName, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
+        public enum Color
+        {
+            Red,
+            Green,
+            Blue
+        }
 
         static void Main(string[] args)
         {
- 
+            Func<int, int> tempFunc = (y) => y;
+
+            return;
+
             var demoC = TypeDescriptor.GetConverter(typeof(int?));
             Console.WriteLine(demoC);
-            return;
  
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).ToString());
  
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
-
-            return;
-            var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
-            Console.WriteLine(t_);
-            return;
-            Console.WriteLine("ass: ");
-            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                Console.WriteLine(item);
-            }
-            Console.WriteLine();
-            Console.WriteLine("ass: 2 ");
-            foreach (var item in BuildManager.GetReferencedAssemblies())
-            {
-                Console.WriteLine(item);
-            }
-
-            return;
+            
             var _inputValues = new NameValueCollection();
 
             _inputValues.Add("a", "123123");
             _inputValues.Add("a", "hello");
             _inputValues.Add("a", "hello22");
             _inputValues.Add("sdfs", "sdfsfewr");
+
+            Console.WriteLine(_inputValues["a"]);
 
             foreach (string item in _inputValues.Keys)
             {

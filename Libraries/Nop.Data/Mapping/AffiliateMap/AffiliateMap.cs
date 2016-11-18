@@ -1,5 +1,4 @@
-﻿using System.Data.Entity.ModelConfiguration;
-using Nop.Core.Domain.Affiliates;
+﻿using Nop.Core.Domain.Affiliates;
 
 namespace Nop.Data.Mapping.AffiliateMap
 {

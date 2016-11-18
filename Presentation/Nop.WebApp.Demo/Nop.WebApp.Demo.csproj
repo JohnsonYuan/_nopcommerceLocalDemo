@@ -72,6 +72,7 @@
   <ItemGroup>
     <Content Include="Models\WebForm1.aspx" />
     <Content Include="packages.config" />
+    <Content Include="ResponseOutputStream.aspx" />
     <Content Include="WebForm2.aspx" />
     <None Include="Properties\PublishProfiles\demo].pubxml" />
     <None Include="Web.Debug.config">
@@ -100,6 +101,13 @@
     </Compile>
     <Compile Include="PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseOutputStream.aspx.cs">
+      <DependentUpon>ResponseOutputStream.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResponseOutputStream.aspx.designer.cs">
+      <DependentUpon>ResponseOutputStream.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebForm1.aspx.cs">
       <DependentUpon>WebForm1.aspx</DependentUpon>
     </Compile>

@@ -179,7 +179,7 @@ namespace Nop.WebApp.Demo
 
         protected void Page_Load(object sender, EventArgs e)
         {
-<<<<<<< HEAD
+
             HttpCookie MyCookie = new HttpCookie("LastVisit");
             MyCookie.Value = DateTime.Now.ToString();
             Response.Cookies.Set(MyCookie);
@@ -197,7 +197,7 @@ namespace Nop.WebApp.Demo
                 Response.Write("null");
             }
             Response.Write("<br/>");
-=======
+
             WriteLine("appdomain: ");
             foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -219,7 +219,6 @@ namespace Nop.WebApp.Demo
             {
                 WriteLine(item.ToString());
             }
->>>>>>> webFramework
         }
     }
 }

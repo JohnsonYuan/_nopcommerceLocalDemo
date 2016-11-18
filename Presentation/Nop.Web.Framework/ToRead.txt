@@ -18,3 +18,5 @@ http://www.tuicool.com/articles/NBbyaum 讲了下自定义生成antiforerty
 	页面生成cookie名字为_RequestVerificationToken, httpOnly, 值为A
 	提交form时验证， 如果 解密cookie[_RequestVerificationToken]值 = input[_RequestVerificationToken], 才可提交请求
 http://blog.csdn.net/cpytiger/article/details/8781457
+
+System.ServiceModel.Syndication

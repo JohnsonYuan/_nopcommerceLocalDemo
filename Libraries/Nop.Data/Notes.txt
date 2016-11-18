@@ -71,16 +71,11 @@ protected override void OnModelCreating(DbModelBuilder modelBuilder)
 
 
 FluentAPI:
-
+demo:https://weblogs.asp.net/dotnetstories/looking-into-fluent-api-in-an-asp-net-mvc-4-0-code-first-application
 实际上不使用.WithMany()也是可以的, 使用.WithMany()一般用来后面继续跟其它的api
 HasRequired(j => j.Account).WithMany(); = HasRequired(j => j.Account)
 https://forums.asp.net/t/1779574.aspx?Navigation+Properties+using+WithMany+
 
-Custom validator(Nop.Web.Framework\Validators\):
-http://fluentvalidation.codeplex.com/wikipage?title=Custom
-2 ways of custom validator:
-create a custom property validator(CreditCardPropertyValidator.cs, ValidatorExtensions.cs)
-make use of the Custom method on AbstractValidator(BaseNopValidator.cs)
 
 
 

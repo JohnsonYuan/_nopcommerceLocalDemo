@@ -40,3 +40,33 @@ public class DemoRouteConstraint : IRouteConstraint
 
 XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
 https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages
+
+
+DisplayName：
+NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute
+重写DisplayNamesh属性
+
+
+FluentValidation(Install-Package FluentValidation)：
+https://github.com/JeremySkinner/FluentValidation
+
+1. Custom validator(Nop.Web.Framework\Validators\):
+http://fluentvalidation.codeplex.com/wikipage?title=Custom
+two ways of custom validator:
+create a custom property validator(CreditCardPropertyValidator.cs, ValidatorExtensions.cs)
+make use of the Custom method on AbstractValidator(BaseNopValidator.cs)
+
+2. AttributedValidatorFactory(https://fluentvalidation.codeplex.com/wikipage?title=mvc)
+App_Start():
+FluentValidationModelValidatorProvider.Configure();
+or custom factory:
+FluentValidationModelValidatorProvider.Configure(provider => {
+  provider.ValidatorFactory = new MyCustomValidatorFactory();
+});
+
+[Validator(typeof(PersonValidator))]
+public class Person { public int Id { get; set; } }
+
+public class PersonValidator : AbstractValidator<Person> {
+	public PersonValidator() { RuleFor(x => x.Id).NotNull(); }
+}

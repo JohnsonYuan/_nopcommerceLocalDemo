@@ -179,7 +179,6 @@ namespace Nop.Web.Framework.Localization
             //if (string.IsNullOrEmpty(url))
             //    return url;
 
-
             int startIndex = 0;
             if (applicationPath.IsVirtualDirectory())
             {
