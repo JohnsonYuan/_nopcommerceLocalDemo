@@ -26,15 +26,15 @@ namespace Nop.Core
         /// <summary>
         /// Gets or sets the current working language
         /// </summary>
-        Language WorkingLanguage { get; }
+        Language WorkingLanguage { get; set; }
         /// <summary>
         /// Gets or sets the current working currency
         /// </summary>
-        Currency WorkingCurrency { get; }
+        Currency WorkingCurrency { get; set; }
         /// <summary>
         /// Gets or sets the current tax display type
         /// </summary>
-        TaxDisplayType TaxDisplayType { get; }
+        TaxDisplayType TaxDisplayType { get; set; }
 
         /// <summary>
         /// Gets or sets value indicating whether we're in admin area

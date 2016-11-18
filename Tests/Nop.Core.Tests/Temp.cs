@@ -17,6 +17,7 @@ using MaxMind.GeoIP2;
 using System.Net;
 using System.Collections.Specialized;
 using System.Web.Compilation;
+using System.ComponentModel;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -231,6 +232,9 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+            var demoC = TypeDescriptor.GetConverter(typeof(int?));
+            Console.WriteLine(demoC);
+            return;
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
 
             var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
