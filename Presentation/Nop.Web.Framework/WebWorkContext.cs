@@ -285,7 +285,7 @@ namespace Nop.Web.Framework
         /// <summary>
         /// Gets or sets the current vendor (logged-in manager)
         /// </summary>
-        public virtual Vendor CurrentVender
+        public virtual Vendor CurrentVendor
         {
             get
             {

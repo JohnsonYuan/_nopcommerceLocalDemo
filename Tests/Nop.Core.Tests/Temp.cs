@@ -232,11 +232,16 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
+ 
             var demoC = TypeDescriptor.GetConverter(typeof(int?));
             Console.WriteLine(demoC);
             return;
+ 
+            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).ToString());
+ 
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
 
+            return;
             var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
             Console.WriteLine(t_);
             return;

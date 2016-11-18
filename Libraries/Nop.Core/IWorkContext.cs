@@ -2,6 +2,7 @@
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.Vendors;
 
 namespace Nop.Core
 {
@@ -21,7 +22,7 @@ namespace Nop.Core
         /// <summary>
         /// Gets or sets the current vender (logged-in manager)
         /// </summary>
-        Customer CurrentVender { get; }
+        Vendor CurrentVendor { get; }
 
         /// <summary>
         /// Gets or sets the current working language
