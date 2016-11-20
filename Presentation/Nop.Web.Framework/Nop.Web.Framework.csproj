@@ -83,7 +83,9 @@
     <Compile Include="HtmlExtensions.cs" />
     <Compile Include="LanguageSeoCodeAttribute.cs" />
     <Compile Include="Localization\LocalizedRoute.cs" />
+    <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Localization\LocalizedUrlExtenstions.cs" />
+    <Compile Include="Localization\Localizer.cs" />
     <Compile Include="Mvc\IModelAttribute.cs" />
     <Compile Include="NopResourceDisplayName.cs" />
     <Compile Include="NopValidatorFactory.cs" />
@@ -94,18 +96,32 @@
     <Compile Include="StoreClosedAttribute.cs" />
     <Compile Include="StoreIpAddressAttribute.cs" />
     <Compile Include="StoreLastVisitedPageAttribute.cs" />
+    <Compile Include="Themes\IThemeContext.cs" />
+    <Compile Include="Themes\ThemeConfiguration.cs" />
+    <Compile Include="UI\Paging\IPageableModel.cs" />
+    <Compile Include="UI\ResourceLocation.cs" />
     <Compile Include="UrlHelperExtensions.cs" />
+    <Compile Include="Themes\IThemeProvider.cs" />
+    <Compile Include="Validators\BaseNopValidator.cs" />
+    <Compile Include="Validators\CreditCardPropertyValidator.cs" />
+    <Compile Include="Validators\ValidatorExtensions.cs" />
+    <Compile Include="ViewEngines\Razor\WebViewPage.cs" />
     <Compile Include="WebStoreContext.cs" />
     <Compile Include="WebWorkContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Notes.txt" />
     <Content Include="ToRead.txt" />
+    <Content Include="不明白的.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">
       <Project>{defea0e4-7ec7-4855-81ea-f965469ddab0}</Project>
       <Name>Nop.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj">
+      <Project>{ebe6ca2f-66ed-4289-be1d-bbad49085cb1}</Project>
+      <Name>Nop.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj">
       <Project>{0497bf9c-e18f-4fb5-9c18-1a76493c0a41}</Project>
@@ -126,6 +142,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

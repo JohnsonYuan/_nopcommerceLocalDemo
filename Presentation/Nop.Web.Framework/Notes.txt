@@ -47,13 +47,13 @@ NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute
 重写DisplayNamesh属性
 
 
-FluentValidation(Install-Package FluentValidation)：
+TODO: FluentValidation(Install-Package FluentValidation)：
 https://github.com/JeremySkinner/FluentValidation
 
 1. Custom validator(Nop.Web.Framework\Validators\):
 http://fluentvalidation.codeplex.com/wikipage?title=Custom
-two ways of custom validator:
-create a custom property validator(CreditCardPropertyValidator.cs, ValidatorExtensions.cs)
+two ways of custom validator（https://github.com/JeremySkinner/FluentValidation/wiki/e.-Custom-Validators#using-abstractvalidatorcustom）
+create a custom property validator(CreditCardPropertyValidator.cs, ValidatorExtensions.cs -》 ruleBuilder.SetValidator能够使用fulent验证方式 需要查看文档总结出来)
 make use of the Custom method on AbstractValidator(BaseNopValidator.cs)
 
 2. AttributedValidatorFactory(https://fluentvalidation.codeplex.com/wikipage?title=mvc)
@@ -69,4 +69,32 @@ public class Person { public int Id { get; set; } }
 
 public class PersonValidator : AbstractValidator<Person> {
 	public PersonValidator() { RuleFor(x => x.Id).NotNull(); }
+}
+
+UI\PageHeadBuilder.cs中GetBundleVirtualPath有SHA256生成bundle路径片段：（补充MD5加密） （TODO 比较两种加密方式区别）
+SHA256加密
+string hashInput = "file/helo/fsdfs.js";
+using (SHA256 sha = new SHA256Managed())
+{
+    byte[] input = sha.ComputeHash(Encoding.Unicode.GetBytes(hashInput));
+    string hash = HttpServerUtility.UrlTokenEncode(input);
+    Console.WriteLine(hash);
+}
+MD5加密
+using (MD5 md5Hash = MD5.Create())
+{
+    // Convert the input string to a byte array and compute the hash.
+    byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(hashInput));
+
+    // Create a new Stringbuilder to collect the bytes
+    // and create a string.
+    StringBuilder sBuilder = new StringBuilder();
+
+    // Loop through each byte of the hashed data 
+    // and format each one as a hexadecimal string.
+    for (int i = 0; i < data.Length; i++)
+    {
+        sBuilder.Append(data[i].ToString("x2"));
+    }
+    Console.WriteLine(sBuilder.ToString());
 }

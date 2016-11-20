@@ -239,17 +239,43 @@ namespace Nop.Core.Tests
 
         static void Main(string[] args)
         {
-            Func<int, int> tempFunc = (y) => y;
+            string hashInput = "file/helo/fsdfs.js";
+            using (SHA256 sha = new SHA256Managed())
+            {
+                byte[] input = sha.ComputeHash(Encoding.Unicode.GetBytes(hashInput));
+                string hash = HttpServerUtility.UrlTokenEncode(input);
+                Console.WriteLine(hash);
+            }
 
-            return;
+            using (MD5 md5Hash = MD5.Create())
+            {
+                // Convert the input string to a byte array and compute the hash.
+                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(hashInput));
+
+                // Create a new Stringbuilder to collect the bytes
+                // and create a string.
+                StringBuilder sBuilder = new StringBuilder();
+
+                // Loop through each byte of the hashed data 
+                // and format each one as a hexadecimal string.
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("x2"));
+                }
+                Console.WriteLine(sBuilder.ToString());
+
+                string hash = HttpServerUtility.UrlTokenEncode(data);
+                Console.WriteLine(hash);
+            }
+                return;
 
             var demoC = TypeDescriptor.GetConverter(typeof(int?));
             Console.WriteLine(demoC);
- 
+
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).ToString());
- 
+
             Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
-            
+
             var _inputValues = new NameValueCollection();
 
             _inputValues.Add("a", "123123");
@@ -267,12 +293,12 @@ namespace Nop.Core.Tests
                 {
                     Console.WriteLine(v);
                 }
-                Console.WriteLine(  );
+                Console.WriteLine();
             }
 
-            return; 
+            return;
 
-            Console.WriteLine(3/(float)2); 
+            Console.WriteLine(3 / (float)2);
             return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();
@@ -297,10 +323,10 @@ namespace Nop.Core.Tests
                 Console.WriteLine(pet.Name);
             }
 
-            return; 
+            return;
 
 
-            var a = new int[] { 1, 3, 4, 5, 7,99,123123 };
+            var a = new int[] { 1, 3, 4, 5, 7, 99, 123123 };
             DemoValue[] b = {
                 new DemoValue { MyProperty = 3 },
                 new DemoValue { MyProperty = 7 },
