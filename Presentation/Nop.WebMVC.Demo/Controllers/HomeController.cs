@@ -11,7 +11,7 @@ namespace Nop.WebMVC.Demo.Controllers
 
         // GET: Home
         public ActionResult Index(int? id)
-        {
+        { 
             return Content("Hello world, [int] id = " + id);
         }
     }

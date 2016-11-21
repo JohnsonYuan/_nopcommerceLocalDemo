@@ -1,0 +1,22 @@
+﻿UrlHelper.Content("") => 得到路径
+UI\Paging\Pager.cs:
+var url = UrlHelper.GenerateUrl(null, null, null, routeValues, RouteTable.Routes, viewContext.RequestContext, true);
+
+
+Bundle相关
+//PageHeadBuilder.cs, 检查该bundle是否存在，不存在则新建script bundle
+string bundleVirtualPath = GetBundleVirtualPath("~/bundles/scripts/", ".js", partsToBundle);
+var bundleFor = BundleTable.Bundles.GetBundleFor(bundleVirtualPath);
+if(bundleFor == null)
+{
+    var bundle = new ScriptBundle(bundleVirtualPath);
+    //bundle.Transforms.Clear();
+
+    //"As is" ordering
+    bundle.Orderer = new AsIsBundleOrderer();
+    //disable file extension replacements. renders scripts which were specified by a developer
+    bundle.EnableFileExtensionReplacements = false;
+    bundle.Include(partsToBundle);
+    BundleTable.Bundles.Add(bundle);
+}
+bundle路径为Scripts.Render(bundleVirtualPath).ToString()

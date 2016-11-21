@@ -114,6 +114,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">
+      <Project>{defea0e4-7ec7-4855-81ea-f965469ddab0}</Project>
+      <Name>Nop.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj">
       <Project>{ebe6ca2f-66ed-4289-be1d-bbad49085cb1}</Project>
       <Name>Nop.Data</Name>
