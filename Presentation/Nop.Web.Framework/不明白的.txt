@@ -17,3 +17,7 @@ foreach (var ptb in partsToBundle)
 {
     bundle.Include(ptb, new CssRewriteUrlTransform()());
 }
+
+Theme\ThemeableVirtualPathProviderViewEngine.cs 和VirtualPathProviderViewEngine区别， 注释说//we make some methods protected virtual because they are overridden by some plugin vendors
+VirtualPathViewEngine 有 AreaViewLocationFormats定义
+查看RazorViewEngine和VirtualPathViewEngine关系

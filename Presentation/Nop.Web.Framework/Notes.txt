@@ -98,3 +98,16 @@ using (MD5 md5Hash = MD5.Create())
     }
     Console.WriteLine(sBuilder.ToString());
 }
+
+
+
+Custom MVC view engine:
+http://www.codeproject.com/Articles/259365/Custom-ViewEngine-in-ASP-NET-MVC
+http://www.codeproject.com/Articles/294297/Creating-your-own-MVC-View-Engine-into-MVC-Applica
+Themes\ThemeableVirtualPathProviderViewEngine.cs : VirtualPathProviderViewEngine
+The easiest approach to create custom view engine is just derive a new view engine from abstract VirtualPathProviderViewEngine Class. This base class can take care of the all low-level mechanics of finding and caching views.
+
+自定义类WebViewPage<TModel>
+此类表示呈现使用ASP.NET Razor语法的视图所需的属性和方法。
+所以每一个视图都应该继承此类。但是我们在项目中是看不到此继承的，默认情况下Razor会让视图继承自System.Web.Mvc.WebViewPage<TModel>基类。也可以通过修改视图目录（每一个asp.Net mvc项目下面都有一个~/Views/目录）下的web.config文件来更改默认基类，NopCommerce就是使用此方法实现自定义WebViewPage类的。除此之外也可以在视图文件中引入命名空间，但这种方法比较繁琐，除非一个项目中有个别视图需要自定义WebViewPage。
+

@@ -114,7 +114,11 @@
     <Compile Include="StoreIpAddressAttribute.cs" />
     <Compile Include="StoreLastVisitedPageAttribute.cs" />
     <Compile Include="Themes\IThemeContext.cs" />
+    <Compile Include="Themes\ThemeableRazorViewEngine.cs" />
+    <Compile Include="Themes\ThemeableVirtualPathProviderViewEngine.cs" />
     <Compile Include="Themes\ThemeConfiguration.cs" />
+    <Compile Include="Themes\ThemeContext.cs" />
+    <Compile Include="Themes\ThemeProvider.cs" />
     <Compile Include="UI\AsIsBundleOrderer.cs" />
     <Compile Include="UI\DataListExtensions.cs" />
     <Compile Include="UI\IPageHeadBuilder.cs" />

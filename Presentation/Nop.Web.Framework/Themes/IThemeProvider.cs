@@ -8,6 +8,6 @@ namespace Nop.Web.Framework.Themes
 
         IList<ThemeConfiguration> GetThemeConfigurations();
 
-        bool ThemeConfigurationExists();
+        bool ThemeConfigurationExists(string themeName);
     }
 }
