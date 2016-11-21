@@ -73,7 +73,10 @@
     <Compile Include="Localization\LocalizedUrlExtenstions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebStoreContext.cs" />
+<<<<<<< HEAD
     <Compile Include="WebWorkContext.cs" />
+=======
+>>>>>>> webFramework
   </ItemGroup>
   <ItemGroup>
     <Content Include="Notes.txt" />
