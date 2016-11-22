@@ -7,16 +7,16 @@ using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Vendors;
+using Nop.Core.Fakes;
 using Nop.Services.Authentication;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Helpers;
-using Nop.Services.Vendors;
 using Nop.Services.Localization;
 using Nop.Services.Stores;
+using Nop.Services.Vendors;
 using Nop.Web.Framework.Localization;
-using Nop.Core.Fakes;
 
 namespace Nop.Web.Framework
 {

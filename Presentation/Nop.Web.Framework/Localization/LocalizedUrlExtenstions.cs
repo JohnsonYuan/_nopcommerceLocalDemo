@@ -1,9 +1,5 @@
-﻿using Nop.Core.Domain.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Nop.Core.Domain.Localization;
 
 namespace Nop.Web.Framework.Localization
 {
@@ -85,6 +81,7 @@ namespace Nop.Web.Framework.Localization
         /// 其路径~/开头, 没有applicationpath, 所以判断的时候+2
         /// 
         /// url的值由Request.RawUrl， isRawPath=true
+        /// url的值由Request.AppRelativeCurrentExecutionFilePath ("~/"开始)， isRawPath=false,  Localization\LocalizedRoute.cs->GetRouteData调用
         /// </remarks>
         public static bool IsLocalizedUrl(this string url, string applicationPath, bool isRawPath)
         {

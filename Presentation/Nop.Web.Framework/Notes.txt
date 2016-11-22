@@ -9,7 +9,8 @@ IModelAttribute
 e.g.: override DisplayName属性, 自定义显示值
 NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute, IModelAttribute
 
-ActionFilterAttribute
+IAuthorizationFilter
+ActionFilterAttribute -> FilterAttribute (Seo\WwwRequirementAttribute.cs)
 AttributedValidatorFactory (NopValidatorFactory.cs)
 ActionResult => override ExecuteResult() Enables processing of the result of an action method by a custom type that inherits from the ActionResult class.
 
@@ -111,3 +112,15 @@ The easiest approach to create custom view engine is just derive a new view engi
 此类表示呈现使用ASP.NET Razor语法的视图所需的属性和方法。
 所以每一个视图都应该继承此类。但是我们在项目中是看不到此继承的，默认情况下Razor会让视图继承自System.Web.Mvc.WebViewPage<TModel>基类。也可以通过修改视图目录（每一个asp.Net mvc项目下面都有一个~/Views/目录）下的web.config文件来更改默认基类，NopCommerce就是使用此方法实现自定义WebViewPage类的。除此之外也可以在视图文件中引入命名空间，但这种方法比较繁琐，除非一个项目中有个别视图需要自定义WebViewPage。
 
+Localization\LocalizedRoute.cs , override Route GetVirtualPath
+RouteValueDictionary parameters = new RouteValueDictionary { { "action", "show" }, { "categoryName", "bikes" } };
+VirtualPathData vpd = RouteTable.Routes.GetVirtualPath(null, parameters);
+HyperLink1.NavigateUrl = vpd.VirtualPath;
+
+LocalizedRoute重写Route, 参考Route构造函数
+GenericPathRouteExtensions.cs -> MapGenericPathRoute方法, 参考RouteCollection, MapRoute扩展方法
+调用MapGenericPathRoute
+public static void RegisterRoutes(RouteCollection routes)
+{
+ routes.MapGenericPathRoute()
+}

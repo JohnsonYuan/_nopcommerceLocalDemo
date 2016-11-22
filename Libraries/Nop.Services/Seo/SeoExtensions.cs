@@ -41,7 +41,7 @@ namespace Nop.Services.Seo
         /// <param name="productTag">Product tag</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>Product tag SE (search engine) name</returns>
-        private static string GetSeName(this ProductTag productTag, int languageId)
+        public static string GetSeName(this ProductTag productTag, int languageId)
         {
             if (productTag == null)
                 throw new ArgumentNullException("productTag");
@@ -145,7 +145,9 @@ namespace Nop.Services.Seo
         /// <param name="languageId">Language identifier</param>
         /// <param name="returnDefaultValue">A value indicating whether to return default value (if language specified one is not found)</param>
         /// <param name="ensureTwoPublishedLanguages">A value indicating whether to ensure that we have at least two published languages; otherwise, load only default value</param>
-        private static string GetSeName(int entityId, string entityName, int languageId, bool returnDefaultValue, bool ensureTwoPublishedLanguages)
+        /// <returns>Search engine  name (slug)</returns>
+        public static string GetSeName(int entityId, string entityName, int languageId, bool returnDefaultValue = true,
+            bool ensureTwoPublishedLanguages = true)
         {
             string result = string.Empty;
 
@@ -174,71 +176,7 @@ namespace Nop.Services.Seo
 
             return result;
         }
-
-        /// <summary>
-        /// 我的注释: 检测是否含有非英文字母或非unicode字符
-        /// Get SE name(validation)
-        /// </summary>
-        /// <param name="name">Name</param>
-        /// <returns>Result</returns>
-        public static string GetSeName(string name)
-        {
-            var seoSettings = EngineContext.Current.Resolve<SeoSettings>();
-            return GetSeName(name, seoSettings.ConvertNonWesternChars, seoSettings.AllowUnicodeCharsInUrls);
-        }
-
-        /// <summary>
-        /// Get SE name
-        /// </summary>
-        /// <param name="name">Name</param>
-        /// <param name="convertNonWesternChars">A value indicating whether non western chars should be converted</param>
-        /// <param name="allowUnicodeCharsInUrls">A value indicating whether Unicode chars are allowed</param>
-        /// <returns>Result</returns>
-        public static string GetSeName(string name, bool convertNonWesternChars, bool allowUnicodeCharsInUrls)
-        {
-            if (String.IsNullOrEmpty(name))
-                return name;
-            string okChars = "abcdefghijklmnopqrstuvwxyz1234567890";
-            name = name.Trim().ToLowerInvariant();
-
-            if (convertNonWesternChars)
-            {
-                if (_seoCharacterTable == null)
-                    InitializeSeoCharacterTable();
-            }
-
-            var sb = new StringBuilder();
-            foreach (char c in name.ToCharArray())
-            {
-                string c2 = c.ToString();
-                if (convertNonWesternChars)
-                {
-                    if (_seoCharacterTable.ContainsKey(c2))
-                        c2 = _seoCharacterTable[c2];
-                }
-
-                if (allowUnicodeCharsInUrls)
-                {
-                    // 我的注释: char.IsLetterOrDigit: Indicates whether a Unicode character is categorized as a letter or a decimal digit.
-                    // Valid letters and decimal digits are members of the following categories in UnicodeCategory: UppercaseLetter, LowercaseLetter, TitlecaseLetter, ModifierLetter, OtherLetter, or DecimalDigitNumber.
-                    // 中文属于其中的UnicodeCategory中的OtherLetter (CharUnicodeInfo.GetUnicodeCategory('中')
-                    if (char.IsLetterOrDigit(c) || okChars.Contains(c2))
-                        sb.Append(c2);
-                }
-                else if (okChars.Contains(c2))
-                {
-                    sb.Append(c2);
-                }
-            }
-            string name2 = sb.ToString();
-            name2 = name2.Replace(" ", "-");
-            while (name2.Contains("--"))
-                name2 = name2.Replace("--", "-");
-            while (name2.Contains("__"))
-                name2 = name2.Replace("__", "_");
-            return name2;
-        }
-
+        
         /// <summary>
         /// 我的注释: 该方法在保存的时候调用， 保证生成唯一的slug
         /// Validate search engine name
@@ -303,6 +241,70 @@ namespace Nop.Services.Seo
 
             seName = tempSeName;
             return seName;
+        }
+
+        /// <summary>
+        /// 我的注释: 检测是否含有非英文字母或非unicode字符
+        /// Get SE name(validation)
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <returns>Result</returns>
+        public static string GetSeName(string name)
+        {
+            var seoSettings = EngineContext.Current.Resolve<SeoSettings>();
+            return GetSeName(name, seoSettings.ConvertNonWesternChars, seoSettings.AllowUnicodeCharsInUrls);
+        }
+
+        /// <summary>
+        /// Get SE name
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="convertNonWesternChars">A value indicating whether non western chars should be converted</param>
+        /// <param name="allowUnicodeCharsInUrls">A value indicating whether Unicode chars are allowed</param>
+        /// <returns>Result</returns>
+        public static string GetSeName(string name, bool convertNonWesternChars, bool allowUnicodeCharsInUrls)
+        {
+            if (String.IsNullOrEmpty(name))
+                return name;
+            string okChars = "abcdefghijklmnopqrstuvwxyz1234567890";
+            name = name.Trim().ToLowerInvariant();
+
+            if (convertNonWesternChars)
+            {
+                if (_seoCharacterTable == null)
+                    InitializeSeoCharacterTable();
+            }
+
+            var sb = new StringBuilder();
+            foreach (char c in name.ToCharArray())
+            {
+                string c2 = c.ToString();
+                if (convertNonWesternChars)
+                {
+                    if (_seoCharacterTable.ContainsKey(c2))
+                        c2 = _seoCharacterTable[c2];
+                }
+
+                if (allowUnicodeCharsInUrls)
+                {
+                    // 我的注释: char.IsLetterOrDigit: Indicates whether a Unicode character is categorized as a letter or a decimal digit.
+                    // Valid letters and decimal digits are members of the following categories in UnicodeCategory: UppercaseLetter, LowercaseLetter, TitlecaseLetter, ModifierLetter, OtherLetter, or DecimalDigitNumber.
+                    // 中文属于其中的UnicodeCategory中的OtherLetter (CharUnicodeInfo.GetUnicodeCategory('中')
+                    if (char.IsLetterOrDigit(c) || okChars.Contains(c2))
+                        sb.Append(c2);
+                }
+                else if (okChars.Contains(c2))
+                {
+                    sb.Append(c2);
+                }
+            }
+            string name2 = sb.ToString();
+            name2 = name2.Replace(" ", "-");
+            while (name2.Contains("--"))
+                name2 = name2.Replace("--", "-");
+            while (name2.Contains("__"))
+                name2 = name2.Replace("__", "_");
+            return name2;
         }
 
         /// <summary>

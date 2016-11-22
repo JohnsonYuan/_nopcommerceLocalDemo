@@ -16,8 +16,8 @@ namespace Nop.WebMVC.Demo
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
-                constraints: new { id = "\\d+", controller = new DemoRouteConstraint() }
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                //constraints: new { id = "\\d+", controller = new DemoRouteConstraint() }
             );
         }
 

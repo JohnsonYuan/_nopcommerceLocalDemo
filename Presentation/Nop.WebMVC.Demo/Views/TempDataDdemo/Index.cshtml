@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@{  
+    RouteValueDictionary parameters = new RouteValueDictionary { { "action", "Foo" }, { "controller", "TempDataDdemo" } };
+    var vpath = RouteTable.Routes.GetVirtualPath(null, parameters);
+}
+
+<h2>Index</h2>
+
+virtual path: @vpath.VirtualPath
+
+<br/>
+
+@HttpContext.Current.Request.IsLocal 
+
+<br/>
+@HttpContext.Current.Request.RawUrl
+<br />
+
+@HttpContext.Current.Request.CurrentExecutionFilePath
+<br />
+@HttpContext.Current.Request.CurrentExecutionFilePathExtension
+<br />
+@HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath
+<br />

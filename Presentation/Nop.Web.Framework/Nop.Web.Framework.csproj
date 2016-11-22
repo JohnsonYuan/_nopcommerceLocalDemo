@@ -110,6 +110,10 @@
     <Compile Include="PublicStoreAllowNavigationAttribute.cs" />
     <Compile Include="RemotePost.cs" />
     <Compile Include="RssActionResult.cs" />
+    <Compile Include="Seo\CustomUrlRecordEntityNameRequested.cs" />
+    <Compile Include="Seo\GenericPathRoute.cs" />
+    <Compile Include="Seo\GenericPathRouteExtensions.cs" />
+    <Compile Include="Seo\WwwRequirementAttribute.cs" />
     <Compile Include="StoreClosedAttribute.cs" />
     <Compile Include="StoreIpAddressAttribute.cs" />
     <Compile Include="StoreLastVisitedPageAttribute.cs" />
