@@ -17,7 +17,7 @@ namespace Nop.Core.Infrastructure
             if(Singleton<IEngine>.Instance == null || forceRecreate)
             {
                 Singleton<IEngine>.Instance = new NopEngine();
-                var config = ConfigurationManager.GetSection("NopConfig") as NopConfig;
+                 var config = ConfigurationManager.GetSection("NopConfig") as NopConfig;
                 Singleton<IEngine>.Instance.Initialize(config);
             }
             return Singleton<IEngine>.Instance;

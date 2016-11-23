@@ -65,7 +65,7 @@ namespace Nop.Web.Framework.Themes
         private ThemeConfiguration CreateThemeConfiguration(string themePath)
         {
             var themeDirectory = new DirectoryInfo(themePath);
-            var themeConfigFile = new FileInfo(Path.Combine(themePath, "theme.config");
+            var themeConfigFile = new FileInfo(Path.Combine(themePath, "theme.config"));
 
             if (themeConfigFile.Exists)
             {

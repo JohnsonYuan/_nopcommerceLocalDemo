@@ -35,10 +35,10 @@ namespace Nop.WebMVC.Demo.Controllers
         // GET: TempDataDdemo
         public ActionResult Index()
         {
-            var response = System.Web.HttpContext.Current.Response;
-            response.Status = "301 Moved Permanently";
-            response.RedirectLocation = GetStoreLocation(false) + "WebForm1.aspx";
-            response.End();
+            //var response = System.Web.HttpContext.Current.Response;
+            //response.Status = "301 Moved Permanently";
+            //response.RedirectLocation = GetStoreLocation(false) + "WebForm1.aspx";
+            //response.End();
             return View();
         }
 
