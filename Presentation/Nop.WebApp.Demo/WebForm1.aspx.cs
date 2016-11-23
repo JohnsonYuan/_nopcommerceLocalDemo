@@ -19,10 +19,10 @@ namespace Nop.WebApp.Demo
     {
         public static void Initialize()
         {
-            var path = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Libraries\Nop.Core\bin\Debug\Nop.Core.dll";
-            var an = AssemblyName.GetAssemblyName(path);
-            //BuildManager.AddReferencedAssembly(Assembly.Load(an));
-            var a = PerformFileDeploy(new FileInfo(path));
+            //var path = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Libraries\Nop.Core\bin\Debug\Nop.Core.dll";
+            //var an = AssemblyName.GetAssemblyName(path);
+            ////BuildManager.AddReferencedAssembly(Assembly.Load(an));
+            //var a = PerformFileDeploy(new FileInfo(path));
         }
         private static Assembly PerformFileDeploy(FileInfo plug)
         {
