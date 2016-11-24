@@ -9,7 +9,7 @@ using System.Web;
 // 我的注释 : autofac 文档
 // autofac 基本用法
 // var builder = new ContainerBuilder(); builder.RegisterType<ConsoleOutput>().As<IOutput>();
-// container = builder.Build();  //构建容器
+// IContainer container = builder.Build();  //构建容器
 // using (var scope = container.BeginLifetimeScope()) {IDateWriter datawriter = container.Resolve<IDateWriter>();}
 
 /// resolve optional
@@ -207,6 +207,8 @@ namespace Nop.Core.Infrastructure.DependencyManagement
             {
                 // 我的注释：AutofacDependencyResolver.Current.RequestLifetimeScope
                 // https://github.com/autofac/Autofac.Mvc/blob/develop/src/Autofac.Integration.Mvc/AutofacDependencyResolver.cs
+                // 参考 Autofac.Integration.Mvc/RequestLifetimeScopeProvider.cs
+                // 本质还是会创建ApplicationContainer.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag)， 但 HttpContext.Current == null throw new InvalidOperationException
                 if (HttpContext.Current != null)
                     return AutofacDependencyResolver.Current.RequestLifetimeScope;
 

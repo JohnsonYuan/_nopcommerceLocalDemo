@@ -2,6 +2,10 @@
 UI\Paging\Pager.cs:
 var url = UrlHelper.GenerateUrl(null, null, null, routeValues, RouteTable.Routes, viewContext.RequestContext, true);
 
+Nop.Web.Framework.Controllers\FormValueRequiredAttribute.cs
+Using ActionMethodSelectorAttribute to Handle Multiple Submit Buttons
+http://www.dotnetcurry.com/aspnet-mvc/724/handle-multiple-submit-buttons-aspnet-mvc-action-methods
+
 
 Bundle相关
 //PageHeadBuilder.cs, 检查该bundle是否存在，不存在则新建script bundle

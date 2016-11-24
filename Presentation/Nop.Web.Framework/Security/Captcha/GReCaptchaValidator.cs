@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
-using System.Net.Http;
 using System.Linq;
+using System.Net.Http;
 using Newtonsoft.Json.Linq;
 
 namespace Nop.Web.Framework.Security.Captcha

@@ -1,7 +1,7 @@
 ﻿6 Tips for ASP.NET MVC Model Binding
 http://odetocode.com/Blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx
 
-ModelBinder
+ModelBinder (Nop.Web.Framework.Mvc.NopModelBinder.cs, BaseNopModel.cs)
 https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultmodelbinder(v=vs.118).aspx
 http://www.codeproject.com/Tips/806415/Model-Binding-using-IModelBinder-and-DefaultModelB
 http://www.cnblogs.com/artech/archive/2012/05/21/model-binder-provision.html

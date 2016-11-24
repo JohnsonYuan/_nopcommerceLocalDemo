@@ -93,6 +93,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckAffiliateAttribute.cs" />
+    <Compile Include="Controllers\AdminAuthorizeAttribute.cs" />
+    <Compile Include="Controllers\AdminVendorValidation.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BasePaymentController.cs" />
+    <Compile Include="Controllers\BasePluginController.cs" />
+    <Compile Include="Controllers\FormValueRequiredAttribute.cs" />
+    <Compile Include="Controllers\ParameterBasedOnFormNameAndValueAttribute.cs" />
     <Compile Include="Controllers\ParameterBasedOnFormNameAttribute.cs" />
     <Compile Include="CustomerLastActivityAttribute.cs" />
     <Compile Include="DependencyRegistrar.cs" />
