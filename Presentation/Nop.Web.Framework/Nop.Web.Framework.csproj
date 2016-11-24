@@ -106,6 +106,8 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="HtmlExtensions.cs" />
     <Compile Include="LanguageSeoCodeAttribute.cs" />
+    <Compile Include="Localization\ILocalizedModelLocal.cs" />
+    <Compile Include="Localization\LocalizedModel.cs" />
     <Compile Include="Localization\LocalizedRoute.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Localization\LocalizedUrlExtenstions.cs" />
