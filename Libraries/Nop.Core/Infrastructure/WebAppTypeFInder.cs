@@ -9,7 +9,7 @@ namespace Nop.Core.Infrastructure
     /// <summary>
     /// Provides information about types in the current web application. 
     /// Optionally this class can look at all assemblies in the bin folder.
-    /// 我的注释 重写 GetAssemblies(), 读取~\bin文件下dll
+    /// 我的注释 重写 GetAssemblies(), 读取~\bin文件下dll(AppDomain.Current.Load, 然后调用base.GetAssemblies()
     /// </summary>
     public class WebAppTypeFinder : AppDomainTypeFinder
     {

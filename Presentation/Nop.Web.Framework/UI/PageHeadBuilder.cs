@@ -1,14 +1,14 @@
-﻿using Nop.Core.Domain.Seo;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Web.Optimization;
-using System.Web.Mvc;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
-using Nop.Services.Seo;
-using System.Linq;
+using System.Web.Mvc;
+using System.Web.Optimization;
 using Nop.Core;
+using Nop.Core.Domain.Seo;
+using Nop.Services.Seo;
 
 namespace Nop.Web.Framework.UI
 {
