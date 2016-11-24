@@ -9,6 +9,9 @@ http://www.cnblogs.com/artech/archive/2012/05/21/model-binder-provision.html
 DataAnnotations and ASP.NET MVC
 http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
 
+Controllers/BaseController.cs -> RenderPartialViewToString
+http://www.codemag.com/article/1312081
+
 
 XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
 https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages

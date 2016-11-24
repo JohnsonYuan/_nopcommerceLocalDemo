@@ -289,9 +289,23 @@ namespace Nop.Core.Tests
                 this._output.Write(DateTime.Today.ToShortDateString());
             }
         }
-
+        public enum NotifyType
+        {
+            Success,
+            Error
+        }
         static void Main(string[] args)
         {
+            Console.WriteLine("hel" + NotifyType.Success);
+            using (StringWriter sw = new StringWriter())
+            {
+                sw.WriteLine("Hello");
+                sw.WriteLine("JOHNSON");
+
+                Console.WriteLine(sw.ToString());
+            }
+
+            return;
             var builder = new ContainerBuilder();
             builder.RegisterType<ConsoleOutput>().As<IOutput>();
             builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
