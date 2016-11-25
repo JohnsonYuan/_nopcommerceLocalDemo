@@ -21,3 +21,116 @@ foreach (var ptb in partsToBundle)
 Theme\ThemeableVirtualPathProviderViewEngine.cs 和VirtualPathProviderViewEngine区别， 注释说//we make some methods protected virtual because they are overridden by some plugin vendors
 VirtualPathViewEngine 有 AreaViewLocationFormats定义
 查看RazorViewEngine和VirtualPathViewEngine关系
+
+
+自定义ViewEngine
+NopCommerce中自定义RazorViewEngine, 寻找路径增加了Theme参数
+ThemeableRazorViewEngine -> ThemeableVirtualPathProviderViewEngine -> VirtualPathProviderViewEngine
+ThemeableVirtualPathProviderViewEngine方法大部分与VirtualPathProviderViewEngine一样， 修改internal 为 public virtual, 方便plugin重写
+主要变化为: 增加GetCurrentTheme()方法,GetPath()方法增加theme参数
+FindView(), FindPartialView()会调用GetPath()， 找到路径带theme的view
+
+**view的格式可以知道了**GetPath()是寻找view的重要方法， 该函数参数有controllerContext, locations， areaLocations, viewname
+	如果view是~或者/开头，表明该view是具体路径, 如~/[filefullname].cshtml，直接按view的路径寻找(GetPathFromSpecificName)， 不需要locations，areaLocations里找了
+	如果view没有~或者/开头, （view名字不能有扩展名，否则view找不到，因为ViewLocations 格式为 ~/Areas/{2}/Views/{1}/{0}.cshtml） 
+	 GetPathFromGeneralName: 便利List<ViewLocation> 里寻找该view文件是否存在（） 如果根据controllerContext判断出area为空， List<ViewLocation> 只包括 ViewLocationFormats或者MasterLocaltionFormat（要找view还是master不同判断）, 不包括AreaLocationFormats
+	          判断view是否存在
+				DisplayInfo virtualPathDisplayInfo = DisplayModeProvider.GetDisplayInfoForVirtualPath(virtualPath, controllerContext.HttpContext, path => FileExists(controllerContext, path), controllerContext.DisplayMode);
+ 
+
+RazorViewEngine -> BuildManagerViewEngine -> VirtualPathProviderViewEngine -> IViewEngine
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/VirtualPathProviderViewEngine.cs
+VirtualPathProviderViewEngine是最基本的ViewEngine，他的属性AreaViewLocationFormats， AreaMasterLocationFormats， AreaPartialViewLocationFormats 。。。需要继承的类实现
+ViewEngines.Engines属性会得到mvc默认的两个ViewEngine(Source: http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/ViewEngines.cs):
+WebFormViewEngine, RazorViewEngine
+ http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/WebFormViewEngine.cs
+ http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/RazorViewEngine.cs
+
+System.Web.Mvc.WebFormViewEngine中定义:
+			MasterLocationFormats = new[]
+            {
+                "~/Views/{1}/{0}.master",
+                "~/Views/Shared/{0}.master"
+            };
+
+            AreaMasterLocationFormats = new[]
+            {
+                "~/Areas/{2}/Views/{1}/{0}.master",
+                "~/Areas/{2}/Views/Shared/{0}.master",
+            };
+
+            ViewLocationFormats = new[]
+            {
+                "~/Views/{1}/{0}.aspx",
+                "~/Views/{1}/{0}.ascx",
+                "~/Views/Shared/{0}.aspx",
+                "~/Views/Shared/{0}.ascx"
+            };
+
+            AreaViewLocationFormats = new[]
+            {
+                "~/Areas/{2}/Views/{1}/{0}.aspx",
+                "~/Areas/{2}/Views/{1}/{0}.ascx",
+                "~/Areas/{2}/Views/Shared/{0}.aspx",
+                "~/Areas/{2}/Views/Shared/{0}.ascx",
+            };
+
+            PartialViewLocationFormats = ViewLocationFormats;
+            AreaPartialViewLocationFormats = AreaViewLocationFormats;
+
+            FileExtensions = new[]
+            {
+                "aspx",
+                "ascx",
+                "master",
+            };
+System.Web.Mvc.RazorViewEngine:
+AreaViewLocationFormats = new[]
+            {
+                "~/Areas/{2}/Views/{1}/{0}.cshtml",
+                "~/Areas/{2}/Views/{1}/{0}.vbhtml",
+                "~/Areas/{2}/Views/Shared/{0}.cshtml",
+                "~/Areas/{2}/Views/Shared/{0}.vbhtml"
+            };
+            AreaMasterLocationFormats = new[]
+            {
+                "~/Areas/{2}/Views/{1}/{0}.cshtml",
+                "~/Areas/{2}/Views/{1}/{0}.vbhtml",
+                "~/Areas/{2}/Views/Shared/{0}.cshtml",
+                "~/Areas/{2}/Views/Shared/{0}.vbhtml"
+            };
+            AreaPartialViewLocationFormats = new[]
+            {
+                "~/Areas/{2}/Views/{1}/{0}.cshtml",
+                "~/Areas/{2}/Views/{1}/{0}.vbhtml",
+                "~/Areas/{2}/Views/Shared/{0}.cshtml",
+                "~/Areas/{2}/Views/Shared/{0}.vbhtml"
+            };
+
+            ViewLocationFormats = new[]
+            {
+                "~/Views/{1}/{0}.cshtml",
+                "~/Views/{1}/{0}.vbhtml",
+                "~/Views/Shared/{0}.cshtml",
+                "~/Views/Shared/{0}.vbhtml"
+            };
+            MasterLocationFormats = new[]
+            {
+                "~/Views/{1}/{0}.cshtml",
+                "~/Views/{1}/{0}.vbhtml",
+                "~/Views/Shared/{0}.cshtml",
+                "~/Views/Shared/{0}.vbhtml"
+            };
+            PartialViewLocationFormats = new[]
+            {
+                "~/Views/{1}/{0}.cshtml",
+                "~/Views/{1}/{0}.vbhtml",
+                "~/Views/Shared/{0}.cshtml",
+                "~/Views/Shared/{0}.vbhtml"
+            };
+
+            FileExtensions = new[]
+            {
+                "cshtml",
+                "vbhtml",
+            };

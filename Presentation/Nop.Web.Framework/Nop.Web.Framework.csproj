@@ -103,6 +103,7 @@
     <Compile Include="Controllers\ParameterBasedOnFormNameAttribute.cs" />
     <Compile Include="CustomerLastActivityAttribute.cs" />
     <Compile Include="DependencyRegistrar.cs" />
+    <Compile Include="Events\AdminTabStripCreated.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HtmlExtensions.cs" />
     <Compile Include="LanguageSeoCodeAttribute.cs" />

@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Autofac;
 using Autofac.Core.Lifetime;
+using System.Web.Mvc;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -290,8 +291,60 @@ namespace Nop.Core.Tests
             }
         }
 
+        public abstract class ThemeableVirtualPathProviderViewEngine
+        {
+            public string Hello = "Base Hello";
+            private string[] _fileExt;
+            public string[] FileExtensions
+            {
+                get
+                {
+                    Console.WriteLine("call get");
+                    return _fileExt; }
+                set
+                {
+                    Console.WriteLine("call set");
+                    _fileExt = value;
+                }
+            }
+        }
+
+        public class ThemeableRazorViewEngine : ThemeableVirtualPathProviderViewEngine
+        {
+            public ThemeableRazorViewEngine()
+            {
+                Console.WriteLine("In ctro: ");
+                FileExtensions = new[] { "cshtml" };
+                Console.WriteLine("Out ctro: ");
+                Console.WriteLine();
+                Hello = "Derived Hello";
+            }
+            public void ShowExt()
+            {
+                if (base.FileExtensions == null)
+                {
+                    Console.WriteLine("null");
+                }
+                else
+                {
+                    foreach (var item in base.FileExtensions)
+                    {
+                        Console.WriteLine(item);
+                    }
+                }
+                Console.WriteLine();
+                Console.WriteLine("test hello prop:");
+                Console.WriteLine("base:" + base.Hello);
+                Console.WriteLine("this:" + Hello);
+            } 
+        }
+
         static void Main(string[] args)
         {
+            ThemeableRazorViewEngine engine = new ThemeableRazorViewEngine();
+            engine.ShowExt();
+            return;
+
             var builder = new ContainerBuilder();
             builder.RegisterType<ConsoleOutput>().As<IOutput>();
             builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;

@@ -334,5 +334,4 @@ namespace Nop.Web.Framework.Themes
         }
         #endregion
     }
-
 }

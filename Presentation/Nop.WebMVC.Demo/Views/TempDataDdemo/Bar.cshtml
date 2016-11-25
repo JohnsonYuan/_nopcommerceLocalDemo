@@ -5,5 +5,9 @@
 
 <h2>Bar</h2>
 
-Temp data is : @TempData["foo"]
+Temp data is : @Html.Raw(TempData["foo"])
 
+@foreach (var item in ViewEngines.Engines)
+{
+    @item
+}
