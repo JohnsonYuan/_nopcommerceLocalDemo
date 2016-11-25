@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Nop.Services.Localization;
-using Nop.Web.Framework.Localization;
-using Nop.Core.Data;
-using Nop.Core.Infrastructure;
-using System.IO;
+﻿using System.IO;
 using System.Web.Mvc;
 using Nop.Core;
+using Nop.Core.Data;
+using Nop.Core.Infrastructure;
+using Nop.Services.Localization;
+using Nop.Web.Framework.Localization;
 using Nop.Web.Framework.Themes;
 
 namespace Nop.Web.Framework.ViewEngines.Razor
 {
-
     /// <summary>
     /// Web view page
     /// </summary>

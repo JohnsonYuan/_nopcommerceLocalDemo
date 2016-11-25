@@ -19,6 +19,11 @@ using System.Collections.Specialized;
 using System.Web.Compilation;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Autofac;
+using Autofac.Core.Lifetime;
+using System.Web.Mvc;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -236,34 +241,123 @@ namespace Nop.Core.Tests
             Green,
             Blue
         }
-        public class MyClass
+
+        // This interface helps decouple the concept of
+        // "writing output" from the Console class. We
+        // don't really "care" how the Write operation
+        // happens, just that we can write.
+        public interface IOutput
         {
-            public MyClass()
+            void Write(string content);
+        }
+
+        // This implementation of the IOutput interface
+        // is actually how we write to the Console. Technically
+        // we could also implement IOutput to write to Debug
+        // or Trace... or anywhere else.
+        public class ConsoleOutput : IOutput
+        {
+            public void Write(string content)
             {
-                DisplayValue(); //这里不会阻塞  
-                Console.WriteLine("MyClass() End.");
+                Console.WriteLine(content);
             }
-            public Task<double> GetValueAsync(double num1, double num2)
+        }// This interface decouples the notion of writing
+         // a date from the actual mechanism that performs
+         // the writing. Like with IOutput, the process
+         // is abstracted behind an interface.
+        public interface IDateWriter
+        {
+            void WriteDate();
+        }
+
+        // This TodayWriter is where it all comes together.
+        // Notice it takes a constructor parameter of type
+        // IOutput - that lets the writer write to anywhere
+        // based on the implementation. Further, it implements
+        // WriteDate such that today's date is written out;
+        // you could have one that writes in a different format
+        // or a different date.
+        public class TodayWriter : IDateWriter
+        {
+            private IOutput _output;
+            public TodayWriter(IOutput output)
             {
-                return Task.Run(() =>
-                {
-                    for (int i = 0; i < 1000000; i++)
-                    {
-                        num1 = num1 / num2;
-                    }
-                    return num1;
-                });
+                this._output = output;
             }
-            public async void DisplayValue()
+
+            public void WriteDate()
             {
-                double result = await GetValueAsync(1234.5, 1.01);//此处会开新线程处理GetValueAsync任务，然后方法马上返回  
-                                                                  //这之后的所有代码都会被封装成委托，在GetValueAsync任务完成时调用  
-                Console.WriteLine("Value is : " + result);
+                this._output.Write(DateTime.Today.ToShortDateString());
             }
         }
+
+        public abstract class ThemeableVirtualPathProviderViewEngine
+        {
+            public string Hello = "Base Hello";
+            private string[] _fileExt;
+            public string[] FileExtensions
+            {
+                get
+                {
+                    Console.WriteLine("call get");
+                    return _fileExt; }
+                set
+                {
+                    Console.WriteLine("call set");
+                    _fileExt = value;
+                }
+            }
+        }
+
+        public class ThemeableRazorViewEngine : ThemeableVirtualPathProviderViewEngine
+        {
+            public ThemeableRazorViewEngine()
+            {
+                Console.WriteLine("In ctro: ");
+                FileExtensions = new[] { "cshtml" };
+                Console.WriteLine("Out ctro: ");
+                Console.WriteLine();
+                Hello = "Derived Hello";
+            }
+            public void ShowExt()
+            {
+                if (base.FileExtensions == null)
+                {
+                    Console.WriteLine("null");
+                }
+                else
+                {
+                    foreach (var item in base.FileExtensions)
+                    {
+                        Console.WriteLine(item);
+                    }
+                }
+                Console.WriteLine();
+                Console.WriteLine("test hello prop:");
+                Console.WriteLine("base:" + base.Hello);
+                Console.WriteLine("this:" + Hello);
+            } 
+        }
+
         static void Main(string[] args)
         {
-            MyClass mc = new MyClass();
+            ThemeableRazorViewEngine engine = new ThemeableRazorViewEngine();
+            engine.ShowExt();
+            return;
+
+            var builder = new ContainerBuilder();
+            builder.RegisterType<ConsoleOutput>().As<IOutput>();
+            builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
+
+            var container = builder.Build();
+
+            // Create the scope, resolve your IDateWriter,
+            // use it, then dispose of the scope.
+            using (var scope = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                var writer = scope.Resolve<IDateWriter>();
+                writer.WriteDate();
+            }
 
             return;
 
