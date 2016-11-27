@@ -52,7 +52,7 @@ namespace Nop.WebMVC.Demo.Controllers
         public ActionResult Foo()
         {
             // store something into the tempdata that will be available during a single redirect
-            TempData["foo"] = "bar";
+            TempData["foo"] = "<h1>Hello</h1>";
 
             // you should always redirect if you store something into TempData to
             // a controller action that will consume this data

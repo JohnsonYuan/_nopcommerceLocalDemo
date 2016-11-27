@@ -9,7 +9,6 @@ using Nop.Web.Framework.Themes;
 
 namespace Nop.Web.Framework.ViewEngines.Razor
 {
-
     /// <summary>
     /// Web view page
     /// </summary>

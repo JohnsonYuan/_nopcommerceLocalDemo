@@ -6,6 +6,11 @@ Nop.Web.Framework.Controllers\FormValueRequiredAttribute.cs
 Using ActionMethodSelectorAttribute to Handle Multiple Submit Buttons
 http://www.dotnetcurry.com/aspnet-mvc/724/handle-multiple-submit-buttons-aspnet-mvc-action-methods
 
+（有点意思）Custom Razor View Engine for C# and VB
+http://www.dotnettricks.com/learn/mvc/custom-razor-view-engine-for-csharp-and-vb
+http://www.amazedsaint.com/2010/06/creating-custom-view-engine-for-aspnet.html
+http://www.c-sharpcorner.com/UploadFile/abhikumarvatsa/removing-or-customizing-view-engines-in-mvc/
+
 
 Bundle相关
 //PageHeadBuilder.cs, 检查该bundle是否存在，不存在则新建script bundle
