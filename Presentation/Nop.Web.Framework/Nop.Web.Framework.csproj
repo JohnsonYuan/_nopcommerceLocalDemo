@@ -109,12 +109,15 @@
     <Compile Include="HtmlExtensions.cs" />
     <Compile Include="Kendoui\DataSourceRequest.cs" />
     <Compile Include="Kendoui\DataSourceResult.cs" />
+    <Compile Include="Kendoui\Filter.cs" />
+    <Compile Include="Kendoui\ModelStateExtensions.cs" />
     <Compile Include="Kendoui\QueryableExtensions.cs" />
     <Compile Include="Kendoui\Sort.cs" />
     <Compile Include="LanguageSeoCodeAttribute.cs" />
+    <Compile Include="Localization\ILocalizedModel.cs" />
     <Compile Include="Localization\ILocalizedModelLocal.cs" />
-    <Compile Include="Localization\LocalizedModel.cs" />
     <Compile Include="Localization\LocalizedRoute.cs" />
+    <Compile Include="Localization\LocalizedRouteExtensions.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Localization\LocalizedUrlExtenstions.cs" />
     <Compile Include="Localization\Localizer.cs" />

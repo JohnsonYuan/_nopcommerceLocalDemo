@@ -54,8 +54,8 @@ namespace Nop.Web.Framework.Seo
 
             var route = new GenericPathRoute(url, new MvcRouteHandler())
             {
-                Defaults = new RouteValueDictionary(),
-                Constraints = new RouteValueDictionary(),
+                Defaults = new RouteValueDictionary(defaults),
+                Constraints = new RouteValueDictionary(constraints),
                 DataTokens = new RouteValueDictionary()
             };
 

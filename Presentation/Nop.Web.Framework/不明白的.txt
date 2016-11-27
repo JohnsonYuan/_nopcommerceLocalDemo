@@ -5,6 +5,14 @@ Layout属性中这一行在做什么
  ASP.NET MVC的View是如何被呈现出来的？[设计篇]:
  http://www.cnblogs.com/artech/archive/2012/08/22/view-engine-01.html
 
+
+ 把string转化为Linq  需要debug看看到底怎么执行
+ ?? DynamicExpression, Expression
+ Nop.Web.Framework.Kendoui\Filter.cs, ToExpression
+ queryable.Where(predicate, values); => Nop.Core.DynamicQueryable (Where<T>)
+
+
+
  Nop.Web.Framework.Localization.LocalizedString.cs
  MarshalByRefObject? when override GetHashCode()?
 

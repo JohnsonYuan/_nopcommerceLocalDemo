@@ -12,6 +12,8 @@ http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
 Controllers/BaseController.cs -> RenderPartialViewToString
 http://www.codemag.com/article/1312081
 
+MvcRouteHandler: GenericPathRoute, LocalizedRoute
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/VirtualPathProviderViewEngine.cs
 
 XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
 https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages

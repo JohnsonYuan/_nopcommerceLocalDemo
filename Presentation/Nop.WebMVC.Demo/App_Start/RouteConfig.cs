@@ -30,6 +30,5 @@ namespace Nop.WebMVC.Demo
                 return id is string;
             }
         }
-
     }
 }

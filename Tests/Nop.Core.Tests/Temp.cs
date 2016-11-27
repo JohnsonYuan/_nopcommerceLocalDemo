@@ -290,81 +290,111 @@ namespace Nop.Core.Tests
                 this._output.Write(DateTime.Today.ToShortDateString());
             }
         }
-<<<<<<< HEAD
+
         public enum NotifyType
         {
             Success,
             Error
         }
-        static void Main(string[] args)
-        {
-            Console.WriteLine("hel" + NotifyType.Success);
-            using (StringWriter sw = new StringWriter())
-            {
-                sw.WriteLine("Hello");
-                sw.WriteLine("JOHNSON");
 
-                Console.WriteLine(sw.ToString());
+
+        /// <summary>
+        /// Represents a filter expression of Kendo DataSource.
+        /// </summary>
+        public class Filter
+        {
+            public string Name { get; set; }
+
+            /// <summary>
+            /// Gets or sets the child filter expressions. Set to <c>null</c> if there are no child expressions.
+            /// </summary>
+            public IEnumerable<Filter> Filters { get; set; }
+
+
+            /// <summary>
+            /// Get a flattened list of all child filter expressions.
+            /// </summary>
+            public IList<Filter> All()
+            {
+                var filters = new List<Filter>();
+
+                Collect(filters);
+
+                return filters;
             }
 
-            return;
-=======
-
-        public abstract class ThemeableVirtualPathProviderViewEngine
-        {
-            public string Hello = "Base Hello";
-            private string[] _fileExt;
-            public string[] FileExtensions
+            /// <summary>
+            /// Get a flattened list of all child filter expressions.
+            /// </summary>
+            public IList<Filter> All2()
             {
-                get
-                {
-                    Console.WriteLine("call get");
-                    return _fileExt; }
-                set
-                {
-                    Console.WriteLine("call set");
-                    _fileExt = value;
-                }
+                return Collect();
             }
-        }
 
-        public class ThemeableRazorViewEngine : ThemeableVirtualPathProviderViewEngine
-        {
-            public ThemeableRazorViewEngine()
+
+            private List<Filter> Collect()
             {
-                Console.WriteLine("In ctro: ");
-                FileExtensions = new[] { "cshtml" };
-                Console.WriteLine("Out ctro: ");
-                Console.WriteLine();
-                Hello = "Derived Hello";
-            }
-            public void ShowExt()
-            {
-                if (base.FileExtensions == null)
+                var filters = new List<Filter>();
+                if (Filters != null && Filters.Any())
                 {
-                    Console.WriteLine("null");
+                    foreach (Filter item in Filters)
+                    {
+                        filters.Add(item);
+                        filters.AddRange(item.Collect());
+                    }
                 }
                 else
                 {
-                    foreach (var item in base.FileExtensions)
+                    filters.Add(this);
+                }
+                return filters;
+            }
+
+
+            private void Collect(IList<Filter> filters)
+            {
+                if (Filters != null && Filters.Any())
+                {
+                    foreach (Filter filter in Filters)
                     {
-                        Console.WriteLine(item);
+                        filters.Add(filter);
+
+                        filter.Collect(filters);
                     }
                 }
-                Console.WriteLine();
-                Console.WriteLine("test hello prop:");
-                Console.WriteLine("base:" + base.Hello);
-                Console.WriteLine("this:" + Hello);
-            } 
+                else
+                {
+                    filters.Add(this);
+                }
+            }
         }
 
+
+        
         static void Main(string[] args)
         {
-            ThemeableRazorViewEngine engine = new ThemeableRazorViewEngine();
-            engine.ShowExt();
+
+            Filter fb1 = new Filter { Name = "B1" };
+            Filter fb2 = new Filter { Name = "B2" };
+            Filter fc = new Filter { Name = "C" };
+            Filter fb = new Filter { Name = "B", Filters = new Filter[] { fb1, fb2 } };
+            Filter fa = new Filter { Name = "A", Filters = new Filter[] { fb, fc } };
+
+            var itemsResult = fa.All2();
+
+            foreach (var item in itemsResult)
+            {
+                Console.WriteLine(item.Name + "\t" + itemsResult.IndexOf(item));
+            }
+
+            Console.WriteLine(itemsResult.IndexOf(fb1));
+            Console.WriteLine(itemsResult.IndexOf(fb2));
+            Console.WriteLine(itemsResult.IndexOf(fc));
+            Console.WriteLine(itemsResult.IndexOf(fb));
+            Console.WriteLine(itemsResult.IndexOf(fa));
+
             return;
 
->>>>>>> webframe
             var builder = new ContainerBuilder();
             builder.RegisterType<ConsoleOutput>().As<IOutput>();
             builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;

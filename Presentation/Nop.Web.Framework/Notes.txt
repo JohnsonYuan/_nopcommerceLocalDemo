@@ -1,4 +1,13 @@
-﻿﻿References:
+﻿肯能有问题的地方：
+Nop.Web.Framework.Kendoui\Filter.cs, Collect方中:
+如果A -> B, C, B -> B1, B2当A调用Collect方法是，
+遍历的结果是B B1 B1 B2 B2 C C
+因为轮到B1时，会把B1加入结果中, 然后调用B.Collect()， 会再次把B1加到结果中
+这样的话ToExprssion会生成重复的filter string
+？TOCHECK？ 可能影响QueryableExtensions中Filter<T>效率
+
+
+﻿References:
 Nop.Core
 Nop.Services
 
