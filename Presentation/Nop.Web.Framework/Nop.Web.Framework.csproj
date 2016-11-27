@@ -121,6 +121,10 @@
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Localization\LocalizedUrlExtenstions.cs" />
     <Compile Include="Localization\Localizer.cs" />
+    <Compile Include="Menu\Extensions.cs" />
+    <Compile Include="Menu\IAdminMenuPlugin.cs" />
+    <Compile Include="Menu\SiteMapNode.cs" />
+    <Compile Include="Menu\XmlSiteMap.cs" />
     <Compile Include="Mvc\IModelAttribute.cs" />
     <Compile Include="NopResourceDisplayName.cs" />
     <Compile Include="NopValidatorFactory.cs" />

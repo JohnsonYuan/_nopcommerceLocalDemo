@@ -373,6 +373,18 @@ namespace Nop.Core.Tests
         
         static void Main(string[] args)
         {
+            var doc = new XmlDocument();
+            doc.Load(@"C:\Users\Johnson\Source\Repos\_nopcommerceLocalDemo\Tests\Nop.Core.Tests\bin\Debug\Nop.Core.Tests.XML");
+            Console.WriteLine(doc.DocumentElement.FirstChild.OuterXml);
+            return;
+            foreach (XmlNode item in doc.DocumentElement.SelectNodes(@"members/member"))
+            {
+                Console.WriteLine(item.OuterXml);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+
+            return;
 
             Filter fb1 = new Filter { Name = "B1" };
             Filter fb2 = new Filter { Name = "B2" };
