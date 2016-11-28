@@ -6,6 +6,73 @@ build.cmd =》 cmd格式可以学习
 
 [MethodImpl(MethodImplOptions.Synchronized)]属性加到方法 相当于lock(this)
 
+Autofac Registration : http://docs.autofac.org/en/latest/register/registration.html
+1. 如果注册相同的，后注册的生效
+            builder.RegisterType<MyComponent>();
+            builder.Register(c => new MyComponent()); //这个会生效， Resolve时候出来的是这个
+
+2. builder.RegisterType<SomeType>(); 这样注册相当于builder.RegisterType<SomeType>().AsSelf();
+Resolve<SomeType>即可
+// However, if you want BOTH services (not as common) you can say so:
+builder.RegisterType<SomeType>().AsSelf().As<IService>();
+如果没有AsSelf() Resolve<SomeType> -> throw exception
+
+// Create the builder with which components/services are registered.
+var builder = new ContainerBuilder();
+
+// Register types that expose interfaces...
+builder.RegisterType<ConsoleLogger>().As<ILogger>();
+
+// Register instances of objects you create...
+var output = new StringWriter();
+builder.RegisterInstance(output).As<TextWriter>();
+
+// Register expressions that execute to create objects... 相当于RegisterInstance
+builder.Register(c => new ConfigReader("mysection")).As<IConfigReader>();
+
+// Build the container to finalize registrations
+// and prepare for object resolution.
+var container = builder.Build();
+
+// Now you can resolve services using Autofac. For example,
+// this line will execute the lambda expression registered
+// to the IConfigReader service.
+using(var scope = container.BeginLifetimeScope())
+{
+  var reader = container.Resolve<IConfigReader>();
+}
+
+Autofac per-request lifetime scope: http://docs.autofac.org/en/latest/faq/per-request-scope.html#registering-dependencies-as-per-request
+InstancePerRequest vs InstancePerLifetimescope:
+InstancePerMatchingLifetimeScope相当于一个有名字的InstancePerLifetimescope
+InstancePerRequest 相当于一个名字为MatchingScopeLifetimeTags.RequestLifetimeScopeTag的InstancePerLifetimescope
+
+InstancePerRequest https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/RegistrationExtensions.cs
+	var tags = new[] { MatchingScopeLifetimeTags.RequestLifetimeScopeTag }.Concat(lifetimeScopeTags).ToArray();
+	return registration.InstancePerMatchingLifetimeScope(tags);
+
+Reflection Components: RegisterType 的类型必须是concrete type
+public class MyComponent
+{
+    public MyComponent() { /* ... */ }
+    public MyComponent(ILogger logger) { /* ... */ }
+    public MyComponent(ILogger logger, IConfigReader reader) { /* ... */ }
+}
+
+var builder = new ContainerBuilder();
+builder.RegisterType<MyComponent>();
+builder.RegisterType<ConsoleLogger>().As<ILogger>();
+var container = builder.Build();
+using(var scope = container.BeginLifetimeScope())
+{
+// autofac会发现ILogger已经注册， 所以resolve MyComponent的时候会选择MyComponent(ILogger logger)这个版本
+  var component = container.Resolve<MyComponent>();
+}
+
+如果builder.Register(c => new MyComponent());
+Resolve的时候是MyComponent() -》 即注册时使用的（类似于RegisterInstance)
+
+
 Autofac MVC (Install-Package  Autofac.Mvc5)
 register your controllers, and set the dependency resolver
 http://docs.autofac.org/en/latest/integration/mvc.html

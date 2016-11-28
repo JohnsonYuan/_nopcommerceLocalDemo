@@ -369,49 +369,62 @@ namespace Nop.Core.Tests
             }
         }
 
-
-        
-        static void Main(string[] args)
+        public class XmlDownloadResult
         {
-            var doc = new XmlDocument();
-            doc.Load(@"C:\Users\Johnson\Source\Repos\_nopcommerceLocalDemo\Tests\Nop.Core.Tests\bin\Debug\Nop.Core.Tests.XML");
-            Console.WriteLine(doc.DocumentElement.FirstChild.OuterXml);
+            [System.Runtime.CompilerServices.SpecialName]
+            private string _hello;
+            internal int _hello2;
+            public string _hello3;
+            public int MyProperty { get; set; }
+            public string StringAttr { get; set; }
+        }
+
+        public class MyComponent
+        {
+            public MyComponent() { Console.WriteLine("default"); }
+            public MyComponent(IOutput logger) { Console.WriteLine("logger"); }
+            public MyComponent(IOutput logger, IDateWriter reader) { Console.WriteLine("logger and reader"); }
+        }
+
+        static void Main(string[] args)
+        { 
+            IEnumerable<int> array = new List<int> { 1, 2, 3 };
+            Type arrT = array.GetType();
+            Type arrT2 = arrT.GetElementType();
+            Console.WriteLine(arrT);
+            Console.WriteLine(arrT2);
+            Console.WriteLine("The element type of {0} is {1}.", array, arrT2);
             return;
-            foreach (XmlNode item in doc.DocumentElement.SelectNodes(@"members/member"))
-            {
-                Console.WriteLine(item.OuterXml);
-                Console.WriteLine();
-                Console.WriteLine();
-            }
-
-            return;
-
-            Filter fb1 = new Filter { Name = "B1" };
-            Filter fb2 = new Filter { Name = "B2" };
-            Filter fc = new Filter { Name = "C" };
-            Filter fb = new Filter { Name = "B", Filters = new Filter[] { fb1, fb2 } };
-            Filter fa = new Filter { Name = "A", Filters = new Filter[] { fb, fc } };
-
-            var itemsResult = fa.All2();
-
-            foreach (var item in itemsResult)
-            {
-                Console.WriteLine(item.Name + "\t" + itemsResult.IndexOf(item));
-            }
-
-            Console.WriteLine(itemsResult.IndexOf(fb1));
-            Console.WriteLine(itemsResult.IndexOf(fb2));
-            Console.WriteLine(itemsResult.IndexOf(fc));
-            Console.WriteLine(itemsResult.IndexOf(fb));
-            Console.WriteLine(itemsResult.IndexOf(fa));
-
-            return;
-
-            var builder = new ContainerBuilder();
-            builder.RegisterType<ConsoleOutput>().As<IOutput>();
+   
+            var builder = new ContainerBuilder(); 
+            builder.RegisterType<ConsoleOutput>().AsSelf().As<IOutput>().InstancePerRequest();
             builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
-
+      
+            builder.RegisterType<MyComponent>();
+            builder.Register(c => new MyComponent());
             var container = builder.Build();
+            using (var scopeContainer = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+               //var myComponent = scopeContainer.Resolve<MyComponent>();
+               var myComponent = scopeContainer.Resolve<ConsoleOutput>();
+            }
+
+
+            return;
+
+            using (var scope = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                IOutput output;
+                try
+                {
+                    output = scope.Resolve<IOutput>();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            return;
 
             // Create the scope, resolve your IDateWriter,
             // use it, then dispose of the scope.

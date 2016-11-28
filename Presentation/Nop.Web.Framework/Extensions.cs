@@ -1,13 +1,11 @@
-﻿using Nop.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using Nop.Core;
 using Nop.Core.Infrastructure;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace Nop.Web.Framework
 {

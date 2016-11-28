@@ -6,7 +6,8 @@ https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultmodelbinder(v=vs.
 http://www.codeproject.com/Tips/806415/Model-Binding-using-IModelBinder-and-DefaultModelB
 http://www.cnblogs.com/artech/archive/2012/05/21/model-binder-provision.html
 
-DataAnnotations and ASP.NET MVC
+
+DataAnnotations and ASP.NET MVC, NopMetadataProvider.cs => DataAnnotationsModelMetadataProvider
 http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
 
 Controllers/BaseController.cs -> RenderPartialViewToString

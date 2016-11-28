@@ -25,6 +25,8 @@ namespace Nop.WebApp.Demo
             {
                 Response.Write( cookies.Value + "<br/><br/><br/>");
             }
+            Response.Charset = "unicode";
+            Response.Headers.Add("hello", "WherE");
         }
 
         protected void check_Click(object sender, EventArgs e)
@@ -43,6 +45,16 @@ namespace Nop.WebApp.Demo
             HttpCookie MyCookie = new HttpCookie("LastVisit");
             MyCookie.Values.Clear();
             Response.Cookies.Set(MyCookie);
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            Response.Clear();
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            Response.ClearContent();
         }
     }
 }
