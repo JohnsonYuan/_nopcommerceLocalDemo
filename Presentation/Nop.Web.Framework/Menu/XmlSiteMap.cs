@@ -25,7 +25,7 @@ namespace Nop.Web.Framework.Menu
         {
             var webHelper = EngineContext.Current.Resolve<IWebHelper>();
             string filePath = CommonHelper.MapPath(physicalPath);
-            string content = File.ReadAllBytes(filePath);
+            string content = File.ReadAllText(filePath);
 
             if (!string.IsNullOrEmpty(content))
             {

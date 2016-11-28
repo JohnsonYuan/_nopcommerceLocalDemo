@@ -6,6 +6,7 @@ using Nop.Core;
 using Nop.Core.Infrastructure;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
+using Nop.Web.Framework.Kendoui;
 
 namespace Nop.Web.Framework
 {
