@@ -99,6 +99,23 @@ Also, if you register controllers manually and choose to specify lifetimes, you 
   var container = builder.Build();
   DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
+ 第一步注册Controller功能： 免去一个个注册Controller, 一次把assemblies中所有Controller注册
+ example中给的参数是typeof(MvcApplication).Assembly， 会注册所有MvcApplication Assembly下的Controller
+ NopCommerce中参数给的是typeFinder.GetAssemblies()， 会把AppDomain.Current所有引用中的Controller注册， 因为除了Nop.Web, Nop.Web.Framework还有Controller, 不能只注册web projet的assembly的controller
+ 把assemblies中继承IController的类注册RegistrationBuilder.ForType(t) 这样就能Resolve 所有的Controller了
+ 1. RegisterControllers source code: (Autofac.Mvc)
+ https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/Features/Scanning/ScanningRegistrationExtensions.cs
+ 
+ return builder.RegisterAssemblyTypes(controllerAssemblies)
+                .Where(t => typeof(IController).IsAssignableFrom(t) &&
+                    t.Name.EndsWith(nameof(Controller), StringComparison.Ordinal));
+2. builder.RegisterAssemblyTypes 在 Autofac RegistrationExtensions定义
+return ScanningRegistrationExtensions.RegisterAssemblyTypes(builder, assemblies);
+3. ScanningRegistrationExtensions source:
+https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/Features/Scanning/ScanningRegistrationExtensions.cs
+assembly中每个类型都会RegistrationBuilder.ForType(t) // 注册当前Type, 相当于RegisterType<t>().AsSelf()
+
+
 Use MemoryCache:(System.Web.Caching.Cache can only works in ASP.NET)
 http://www.codeproject.com/Articles/290935/Using-MemoryCache-in-Net-4-0
 
