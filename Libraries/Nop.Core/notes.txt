@@ -8,10 +8,15 @@ build.cmd =》 cmd格式可以学习
 
 Autofac Registration : http://docs.autofac.org/en/latest/register/registration.html
 1. 如果注册相同的，后注册的生效
-            builder.RegisterType<MyComponent>();
-            builder.Register(c => new MyComponent()); //这个会生效， Resolve时候出来的是这个
+            builder.RegisterType<Class1>().As<IInterface>; //默认AsSelf()
+            builder.RegisterType<Class2>().As<IInterface>; //这个会生效， Resolve时候出来的是这个
 
-2. builder.RegisterType<SomeType>(); 这样注册相当于builder.RegisterType<SomeType>().AsSelf();
+2. builder.Register(c => new A(c.Resolve<B>()));
+Autofac can accept a delegate or lambda expression to be used as a component creator:
+The parameter c type is IComponentContext in which the component is being created, you can use it Resolve object
+
+3. builder.RegisterType<SomeType>(); 这样注册相当于builder.RegisterType<SomeType>().AsSelf();
+AsSelf()是默认的选项， 还有AsImplementedInterface()
 Resolve<SomeType>即可
 // However, if you want BOTH services (not as common) you can say so:
 builder.RegisterType<SomeType>().AsSelf().As<IService>();
@@ -120,3 +125,145 @@ namespace Nop.WebApp.Demo
         }
     }
 }
+
+
+Autofac 注册难点： Registration Sources
+
+实现方法（Implementing a Registration Source）：http://docs.autofac.org/en/latest/advanced/registration-sources.html?highlight=IRegistrationSource
+继承IRegistrationSource, RegistrationsFor方法中实现
+RegistrationsFor方法参数service是TypedService类型
+var ts = service as TypedService;
+比如调用scope.Scope<BaseHandler>, autofac没有找到注册的BaseHandler， 会在RegistrationSource里寻找
+属性ts.ServiceType是需要Resolve的类型， 此处ServiceType就是BaseHandler
+然后再返回BaseHandler需要Resolve的类型， 方法中可以调用RegistrationBuilder.ForDelegate, 参数c可以Resolve注册过的类型
+RegistrationBuilder.ForDelegate((c, p) => c.Resolve<> );
+
+// 混合了AnyConcreteTypeNotAlreadyRegisteredSource, autofac文档, NopCommerce Web.Framework\DependencyRegister.cs\SettingsSource
+public class [classname] : IRegistrationSource
+{
+  public IEnumerable<IComponentRegistration> RegistrationsFor(
+    Service service,
+    Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
+  {
+		// autofac中as成IServiceWithType;
+		var ts = service as TypedService;
+
+        //AnyConcreteTypeNotAlreadyRegisteredSource
+		if(swt == null || !typeof(BaseHandler).IsAssignableFrom(ts.ServiceType))
+		{
+		  // It's not a request for the base handler type, so skip it.
+		  return Enumerable.Empty<IComponentRegistration>();
+		}
+
+		// 返回Resolve成的类型 e.g. 返回HandlerA
+		var builder = RegistrationBuilder
+                .ForDelegate((c, p) =>
+        {
+			var provider = c.Resolve<IHandlerFactory>();
+			var method = provider.GetType().GetMethod("GetHandler").MakeGenericMethod(ts.ServiceType);
+            // In the end, return the object from the factory.
+            return method.Invoke(provider, null);
+        });
+
+		return new[] { builder.CreateRegistration() };
+  }
+}
+
+Autofac 自带一个AnyConcreteTypeNotAlreadyRegisteredSource， 可以把没注册的类都按注册为本身
+https://github.com/autofac/Autofac/blob/1aca241fc0e7d5535fdff23c833dcbfdaa0f02b7/src/Autofac/Features/ResolveAnything/AnyConcreteTypeNotAlreadyRegisteredSource.cs
+var builder = new ContainerBuilder();
+builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
+var container = builder.Build();
+
+如果没有注册Pet class, 可以直接调用sopce.Resolve<Pet>，得到Pet class
+Resolve实现的关键部分：
+var builder = RegistrationBuilder.ForType(ts.ServiceType); // ts.ServiceType为当前需要Resolve的type(Pet)
+return new[] { builder.CreateRegistration() };
+
+RegistrationBuilder还有ForDelegate方法， 参数c为IComponentContext, 可以调用Resolve
+
+Nopcommerce  Nop.Web.Framework\DependencyRegistrar.cs, SettingsSource  : IRegistrationSource通过实现Registration Source来完成所有继承ISettings类的注册:
+		RegistrationBuilder
+                .ForDelegate((c, p) =>
+                {
+                    var currentStoreId = c.Resolve<IStoreContext>().CurrentStore.Id;
+                    return c.Resolve<ISettingService>().LoadSetting<TSettings>(currentStoreId);
+                })
+                .InstancePerLifetimeScope()
+                .CreateRegistration();
+
+
+System.Reflection:
+
+1. GetMethod (Type class) 为例（还有GetMethods, GetProperty ...）:
+public MethodInfo GetMethod(string name) // name是该类的方法名， case-sensitive, 默认的BindingFlags是BindingFlags.Instance | BindingFlags.Public
+public MethodInfo GetMethod Method (String, BindingFlags) //
+about : BindingFlags.Instance
+•必须使用 BindingFlags.Instance 或 BindingFlags.Static in order to get a return，否则返回null
+•Specify BindingFlags.Public to include public methods in the search.
+•Specify BindingFlags.NonPublic to include non-public methods (可以得到private, internal, and protected methods) in the search.
+•Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy; private static members in inherited classes are not included.
+
+public class Person
+{
+   public String FirstName;
+   public String LastName;
+
+   public override String ToString()
+   {
+      return (FirstName + " " + LastName).Trim();
+   }
+}
+
+
+Type t = typeof(Person);
+MethodInfo m = t.GetMethod(“ToString");
+
+
+MethodInfo BuildMethod = typeof(SettingsSource).GetMethod("BuildRegistration",
+            BindingFlags.Static | BindingFlags.NonPublic);
+
+2.  MethodInfo.MakeGenericMethod : 申明Generic方法参数的类型
+https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k(System.Reflection.MethodInfo.MakeGenericMethod);k(SolutionItemsProject);k(TargetFrameworkMoniker-.NETFramework,Version%3Dv4.5.2);k(DevLang-csharp)&rd=true
+// Define a class with a generic method.
+public class HandlerFactory
+{
+    public static T GetHandler<T>() where T : struct
+    {
+        return (T)Activator.CreateInstance(typeof(T));
+    }
+}
+
+Type ex = typeof(HandlerFactory);
+
+
+MethodInfo mi = ex.GetMethod("Generic");						// mi.ToString():  T GetHandler[T]()
+
+MethodInfo miConstructed = mi.MakeGenericMethod(typeof(int));	//    ToString():  Int32 GetHandler[Int32]()
+
+// 详细比较查看文档中两个方法的比较
+
+3. MethodInfo.InvodeMethod(object obj, object[] parameters) : 调用方法
+https://msdn.microsoft.com/en-us/library/a89hcwhh(v=vs.110).aspx
+第一个参数是调用这个方法的object 如果该方法是stattic的,最好写成null, 写成别的值会忽略这个参数
+第二个参数An argument list for the invoked method or constructor、
+
+如果该方法不是static， 第一个参数必须赋值为调用这个方法的object
+
+public class MagicClass
+{
+    private int magicBaseValue;
+
+    public MagicClass()
+    {
+        magicBaseValue = 9;
+    }
+
+    public int ItsMagic(int preMagic)
+    {
+        return preMagic * magicBaseValue;
+    }
+}
+
+MethodInfo magicMethod = magicType.GetMethod("ItsMagic");
+object magicValue = magicMethod.Invoke(magicClassObject, new object[]{100}); //方法ItsMagic参数值为100

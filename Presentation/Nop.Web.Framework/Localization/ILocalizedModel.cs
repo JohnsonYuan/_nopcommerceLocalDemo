@@ -6,7 +6,7 @@ namespace Nop.Web.Framework.Localization
     {
     }
 
-    public interface ILoccalizedModel<TLocalizedModel> : ILocalizedModel
+    public interface ILocalizedModel<TLocalizedModel> : ILocalizedModel
     {
         IList<TLocalizedModel> Locales { get; set; }
     }
