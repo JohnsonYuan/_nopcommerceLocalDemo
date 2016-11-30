@@ -15,7 +15,91 @@ Autofac Registration : http://docs.autofac.org/en/latest/register/registration.h
 Autofac can accept a delegate or lambda expression to be used as a component creator:
 The parameter c type is IComponentContext in which the component is being created, you can use it Resolve object
 
-3. builder.RegisterType<SomeType>(); 这样注册相当于builder.RegisterType<SomeType>().AsSelf();
+3.Passing Parameters to Register （http://docs.autofac.org/en/latest/register/parameters.html?highlight=ResolvedParameter）
+Available Parameter Types
+·NamedParameter - match target parameters by name
+·TypedParameter - match target parameters by type (exact type match required)
+·ResolvedParameter - flexible parameter matching
+
+NamedParameter and TypedParameter只能提供固定的值
+ResolvedParameter可以获取到contaienr Resolve的值 （can be used as a way to supply values dynamically retrieved from the container, e.g. by resolving a service by name.）
+e.g. 注册一个Ctor需要参数的类
+public class ConfigReader : IConfigReader
+{
+  public ConfigReader(string configSectionName)
+  {
+    // Store config section name
+  }
+  // ...read configuration based on the section name.
+}
+You could use a lambda expression component for that:
+·builder.Register(c => new ConfigReader("sectionName")).As<IConfigReader>();
+Or you could pass a parameter to a reflection component registration:
+// Using a NAMED parameter:
+·builder.RegisterType<ConfigReader>()
+       .As<IConfigReader>()
+       .WithParameter("configSectionName", "sectionName");
+// Using a TYPED parameter:
+·builder.RegisterType<ConfigReader>()
+       .As<IConfigReader>()
+       .WithParameter(new TypedParameter(typeof(string), "sectionName"));
+
+// Using a RESOLVED parameter:
+·builder.RegisterType<ConfigReader>()
+       .As<IConfigReader>()
+       .WithParameter(
+         new ResolvedParameter(
+           (pi, ctx) => pi.ParameterType == typeof(string) && pi.Name == "configSectionName",
+           (pi, ctx) => "sectionName"));
+
+-------------------------------
+
+NopCommerce Web.Framework\DependencyRegister.cs注册是用ResolvedParameter.ForNamed这种形式，调用方法还是与上面例子相同：
+    builder.RegisterType<ProductTagService>().As<IProductTagService>()
+        .WithParameter(ResolvedParameter.ForNamed<ICacheManager>("nop_cache_static"))
+        .InstancePerLifetimeScope();
+
+ResolvedParameter.ForNamed source code:
+https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/Core/ResolvedParameter.cs
+public static ResolvedParameter ForNamed<TService>(string serviceName)
+{
+            if (serviceName == null) throw new ArgumentNullException(nameof(serviceName));
+
+            return ForKeyed<TService>(serviceName);
+}
+
+public static ResolvedParameter ForKeyed<TService>(object serviceKey)
+{
+    if (serviceKey == null) throw new ArgumentNullException(nameof(serviceKey));
+	var ks = new KeyedService(serviceKey, typeof(TService));
+    return new ResolvedParameter(
+        (pi, c) => pi.ParameterType == typeof(TService) && c.IsRegisteredService(ks),
+		(pi, c) => c.ResolveService(ks));	// Resolve本质还是会调用ResolveService
+}
+
+-------------------------------
+Passing Parameters to Resolve（http://docs.autofac.org/en/latest/resolve/parameters.html?highlight=ResolvedParameter）
+·var reader = scope.Resolve<ConfigReader>(new NamedParameter("configSectionName", "sectionName"));
+If you have more than one parameter, just pass them all in via the Resolve() method:
+·var service = scope.Resolve<AnotherService>(
+                new NamedParameter("id", "service-identifier"),
+                new TypedParameter(typeof(Guid), Guid.NewGuid()),
+                new ResolvedParameter(
+                  (pi, ctx) => pi.ParameterType == typeof(ILog) && pi.Name == "logger",
+                  (pi, ctx) => LogManager.GetLogger("service")));
+
+Parameters with Lambda Expression Register/Resolve
+// Use TWO parameters to the registration delegate:
+// c = The current IComponentContext to dynamically resolve dependencies
+// p = An IEnumerable<Parameter> with the incoming parameter set
+builder.Register((c, p) =>
+                 new ConfigReader(p.Named<string>("configSectionName")))
+       .As<IConfigReader>();
+
+var reader = scope.Resolve<IConfigReader>(new NamedParameter("configSectionName", "sectionName"));
+
+
+4. builder.RegisterType<SomeType>(); 这样注册相当于builder.RegisterType<SomeType>().AsSelf();
 AsSelf()是默认的选项， 还有AsImplementedInterface()
 Resolve<SomeType>即可
 // However, if you want BOTH services (not as common) you can say so:

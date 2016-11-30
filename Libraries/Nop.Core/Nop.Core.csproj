@@ -42,6 +42,10 @@
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="StackExchange.Redis, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StackExchange.Redis.1.1.603\lib\net45\StackExchange.Redis.dll</HintPath>
       <Private>True</Private>
@@ -90,6 +94,7 @@
     <Compile Include="Caching\MemoryCacheManager.cs" />
     <Compile Include="Caching\NopNullCache.cs" />
     <Compile Include="Caching\PerRequestCacheManager.cs" />
+    <Compile Include="Caching\RedisCacheManager.cs" />
     <Compile Include="Caching\RedisConnectionWrapper.cs" />
     <Compile Include="CommonHelper.cs" />
     <Compile Include="ComponentModel\GenericDictionaryTypeConverter.cs" />
@@ -349,6 +354,7 @@
     <Compile Include="Plugins\IPluginFinder.cs" />
     <Compile Include="Plugins\LoadPluginsMode.cs" />
     <Compile Include="Plugins\OfficialFeedCategory.cs" />
+    <Compile Include="Plugins\OfficialFeedManager.cs" />
     <Compile Include="Plugins\OfficialFeedPlugin.cs" />
     <Compile Include="Plugins\OfficialFeedVersion.cs" />
     <Compile Include="Plugins\PluginDescriptor.cs" />

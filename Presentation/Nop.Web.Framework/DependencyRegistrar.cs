@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Web;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
@@ -11,14 +12,18 @@ using Nop.Core.Configuration;
 using Nop.Core.Data;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
-using Nop.Services.Configuration;
-using System.Web;
 using Nop.Core.Fakes;
-using Nop.Services.Helpers;
 using Nop.Data;
+using Nop.Services.Configuration;
+using Nop.Services.Helpers;
+using Nop.Core.Plugins;
+using Nop.Core.Caching;
 
 namespace Nop.Web.Framework
 {
+    /// <summary>
+    /// Dependency registrar
+    /// </summary>
     public class DependencyRegistrar : IDependencyRegister
     {
         /// <summary>
@@ -78,6 +83,27 @@ namespace Nop.Web.Framework
             }
 
             builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
+
+            //plugins
+            builder.RegisterType<PluginFinder>().As<IPluginFinder>().InstancePerLifetimeScope();
+            builder.RegisterType<OfficialFeedManager>().As<IOfficialFeedManager>().InstancePerLifetimeScope();
+
+            //cache managers
+            if (config.RedisCachingEnabled)
+            {
+                builder.RegisterType<RedisConnectionWrapper>().As<IRedisConnectionWrapper>().SingleInstance();
+                builder.RegisterType<RedisCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_static").InstancePerLifetimeScope();
+            }
+            else
+            {
+                builder.RegisterType<MemoryCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_static").SingleInstance();
+            }
+            builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_per_request").InstancePerLifetimeScope();
+
+            if (config.RunOnAzureWebsites)
+            {
+
+            }
         }
 
         /// <summary>

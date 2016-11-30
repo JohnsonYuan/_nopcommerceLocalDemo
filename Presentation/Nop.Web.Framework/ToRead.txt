@@ -27,3 +27,14 @@ http://blog.csdn.net/cpytiger/article/details/8781457
 
 System.ServiceModel.Syndication
 
+
+看LitJson的JsonMapper代码
+http://lbv.github.io/litjson/docs/quickstart.html
+        string str = "中"; // 超过10ffff的字符 𐀀 \uD800\uDC00
+        JsonData jd = new JsonData();
+        jd["1"] = "a";
+        jd["b"] = str;
+		jd.ToJson();	// {"1":"a","b":"\u4E2D"}		// 4E2D是把中字 -> int -> hex, 得到的
+
+		JsonData jbObj = JsonMapper.ToObject(@"{""1"":""a"",""b"":""\u4E2D""}");
+        Response.Write(jbObj["b']);	// 得到的值是“中”，不是\u4E2D ===》 调查在哪里做了转换

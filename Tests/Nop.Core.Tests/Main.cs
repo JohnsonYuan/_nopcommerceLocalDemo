@@ -3,6 +3,9 @@ using Autofac;
 using Autofac.Core.Lifetime;
 using Autofac.Builder;
 using System.Reflection;
+using Nop.Core.Caching;
+using System.Web;
+using Nop.Core.Fakes;
 
 namespace Nop.Core.Tests
 {
@@ -53,21 +56,45 @@ namespace Nop.Core.Tests
 
         static void Main()
         {
-            // Get the constructor and create an instance of MagicClass
-            Type magicType = Type.GetType("MagicClass");
-            ConstructorInfo magicConstructor = magicType.GetConstructor(Type.EmptyTypes);
-            object magicClassObject = magicConstructor.Invoke(new object[] { });
+            var builder = new ContainerBuilder();
+            builder.RegisterType<ConsoleOutput>().AsSelf().As<IOutput>().InstancePerRequest();
+            builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
 
-            // Get the ItsMagic method and invoke with a parameter value of 100
+            builder.Register(c => new FakeHttpContext("~")).As<HttpContextBase>().InstancePerLifetimeScope();
 
-            MethodInfo magicMethod = magicType.GetMethod("ItsMagic");
-            object magicValue = magicMethod.Invoke(magicClassObject, new object[] { 100 });
+            builder.RegisterSource(new AutofacDemo.Features.AnyConcreteTypeNotAlreadyRegisteredSource());
+ builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_per_request").InstancePerLifetimeScope();
 
-            Console.WriteLine("MethodInfo.Invoke() Example\n");
+            builder.RegisterType<MemoryCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_static").SingleInstance();
 
+            var container = builder.Build();
+            using (var scopeContainer = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                //var myComponent = scopeContainer.Resolve<MyComponent>();
+                var myComponent = scopeContainer.Resolve<ConsoleOutput>();
+                var pets = scopeContainer.Resolve<Pet>();
+                pets.Output();
+
+
+                // test for cache
+                var iCache = scopeContainer.Resolve<ICacheManager>();
+                Console.WriteLine(iCache.GetType());
+
+                iCache = scopeContainer.ResolveNamed<ICacheManager>("nop_cache_static");
+                Console.WriteLine(iCache.GetType());
+
+                try
+                {
+                    iCache = scopeContainer.ResolveNamed<ICacheManager>("nop_cache_static11");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
+            }
 
             return;
-
 
             HandlerFactory hf = new HandlerFactory();
             var method = typeof(HandlerFactory).GetMethod("GetHandler");
@@ -79,20 +106,6 @@ namespace Nop.Core.Tests
             var result = method.Invoke(hf, null);
             Console.WriteLine(method.IsGenericMethod);
             return;
-            var builder = new ContainerBuilder();
-            builder.RegisterType<ConsoleOutput>().AsSelf().As<IOutput>().InstancePerRequest();
-            builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
-
-            builder.RegisterSource(new AutofacDemo.Features.AnyConcreteTypeNotAlreadyRegisteredSource());
-
-            var container = builder.Build();
-            using (var scopeContainer = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
-            {
-                //var myComponent = scopeContainer.Resolve<MyComponent>();
-                var myComponent = scopeContainer.Resolve<ConsoleOutput>();
-                var pets = scopeContainer.Resolve<Pet>();
-                pets.Output();
-            }
         }
     }
 
