@@ -9,7 +9,7 @@ namespace Nop.Services.Events
     /// <summary>
     /// Evnt publisher
     /// </summary>
-    class EventPublisher : IEventPublisher
+    public class EventPublisher : IEventPublisher
     {
         #region Fields
 
