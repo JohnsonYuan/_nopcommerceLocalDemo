@@ -227,6 +227,45 @@ namespace Nop.WebApp.Demo
     }
 }
 
+Autofac: 
+在NopEngine -> RegisterDependencies中， 每次更新Container的时候都会builder = new ContainerBuilder()
+是引文一个ContainerBuilder 的 Update， 和Build方法只能使用一次
+（//because Build() or Update() method can only be called once on a ContainerBuilder.）
+
+var builder = new ContainerBuilder();
+var container = builder.Build();
+this._containerManager = new ContainerManager(container);
+
+builder = new ContainerBuilder();
+builder.RegisterInstance(config).As<NopConfig>().SingleInstance();
+。。。
+builder.Update(container);
+
+builder = new ContainerBuilder();
+builder.Register 。。。
+。。。
+builder.Update(container);
+
+Build源代码：
+https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/ContainerBuilder.cs
+Build
+private void Build(IComponentRegistry componentRegistry, bool excludeDefaultModules)
+{
+    if (componentRegistry == null) throw new ArgumentNullException(nameof(componentRegistry));
+
+	// 如果已经Build过， 就会throw BuildCanOnlyBeCalledOnce 的exception
+    if (_wasBuilt)
+        throw new InvalidOperationException(ContainerBuilderResources.BuildCanOnlyBeCalledOnce);
+
+	_wasBuilt = true;
+
+}
+
+
+Autofac.Integration.Mvc/AutofacDependencyResolver.cs
+https://github.com/autofac/Autofac.Mvc/blob/develop/src/Autofac.Integration.Mvc/AutofacDependencyResolver.cs
+NopEngine.cs中调用
+DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
 Autofac 注册难点： Registration Sources
 

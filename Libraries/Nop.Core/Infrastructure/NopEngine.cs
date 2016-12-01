@@ -62,8 +62,8 @@ namespace Nop.Core.Infrastructure
             builder = new ContainerBuilder();
             var drTypes = typeFinder.FindClassesOfType<IDependencyRegister>();
             var drInstances = new List<IDependencyRegister>();
-            foreach (var startUpTaskType in drTypes)
-                drInstances.Add((IDependencyRegister)Activator.CreateInstance(startUpTaskType));
+            foreach (var drType in drTypes)
+                drInstances.Add((IDependencyRegister)Activator.CreateInstance(drType));
             drInstances.AsQueryable().OrderBy(st => st.Order).ToList();
             foreach (var dependencyRegister in drInstances)
                 dependencyRegister.Register(builder, typeFinder, config);

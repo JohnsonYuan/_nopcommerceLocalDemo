@@ -1,4 +1,5 @@
 ﻿using Nop.WebApp.Demo;
+using StackExchange.Profiling;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Web.Compilation;
 
@@ -179,6 +181,13 @@ namespace Nop.WebApp.Demo
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            MiniProfiler.Start();
+            using (MiniProfiler.Current.Step("I'm doing stuff"))
+            {
+                Thread.Sleep(300);
+            }
+            MiniProfiler.Stop();
 
             HttpCookie MyCookie = new HttpCookie("LastVisit");
             MyCookie.Value = DateTime.Now.ToString();
