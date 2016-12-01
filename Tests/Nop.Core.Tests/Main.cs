@@ -6,6 +6,7 @@ using System.Reflection;
 using Nop.Core.Caching;
 using System.Web;
 using Nop.Core.Fakes;
+using Nop.Core.Infrastructure;
 
 namespace Nop.Core.Tests
 {
@@ -23,7 +24,7 @@ namespace Nop.Core.Tests
         }
         public class HandlerFactory
         {
-            public   T GetHandler<T>() where T : struct
+            public T GetHandler<T>() where T : struct
             {
                 return (T)Activator.CreateInstance(typeof(T));
             }
@@ -54,8 +55,12 @@ namespace Nop.Core.Tests
             }
         }
 
+
+
         static void Main()
         {
+            return;
+
             var builder = new ContainerBuilder();
             builder.RegisterType<ConsoleOutput>().AsSelf().As<IOutput>().InstancePerRequest();
             builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
@@ -63,7 +68,7 @@ namespace Nop.Core.Tests
             builder.Register(c => new FakeHttpContext("~")).As<HttpContextBase>().InstancePerLifetimeScope();
 
             builder.RegisterSource(new AutofacDemo.Features.AnyConcreteTypeNotAlreadyRegisteredSource());
- builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_per_request").InstancePerLifetimeScope();
+            builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_per_request").InstancePerLifetimeScope();
 
             builder.RegisterType<MemoryCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_static").SingleInstance();
 
@@ -91,7 +96,7 @@ namespace Nop.Core.Tests
                 {
                     Console.WriteLine(ex.Message);
                 }
-                
+
             }
 
             return;

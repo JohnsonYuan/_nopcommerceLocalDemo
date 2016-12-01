@@ -106,6 +106,11 @@ namespace Nop.Core.Infrastructure
                     {
                         foreach (var t in types)
                         {
+                            // 我的注释
+                            // 如果要找的类型是IConsumer<>, 是一个generic type
+                            // typeof(IConsumer<>).IsAssignableFrom(typeof(IConsumer<>))            // true
+                            // typeof(IConsumer<>).IsAssignableFrom(typeof(TimeConsumer<>))         // false
+                            // typeof(IConsumer<int>).IsAssignableFrom(typeof(TimeConsumer<int>))   // true
                             if (assignTypeFrom.IsAssignableFrom(t)
                                 || (assignTypeFrom.IsGenericType && DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
                             {

@@ -368,3 +368,57 @@ public class MagicClass
 
 MethodInfo magicMethod = magicType.GetMethod("ItsMagic");
 object magicValue = magicMethod.Invoke(magicClassObject, new object[]{100}); //方法ItsMagic参数值为100
+
+Type.GetInterfaces() 会得到类型所有实现的interface
+如果需要筛选满足条件的interface用FindInterfaces
+Type.FindInterfaces (下面有source code):
+public virtual Type[] FindInterfaces(
+	TypeFilter filter,
+	object filterCriteria
+)
+TypeFilter是一个deleate， public delegate bool TypeFilter(Type m, object filterCriteria);
+第二个参数filterCriteria可以为任意类型的值, 能够在TypeFilter里判断就可以，是一个判断条件, 会用于第一个参数filter的判断 （参看下面source code）
+
+    public static void Main()
+    {
+            XmlDocument myXMLDoc = new XmlDocument();
+            Type myType = myXMLDoc.GetType();
+
+            TypeFilter myFilter = new TypeFilter(MyInterfaceFilter);
+            Type[] myInterfaces = myType.FindInterfaces(myFilter, 
+                    "System.Collections.IEnumerable");
+    }
+    public static bool MyInterfaceFilter(Type typeObj,Object criteriaObj)
+    {
+        if(typeObj.ToString() == criteriaObj.ToString())
+            return true;
+        else 
+            return false;
+    }
+
+https://referencesource.microsoft.com/#mscorlib/system/type.cs,599
+        // This method will filter the interfaces supported the class
+        public virtual Type[] FindInterfaces(TypeFilter filter,Object filterCriteria)
+        {
+            if (filter == null)
+                throw new ArgumentNullException("filter");
+            Contract.EndContractBlock();
+            Type[] c = GetInterfaces();
+            int cnt = 0;
+            for (int i = 0;i<c.Length;i++) {
+                if (!filter(c[i],filterCriteria))
+                    c[i] = null;
+                else
+                    cnt++;
+            }
+            if (cnt == c.Length)
+                return c;
+            
+            Type[] ret = new Type[cnt];
+            cnt=0;
+            for (int i=0;i<c.Length;i++) {
+                if (c[i] != null)
+                    ret[cnt++] = c[i];
+            }
+            return ret;
+        }
