@@ -1,0 +1,24 @@
+﻿Global.asax.cs中需要学习的点:
+MvcHandler.DisableMvcResponseHeader = true;
+
+ModelMetadataProviders.Current = new NopMetadataProvider();
+
+DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
+ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new NopValidatorFactory()));
+
+GlobalFilters.Filters.Add(new ProfilingActionFilter());
+
+
+
+=======================================
+需要看的东西
+NopModelBinder
+
+Model Validation using DataAnnotations and ModelValidators
+https://www.codeproject.com/articles/220025/a-sample-on-asp-net-mvc-model-validation-using-dat
+
+Diving into ASP.NET MVC 3 Model Metadata Providers
+http://www.dotnetcurry.com/aspnet-mvc/715/model-metadata-provider-aspnet-mvc
+
+DependencyResolve.
+https://catelproject.atlassian.net/wiki/display/CTL/Introduction+to+DependencyResolver+and+DependencyResolverManager

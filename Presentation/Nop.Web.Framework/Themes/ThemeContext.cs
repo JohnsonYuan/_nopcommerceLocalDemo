@@ -21,6 +21,19 @@ namespace Nop.Web.Framework.Themes
         private bool _themeIsCached;
         private string _cachedThemeName;
 
+        public ThemeContext(IWorkContext workContext,
+            IStoreContext storeContext,
+            IGenericAttributeService genericAttributeService,
+            StoreInformationSettings storeInformationSettings,
+            IThemeProvider themeProvider)
+        {
+            this._workContext = workContext;
+            this._storeContext = storeContext;
+            this._genericAttributeService = genericAttributeService;
+            this._storeInformationSettings = storeInformationSettings;
+            this._themeProvider = themeProvider;
+        }
+
         /// <summary>
         /// Get or set current theme system name
         /// </summary>

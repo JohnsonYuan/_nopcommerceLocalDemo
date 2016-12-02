@@ -1,0 +1,5 @@
+﻿https://www.asp.net/mvc/overview/older-versions/hands-on-labs/aspnet-mvc-4-dependency-injection
+
+看看 Miniprofiler GlobalFilter
+
+怎么寻找partialview FaviconUrl

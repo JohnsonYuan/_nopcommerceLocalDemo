@@ -155,14 +155,14 @@ namespace Nop.Web.Framework.UI
             if (string.IsNullOrEmpty(part))
                 return;
 
-            _titleParts.Add(part);
+            _metaDescriptionParts.Add(part);
         }
         public void AppendMetaDescriptionParts(string part)
         {
             if (string.IsNullOrEmpty(part))
                 return;
 
-            _titleParts.Insert(0, part);
+            _metaDescriptionParts.Insert(0, part);
         }
         public string GenerateMetaDescription()
         {
@@ -257,7 +257,7 @@ namespace Nop.Web.Framework.UI
                     lock (s_lock)
                     {
                         var bundleFor = BundleTable.Bundles.GetBundleFor(bundleVirtualPath);
-                        if(bundleFor == null)
+                        if (bundleFor == null)
                         {
                             var bundle = new ScriptBundle(bundleVirtualPath);
                             //bundle.Transforms.Clear();

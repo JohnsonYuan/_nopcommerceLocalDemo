@@ -194,6 +194,7 @@
     <Compile Include="UI\AsIsBundleOrderer.cs" />
     <Compile Include="UI\DataListExtensions.cs" />
     <Compile Include="UI\IPageHeadBuilder.cs" />
+    <Compile Include="UI\LayoutExtensions.cs" />
     <Compile Include="UI\NotifyType.cs" />
     <Compile Include="UI\PageHeadBuilder.cs" />
     <Compile Include="UI\Paging\BasePageableModel.cs" />
