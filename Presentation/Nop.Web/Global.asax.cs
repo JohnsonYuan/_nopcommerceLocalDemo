@@ -22,7 +22,6 @@ using StackExchange.Profiling.Mvc;
 
 namespace Nop.Web
 {
-    //TODO: Application_AuthenticateRequest 会执行吗不登陆的话
     public class MvcApplication : HttpApplication
     {
         public static void RegisterRoutes(RouteCollection routes)

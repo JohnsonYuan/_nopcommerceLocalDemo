@@ -6,7 +6,6 @@ using Nop.Core.Infrastructure;
 
 namespace Nop.Services.Tasks
 {
-
     /// <summary>
     /// Represents task manager
     /// </summary>

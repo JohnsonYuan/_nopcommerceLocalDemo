@@ -9,6 +9,7 @@ http://www.cnblogs.com/artech/archive/2012/05/21/model-binder-provision.html
 
 DataAnnotations and ASP.NET MVC, NopMetadataProvider.cs => DataAnnotationsModelMetadataProvider
 http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
+http://buildstarted.com/2010/09/14/creating-your-own-modelmetadataprovider-to-handle-custom-attributes/
 
 Controllers/BaseController.cs -> RenderPartialViewToString
 http://www.codemag.com/article/1312081
