@@ -3,3 +3,10 @@
 看看 Miniprofiler GlobalFilter
 
 怎么寻找partialview FaviconUrl
+
+MVC pipeline:
+MvcRouteHandler and MvcHandler 
+https://www.codeproject.com/articles/595520/mvcroutehandler-and-mvchandler-in-asp-net-mvc-fram
+
+DefaultControllerFactory in ASP.NET MVC
+https://www.codeproject.com/articles/599189/defaultcontrollerfactory-in-asp-net-mvc

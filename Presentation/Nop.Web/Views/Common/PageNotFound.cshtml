@@ -1,6 +1,10 @@
-﻿
-@{
-    ViewBag.Title = "PageNotFound";
+﻿@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.PageNotFound").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-not-found-page");
 }
 
 <h2>PageNotFound</h2>

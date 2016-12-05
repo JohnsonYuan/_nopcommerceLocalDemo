@@ -1,9 +1,15 @@
 ﻿
 @{
+    Layout = null;
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
+
+@foreach (var item in ControllerBuilder.Current.DefaultNamespaces)
+{
+    Console.WriteLine(item);
+}
 
 @foreach (var item in GlobalFilters.Filters)
 {

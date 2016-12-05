@@ -1,0 +1,11 @@
+﻿Action:
+NonAction
+ChildAcion
+
+Filter:
+
+_ViewStart.cshtml
+
+View Vs Partial View (最下方有总结的比较表格):
+http://www.c-sharpcorner.com/UploadFile/ff2f08/partial-view-in-mvc/
+

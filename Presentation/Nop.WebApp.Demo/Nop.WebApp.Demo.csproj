@@ -110,6 +110,7 @@
     <Content Include="packages.config" />
     <Content Include="ResponseOutputStream.aspx" />
     <Content Include="WebForm2.aspx" />
+    <Content Include="WebForm3.aspx" />
     <None Include="Properties\PublishProfiles\demo].pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

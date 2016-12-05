@@ -8,12 +8,8 @@ ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider
 
 GlobalFilters.Filters.Add(new ProfilingActionFilter());
 
-Action:
-NonAction
-ChildAcion
 
-Filter:
-
+Infrastructure\Cache: ModelCacheEventConsumer.cs 学习IConsumer
 
 
 =======================================

@@ -29,3 +29,82 @@ if(bundleFor == null)
     BundleTable.Bundles.Add(bundle);
 }
 bundle路径为Scripts.Render(bundleVirtualPath).ToString()
+
+
+
+重写Route:
+Localization\LocalizedRoute.cs， \Seo\GenericPathRouteExtensions.cs
+两个文件参考的是RouteCollectionExtensions 源码：
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/RouteCollectionExtensions.cs
+
+MapRoute方法中有
+var route = new GenericPathRoute(url, new MvcRouteHandler())
+{
+    Defaults = new RouteValueDictionary(defaults),
+    Constraints = new RouteValueDictionary(constraints),
+    DataTokens = new RouteValueDictionary()
+};
+
+if ((namespaces != null) && (namespaces.Length > 0))
+{
+// 在mvc源码中写的是route.DataTokens[RouteDataTokenKeys.Namespaces] = namespaces; RouteCollectionExtensions是internal，不能直接调用
+    route.DataTokens["namespaces"] = namespaces;
+}
+
+
+RouteValueDictionary: case-insensitive collection of key/value （不区分大小写, 但写成Namespaces更专业）
+ public class RouteValueDictionary : IDictionary<string, object> {
+        private Dictionary<string, object> _dictionary;
+ 
+        public RouteValueDictionary() {
+            _dictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        }
+}
+
+System.Web.Mvc.Routing\RouteDataTokenKeys.cs (internal 的， 所以不能自定义的Route不能访问): 
+    internal class RouteDataTokenKeys
+    {
+        public const string UseNamespaceFallback = "UseNamespaceFallback";
+        public const string Namespaces = "Namespaces";
+        public const string Area = "area";
+        public const string Controller = "controller";
+		
+		// ... others def
+	}
+
+
+
+/*********************************************
+//TODO:::: 
+================MVC pipeline==================
+**********************************************/
+怎么找Controller： 先从Route里DataToken里多用户的namespace里找 （route.DataTokens["Namespaces"] = new [] { ""}; ）
+System.Web.Mvc\DefaultControllerFactory.cs:
+protected internal virtual Type GetControllerType(RequestContext requestContext, string controllerName)
+{
+	// 。。。
+
+	// first search in the current route's namespace collection
+	if (routeData.DataTokens.TryGetValue(RouteDataTokenKeys.Namespaces, out routeNamespacesObj))
+	{
+		IEnumerable<string> routeNamespaces = routeNamespacesObj as IEnumerable<string>;
+	}
+
+	// then search in the application's default namespace collection
+	if (ControllerBuilder.DefaultNamespaces.Count > 0)
+	{
+		HashSet<string> namespaceDefaults = new HashSet<string>(ControllerBuilder.DefaultNamespaces, StringComparer.OrdinalIgnoreCase);
+	}
+
+	// if all else fails, search every namespace
+    return GetControllerTypeWithinNamespaces(routeData.Route, controllerName, null /* namespaces */);
+}
+
+Source MvcRouteHandler.cs:
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/MvcRouteHandler.cs
+
+MvcRouteHandler and MvcHandler 
+https://www.codeproject.com/articles/595520/mvcroutehandler-and-mvchandler-in-asp-net-mvc-fram
+
+DefaultControllerFactory in ASP.NET MVC
+https://www.codeproject.com/articles/599189/defaultcontrollerfactory-in-asp-net-mvc
