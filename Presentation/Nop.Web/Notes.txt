@@ -11,6 +11,10 @@ GlobalFilters.Filters.Add(new ProfilingActionFilter());
 
 Infrastructure\Cache: ModelCacheEventConsumer.cs 学习IConsumer
 
+NewsController.cs\RssHeaderLink,  GetLocalized方法，学习Expression tree, expression tree compile
+string link = string.Format("<link href=\"{0}\" rel=\"alternate\" type=\"{1}\" title=\"{2}: News\" />",
+    Url.RouteUrl("NewsRSS", new { languageId = _workContext.WorkingLanguage.Id }, _webHelper.IsCurrentConnectionSecured() ? "https" : "http"), MimeTypes.ApplicationRssXml, _storeContext.CurrentStore.GetLocalized(x => x.Name));
+
 
 =======================================
 需要看的东西

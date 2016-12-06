@@ -53,8 +53,8 @@
         <!--Powered by nopCommerce - http://www.nopCommerce.com-->
     </head>
     <body>
-        <div>
-
-        </div>
+        @RenderBody()
+        @Html.NopCssFiles(this.Url, ResourceLocation.Foot)
+        @Html.NopScripts(this.Url, ResourceLocation.Foot)
     </body>
 </html>

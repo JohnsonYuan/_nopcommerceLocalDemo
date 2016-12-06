@@ -1,10 +1,14 @@
-﻿
+﻿@using Nop.Core.Infrastructure;
+@using Nop.Core;
 @{
-    Layout = null;
     ViewBag.Title = "Index";
+
+    var workContext = EngineContext.Current.Resolve<IWorkContext>();
 }
 
 <h2>Index</h2>
+
+@workContext.WorkingLanguage.Name @workContext.WorkingLanguage.Id
 
 @foreach (var item in ControllerBuilder.Current.DefaultNamespaces)
 {

@@ -390,9 +390,6 @@ namespace Nop.Core.Tests
             var demoC = TypeDescriptor.GetConverter(typeof(int?));
             Console.WriteLine(demoC);
 
-            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).ToString());
-
-            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
 
             var _inputValues = new NameValueCollection();
 

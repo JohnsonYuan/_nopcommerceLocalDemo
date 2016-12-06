@@ -26,7 +26,7 @@ namespace Nop.Web.Framework.UI
         public static void AppendTitleParts(this HtmlHelper html, string part)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
-            pageHeadBuilder.AddTitleParts(part);
+            pageHeadBuilder.AppendTitleParts(part);
         }
         public static MvcHtmlString NopTitle(this HtmlHelper html, bool addDefaultTitle = true, string part = "")
         {
@@ -147,7 +147,7 @@ namespace Nop.Web.Framework.UI
         public static void AppendScriptParts(this HtmlHelper html, ResourceLocation location, string part, bool excludeFromBundle = false, bool isAsync = false)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
-            pageHeadBuilder.AddScriptParts(location, part, excludeFromBundle, isAsync);
+            pageHeadBuilder.AppendScriptParts(location, part, excludeFromBundle, isAsync);
         }
         /// <summary>
         /// Generate all script parts

@@ -162,8 +162,35 @@
     <Content Include="App_Data\Localization\Installation\installation.vi.xml" />
     <Content Include="App_Data\Localization\Installation\installation.zhs.xml" />
     <Content Include="App_Data\Settings.txt" />
+    <Content Include="Content\BBEditor\ed.js" />
+    <Content Include="Content\BBEditor\images\bold.gif" />
+    <Content Include="Content\BBEditor\images\code.gif" />
+    <Content Include="Content\BBEditor\images\italic.gif" />
+    <Content Include="Content\BBEditor\images\link.gif" />
+    <Content Include="Content\BBEditor\images\ordered.gif" />
+    <Content Include="Content\BBEditor\images\picture.gif" />
+    <Content Include="Content\BBEditor\images\quote.gif" />
+    <Content Include="Content\BBEditor\images\underline.gif" />
+    <Content Include="Content\BBEditor\images\unlink.gif" />
+    <Content Include="Content\BBEditor\images\unordered.gif" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\animated-overlay.gif" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\jquery-ui-themes\smoothness\jquery-ui-1.10.3.custom.css" />
+    <Content Include="Content\jquery-ui-themes\smoothness\jquery-ui-1.10.3.custom.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="ErrorPage.htm" />
     <Content Include="favicon.ico" />
@@ -185,6 +212,9 @@
     <Content Include="Scripts\fineuploader\processing.gif" />
     <Content Include="Scripts\fineuploader\templates\default.html" />
     <Content Include="Scripts\fineuploader\templates\simple-thumbnails.html" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-migrate-1.2.1.js" />
     <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.custom.js" />
@@ -194,6 +224,7 @@
     <Content Include="Scripts\fineuploader\LICENSE" />
     <Content Include="App_Data\Pdf\FreeSerif.ttf" />
     <Content Include="App_Data\GeoLite2-Country.mmdb" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -425,9 +456,12 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\InstallController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
+    <Compile Include="Extensions\HtmlExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -649,6 +683,9 @@
     <Content Include="Themes\NopShop\Views\Topic\TopicDetails.cshtml" />
     <Content Include="Themes\NopShop\Views\Vendor\ApplyVendor.cshtml" />
     <Content Include="Themes\NopShop\Views\Web.config" />
+    <Content Include="Views\Widget\WidgetsByZone.cshtml" />
+    <Content Include="Views\Shared\_Notifications.cshtml" />
+    <Content Include="Views\Shared\Header.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -659,7 +696,6 @@
   <ItemGroup>
     <Folder Include="App_Start\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\Widget\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">

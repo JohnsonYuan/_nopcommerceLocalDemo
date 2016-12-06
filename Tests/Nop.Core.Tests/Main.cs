@@ -7,6 +7,8 @@ using Nop.Core.Caching;
 using System.Web;
 using Nop.Core.Fakes;
 using Nop.Core.Infrastructure;
+using System.Web.Routing;
+using System.ComponentModel;
 
 namespace Nop.Core.Tests
 {
@@ -58,7 +60,27 @@ namespace Nop.Core.Tests
 
 
         static void Main()
-        {
+        { 
+            var routeValues = new RouteValueDictionary
+            {
+                {"Namespaces", "Nop.Plugin.Widgets.NivoSlider.Controllers"},
+                {"area", null},
+                {"widgetZone", "home_top"}
+            };
+
+            var props = TypeDescriptor.GetProperties(routeValues);
+
+            foreach (PropertyDescriptor item in props)
+            {
+                Console.WriteLine( item.Name + " " + item.GetValue(routeValues).ToString());
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+            var props2 = routeValues.GetType().GetProperties();
+            foreach (var item in props2)
+            {
+                Console.WriteLine( item.Name + " " + item.GetValue(routeValues).ToString());
+            }
             return;
 
             var builder = new ContainerBuilder();

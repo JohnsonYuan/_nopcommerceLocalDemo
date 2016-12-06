@@ -1,8 +1,6 @@
-﻿using Nop.Core;
+﻿using System.Web.Mvc;
+using Nop.Core;
 using Nop.Web.Models.Common;
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
 
 namespace Nop.Web.Controllers
 {

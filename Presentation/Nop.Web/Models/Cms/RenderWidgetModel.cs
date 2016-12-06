@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web.Routing;
+using Nop.Web.Framework.Mvc;
 
 namespace Nop.Web.Models.Cms
 {
-    public class RenderWidgetModel
+    public class RenderWidgetModel : BaseNopModel
     {
+        public string ActionName { get; set; }
+        public string ControllerName { get; set; }
+        public RouteValueDictionary RouteValues { get; set; }
     }
 }
