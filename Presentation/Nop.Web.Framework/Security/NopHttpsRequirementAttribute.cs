@@ -10,7 +10,7 @@ using System.Web.Mvc;
 namespace Nop.Web.Framework.Security
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
-    class NopHttpsRequirementAttribute : FilterAttribute, IAuthorizationFilter
+    public class NopHttpsRequirementAttribute : FilterAttribute, IAuthorizationFilter
     {
         public NopHttpsRequirementAttribute(SslRequirement sslRequirement)
         {
@@ -62,15 +62,11 @@ namespace Nop.Web.Framework.Security
                         bool currentConnectionSecured = webHelper.IsCurrentConnectionSecured();
                         if (currentConnectionSecured)
                         {
-                            var storeContext = EngineContext.Current.Resolve<IStoreContext>();
-                            if (storeContext.CurrentStore.SslEnabled)
-                            {
-                                //redirect to HTTP version of page
-                                //string url = "http://" + filterContext.HttpContext.Request.Url.Host + filterContext.HttpContext.Request.RawUrl;
-                                string url = webHelper.GetThisPageUrl(true, false);
-                                //301 (permanent) redirection
-                                filterContext.Result = new RedirectResult(url, true);
-                            }
+                            //redirect to HTTP version of page
+                            //string url = "http://" + filterContext.HttpContext.Request.Url.Host + filterContext.HttpContext.Request.RawUrl;
+                            string url = webHelper.GetThisPageUrl(true, false);
+                            //301 (permanent) redirection
+                            filterContext.Result = new RedirectResult(url, true);
                         }
                     }
                     break;

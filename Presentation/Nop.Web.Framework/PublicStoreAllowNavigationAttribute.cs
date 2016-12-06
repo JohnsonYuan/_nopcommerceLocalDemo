@@ -18,7 +18,7 @@ namespace Nop.Web.Framework
         /// Ctor
         /// </summary>
         /// <param name="ignore"></param>
-        public PublicStoreAllowNavigationAttribute(bool ignore)
+        public PublicStoreAllowNavigationAttribute(bool ignore = false)
         {
             this._ignore = ignore;
         }

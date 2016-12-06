@@ -169,7 +169,7 @@ demo: http://blog.csdn.net/lhfly/article/details/7450781
 http://www.codeproject.com/Articles/560798/ASP-NET-MVC-controller-dependency-injection-for-be
 (RegisterControllers, SetResolver两步都是必须的, 否则找不到constructor)
 
-1. Register Controllers(RegisterControllers同意注册， 要么单个注册):
+1. Register Controllers(RegisterControllers统一注册， 要么单个注册):
 	var builder = new ContainerBuilder();
 
 	// You can register controllers all at once using assembly scanning...

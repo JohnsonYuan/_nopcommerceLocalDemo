@@ -456,6 +456,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\BasePublicController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\InstallController.cs" />
@@ -468,6 +469,7 @@
     <Compile Include="Infrastructure\Cache\ModelCacheEventConsumer.cs" />
     <Compile Include="Infrastructure\Installation\IInstallationLocalizationService.cs" />
     <Compile Include="Infrastructure\Installation\InstallationLanguage.cs" />
+    <Compile Include="Infrastructure\Installation\InstallationLocalizationService.cs" />
     <Compile Include="Models\Cms\RenderWidgetModel.cs" />
     <Compile Include="Models\Common\FaviconModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
