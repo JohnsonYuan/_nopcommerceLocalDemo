@@ -3,8 +3,13 @@
 <%@ Import Namespace="System.Data.SqlClient" %>
 <%@ Import Namespace="System.Data" %>
 <script language="CS" runat="server">
+
     void Page_Load(object sender, System.EventArgs e)
     {
+        string cookieToken, formToken;
+        System.Web.Helpers.AntiForgery.GetTokens(null, out cookieToken, out formToken);
+
+        Response.Write("cookies : <br/>" + cookieToken + "<br/>" + formToken);
         // Put user code to initialize the page here 
     }
     void btnCheck_Click(object sender, System.EventArgs e)
@@ -17,7 +22,7 @@
             gv1.DataBind();
         }
         else
-        { 
+        {
             lblResult.Text = "Connection Failed";
         }
     }
@@ -63,6 +68,11 @@
 <body>
     <form id="form1" runat="server">
         <div>
+            <%=Request.FilePath %>
+            <br />
+            <%=HttpRuntime.AppDomainAppVirtualPath%>
+            <br />
+
             <asp:TextBox ID="tbxInput" Text="Data Source=192.168.70.227\sql2005;Initial Catalog=nveruserreg;User ID=gaozg;Password=gaozg123;" Width="650px" runat="server" />
             <br />
             <asp:Button ID="btnCheck" OnClick="btnCheck_Click" Text="text" runat="server" />

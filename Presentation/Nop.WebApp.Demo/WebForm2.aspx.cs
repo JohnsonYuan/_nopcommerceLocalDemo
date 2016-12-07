@@ -10,6 +10,14 @@ namespace Nop.WebApp.Demo
 {
     public partial class WebForm2 : System.Web.UI.Page
     {
+        protected void Page_PreInit(object sender, EventArgs e)
+        {//Create a 'Httpcontext' object using 'Current' property
+            HttpContext myContext = HttpContext.Current;
+
+            Server.Transfer("Webform3.aspx");
+
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             var builder = new SqlConnectionStringBuilder(@"Data Source=|DataDirectory|\DatabaseFileName.sdf");
