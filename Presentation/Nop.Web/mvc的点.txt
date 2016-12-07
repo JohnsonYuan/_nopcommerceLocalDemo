@@ -48,3 +48,27 @@ internal virtual void RenderPartialInternal(string partialViewName, ViewDataDict
             IView view = FindPartialView(newViewContext, partialViewName, viewEngineCollection);
             view.Render(newViewContext, writer);
         }
+
+得到input的id
+@Html.HiddenFor(model => model.Id)
+可以调用：
+@Html.IdFor(model => model.Id)
+NopCommerce中使用@Html.FieldIdFor(model => model.Id), 扩展了HtmlHelper<T>
+二者没有本质差别， nopcommerce替换了[, ] (不知道有什么用)
+
+public static string FieldIdFor<T, TResult>(this HtmlHelper<T> html, Expression<Func<T, TResult>> expression)
+{
+    var id = html.ViewData.TemplateInfo.GetFullHtmlFieldId(ExpressionHelper.GetExpressionText(expression));
+    // because "[" and "]" aren't replaced with "_" in GetFullHtmlFieldId
+    return id.Replace('[', '_').Replace(']', '_');
+}
+
+和IdFor源码对比 http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/Html/NameExtensions.cs
+public static MvcHtmlString Id(this HtmlHelper html, string name)
+{
+    return MvcHtmlString.Create(html.AttributeEncode(html.ViewData.TemplateInfo.GetFullHtmlFieldId(name)));
+}
+public static MvcHtmlString IdFor<TModel, TProperty>(this HtmlHelper<TModel> html, Expression<Func<TModel, TProperty>> expression)
+{
+    return Id(html, ExpressionHelper.GetExpressionText(expression));
+}

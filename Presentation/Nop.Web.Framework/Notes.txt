@@ -1,10 +1,49 @@
-﻿肯能有问题的地方：
+﻿可能有问题的地方：
 Nop.Web.Framework.Kendoui\Filter.cs, Collect方中:
 如果A -> B, C, B -> B1, B2当A调用Collect方法是，
 遍历的结果是B B1 B1 B2 B2 C C
 因为轮到B1时，会把B1加入结果中, 然后调用B.Collect()， 会再次把B1加到结果中
 这样的话ToExprssion会生成重复的filter string
 ？TOCHECK？ 可能影响QueryableExtensions中Filter<T>效率
+
+[FlagAttribute]的妙用
+http://stackoverflow.com/questions/8447/what-does-the-flags-enum-attribute-mean-in-c
+[Flags]
+public enum HttpVerbs
+{
+    Get = 1,
+    Post = 2,
+    Put = 4,
+    Delete = 8,
+    Head = 16,
+    Patch = 32,
+    Options = 64
+}
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/AcceptVerbsAttribute.cs
+
+		private static void AddEntryToList(HttpVerbs verbs, HttpVerbs match, List<string> verbList, string entryText)
+        {
+            if ((verbs & match) != 0)
+            {
+                verbList.Add(entryText);
+            }
+        }
+
+        internal static string[] EnumToArray(HttpVerbs verbs)
+        {
+            List<string> verbList = new List<string>();
+
+            AddEntryToList(verbs, HttpVerbs.Get, verbList, "GET");
+            AddEntryToList(verbs, HttpVerbs.Post, verbList, "POST");
+            AddEntryToList(verbs, HttpVerbs.Put, verbList, "PUT");
+            AddEntryToList(verbs, HttpVerbs.Delete, verbList, "DELETE");
+            AddEntryToList(verbs, HttpVerbs.Head, verbList, "HEAD");
+            AddEntryToList(verbs, HttpVerbs.Patch, verbList, "PATCH");
+            AddEntryToList(verbs, HttpVerbs.Options, verbList, "OPTIONS");
+
+            return verbList.ToArray();
+        }
+
 
 
 ﻿References:

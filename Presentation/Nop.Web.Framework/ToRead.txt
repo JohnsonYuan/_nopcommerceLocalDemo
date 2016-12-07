@@ -1,4 +1,48 @@
-﻿6 Tips for ASP.NET MVC Model Binding
+﻿Anti-Forgery Tokens
+（好的介绍）https://www.asp.net/web-api/overview/security/preventing-cross-site-request-forgery-csrf-attacks
+（好的介绍better）https://weblogs.asp.net/dixin/anti-forgery-request-recipes-for-asp-net-mvc-and-ajax
+（深度好文） https://www.codeproject.com/articles/793384/asp-net-anti-forgery-tokens-internals
+Anti-Forgery会生成一个input 和 cookie token, 两个token值不同， 会在验证的时候判断是否合法
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiForgeryConfig.cs
+1. input name 为 __RequestVerificationToken:
+<input name="__RequestVerificationToken" value="Dk9PdKXJENs_RXRjW-ZkWp20VcMXVXm6sT1YR1f0zkc8wxXBx62xwubC5uTNW7YJPBFzdwLfOAv8-yBOrNWEXE9wZB1AVvRLRKImifcb9O41" type="hidden">
+
+2. cookie name为 __RequestVerificationToken， 如果（applicationPath不是"/"的话 cookie name为 "__RequestVerificationToken" + "_" + HttpServerUtility.UrlTokenEncode(Encoding.UTF8.GetBytes(appPath));
+Yr6yR8d9bH6gFxN10w4IoVEzOHnDFBaSU0yBqHnkXT4v1NyIm6zZw3ELZQFG3xSGX0nBL8-Tw9IJfrR5b8_3LtHghrMRelXEo2rcasx-pDg1 
+
+使用方法：
+@using (Html.BeginForm("Manage", "Account")) {
+    @Html.AntiForgeryToken()
+}
+Controller方法加上ValidateAntiForgeryToken 属性
+
+
+生成token
+string cookieToken, formToken;
+AntiForgery.GetTokens(null, out cookieToken, out formToken);
+验证
+AntiForgery.Validate(cookieToken, formToken);
+
+Antifogery source:
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiForgery.cs
+
+HtmlHelper.cs: (http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/HtmlHelper.cs)
+public MvcHtmlString AntiForgeryToken()
+{
+    return new MvcHtmlString(AntiForgery.GetHtml().ToString());
+}
+
+ValidateAntiForgeryTokenAttribute.cs  http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/ValidateAntiForgeryTokenAttribute.cs
+继承FilterAttribute, IAuthorizationFilter
+public ValidateAntiForgeryTokenAttribute()
+            : this(AntiForgery.Validate)
+{
+}
+OnAuthorization 调用AntiForgery.Validate验证
+
+
+
+6 Tips for ASP.NET MVC Model Binding
 http://odetocode.com/Blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx
 
 ModelBinder (Nop.Web.Framework.Mvc.NopModelBinder.cs, BaseNopModel.cs)

@@ -19,6 +19,16 @@ namespace Nop.WebApp.Demo
         }
         protected void Application_BeginRequest()
         {
+            string originalPath = HttpContext.Current.Request.Path.ToLower();
+            if (originalPath.Contains("/page3"))
+            {
+                Context.RewritePath(originalPath.Replace("/page3", "/Webform3.aspx?page=page1"));
+            }
+            if (originalPath.Contains("/page2"))
+            {
+                Context.RewritePath(originalPath.Replace("/page2", "/RewritePath.aspx"), "pathinfo", "page=page2");
+            }
+
             if (Request.IsLocal)
             {
                 MiniProfiler.Start();
