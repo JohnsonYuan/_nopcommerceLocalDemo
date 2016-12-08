@@ -1,6 +1,7 @@
-﻿Anti-Forgery Tokens
+﻿Anti-Forgery Tokens -- Nop.Web.Framwork\Security\PublicAntiForgeryAttribute,cs
 （好的介绍）https://www.asp.net/web-api/overview/security/preventing-cross-site-request-forgery-csrf-attacks
-（好的介绍better）https://weblogs.asp.net/dixin/anti-forgery-request-recipes-for-asp-net-mvc-and-ajax
+（好的例子， 创建一个只在特定httpverb下验证的Anti-Forgery， nopcommerce的版本则是在post和配置是true验证，）
+https://weblogs.asp.net/dixin/anti-forgery-request-recipes-for-asp-net-mvc-and-ajax
 （深度好文） https://www.codeproject.com/articles/793384/asp-net-anti-forgery-tokens-internals
 Anti-Forgery会生成一个input 和 cookie token, 两个token值不同， 会在验证的时候判断是否合法
 http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiForgeryConfig.cs

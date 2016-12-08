@@ -1,4 +1,7 @@
-﻿https://www.asp.net/mvc/overview/older-versions/hands-on-labs/aspnet-mvc-4-dependency-injection
+﻿DEBUG: GetLocalized
+TopicController, PrepareTopicModel 方法中, 学习expression tree
+
+https://www.asp.net/mvc/overview/older-versions/hands-on-labs/aspnet-mvc-4-dependency-injection
 
 看看 Miniprofiler GlobalFilter
 
@@ -10,3 +13,7 @@ https://www.codeproject.com/articles/595520/mvcroutehandler-and-mvchandler-in-as
 
 DefaultControllerFactory in ASP.NET MVC
 https://www.codeproject.com/articles/599189/defaultcontrollerfactory-in-asp-net-mvc
+
+Enum ToString("f"), ToString("G") 加不加flag属性区别
+https://msdn.microsoft.com/en-us/library/c3s1ez6e(v=vs.110).aspx
+http://stackoverflow.com/questions/8447/what-does-the-flags-enum-attribute-mean-in-c

@@ -470,6 +470,7 @@
     <Compile Include="Infrastructure\Installation\IInstallationLocalizationService.cs" />
     <Compile Include="Infrastructure\Installation\InstallationLanguage.cs" />
     <Compile Include="Infrastructure\Installation\InstallationLocalizationService.cs" />
+    <Compile Include="Infrastructure\RouteProvider.cs" />
     <Compile Include="Models\Cms\RenderWidgetModel.cs" />
     <Compile Include="Models\Common\FaviconModel.cs" />
     <Compile Include="Models\Topics\TopicModel.cs" />
@@ -690,6 +691,7 @@
     <Content Include="Views\Shared\_Notifications.cshtml" />
     <Content Include="Views\Shared\Header.cshtml" />
     <Content Include="Views\Topic\TopicBlock.cshtml" />
+    <Content Include="Views\Topic\TopicDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -51,8 +51,8 @@ namespace Nop.Web.Framework.Localization
 
             if(namespaces != null && namespaces.Length > 0)
             {
-                // mvc source code, but RouteDataTokenKeys is internal
-                //route.DataTokens[RouteDataTokenKeys.Namespaces] = namespaces;
+                // mvc source code, route.DataTokens[RouteDataTokenKeys.Namespaces] = namespaces;
+                // but RouteDataTokenKeys is internal
                 route.DataTokens["Namespaces"] = namespaces;
             }
 

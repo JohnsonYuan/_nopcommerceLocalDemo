@@ -56,7 +56,7 @@ namespace Nop.Services.Security
         public PermissionService(IRepository<PermissionRecord> permissionRecordRepository,
             ICustomerService customerService,
             IWorkContext workContext,
-             ILocalizationService localizationService,
+            ILocalizationService localizationService,
             ILanguageService languageService,
             ICacheManager cacheManager)
         {
@@ -82,7 +82,7 @@ namespace Nop.Services.Security
         {
             if (String.IsNullOrEmpty(permissionRecordSystemName))
                 return false;
-            
+
             string key = string.Format(PERMISSIONS_ALLOWED_KEY, customerRole.Id, permissionRecordSystemName);
             return _cacheManager.Get(key, () =>
             {
@@ -136,7 +136,7 @@ namespace Nop.Services.Security
                 return null;
 
             var query = from pr in _permissionRecordRepository.Table
-                        where  pr.SystemName == systemName
+                        where pr.SystemName == systemName
                         orderby pr.Id
                         select pr;
 
@@ -266,7 +266,7 @@ namespace Nop.Services.Security
             }
 
         }
-        
+
         /// <summary>
         /// Authorize permission
         /// </summary>
@@ -329,7 +329,7 @@ namespace Nop.Services.Security
                 if (Authorize(permissionRecordSystemName, role))
                     //yes, we have such permission
                     return true;
-            
+
             //no permission found
             return false;
         }

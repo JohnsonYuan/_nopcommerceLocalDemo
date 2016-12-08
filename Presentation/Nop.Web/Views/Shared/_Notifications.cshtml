@@ -3,11 +3,11 @@
     var successMessages = new List<string>();
     if (TempData[string.Format("nop.notifications.{0}", NotifyType.Success)] != null)
     {
-        successMessages.AddRange(TempData[string.Format("nop.notifications.{0}", NotifyType.Success)] as IList<string>());
+        successMessages.AddRange(TempData[string.Format("nop.notifications.{0}", NotifyType.Success)] as IList<string>);
     }
     if (ViewData[string.Format("nop.notifications.{0}", NotifyType.Success)] != null)
     {
-        successMessages.AddRange(ViewData[string.Format("nop.notifications.{0}", NotifyType.Success)] as IList<string>());
+        successMessages.AddRange(ViewData[string.Format("nop.notifications.{0}", NotifyType.Success)] as IList<string>);
     }
 
     //error messages

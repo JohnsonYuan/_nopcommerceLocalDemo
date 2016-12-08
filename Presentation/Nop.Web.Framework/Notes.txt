@@ -172,3 +172,8 @@ public static void RegisterRoutes(RouteCollection routes)
 {
  routes.MapGenericPathRoute()
 }
+
+
+好的工具 ：
+.NET Reflector FileGenerator plugin 
+http://filegenreflector.codeplex.com/
