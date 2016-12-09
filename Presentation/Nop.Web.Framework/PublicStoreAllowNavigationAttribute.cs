@@ -1,12 +1,9 @@
-﻿using Nop.Core.Data;
-using Nop.Core.Infrastructure;
-using Nop.Services.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Web;
 using System.Web.Mvc;
+using Nop.Core.Data;
+using Nop.Core.Infrastructure;
+using Nop.Services.Security;
 
 namespace Nop.Web.Framework
 {

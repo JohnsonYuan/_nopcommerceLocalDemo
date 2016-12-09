@@ -168,7 +168,7 @@ namespace Nop.Web.Controllers
                 return template.ViewPath;
             });
 
-            ViewBag.IsPopup = false;
+            ViewBag.IsPopup = true;
             return PartialView(templateViewPath, cacheModel);
         }
 

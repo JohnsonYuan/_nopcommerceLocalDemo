@@ -7,15 +7,20 @@
     System.Linq.Expressions.Expression<Func<TopicModel, string>> func = m => m.Title;
 }
 
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
 
-@Html.HiddenFor(model => model.Id)
-@Html.Password("password", null, new { id = "password-" + @Model.Id })
+    @Html.HiddenFor(model => model.Id)
+    @Html.Password("password", null, new { id = "password-" + @Model.Id })
 
-@DateTime.Now is the <em>current</em> time.
-<br />
-<br />
-@Html.IdFor(model => model.Id)
-<br />
-@Html.FieldIdFor(model => model.Id)
+    @DateTime.Now
+        <br />
+        <br />
+        @Html.IdFor(model => model.Id)
+        <br />
+        @Html.FieldIdFor(model => model.Id)
+}
+
 
 

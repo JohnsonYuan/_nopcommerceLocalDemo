@@ -1,7 +1,27 @@
-﻿DEBUG: GetLocalized
+﻿先把controllerfactory看了
+https://www.codeproject.com/articles/599189/defaultcontrollerfactory-in-asp-net-mvc
+https://www.codeproject.com/articles/595520/mvcroutehandler-and-mvchandler-in-asp-net-mvc-fram
+http://stackoverflow.com/questions/8447/what-does-the-flags-enum-attribute-mean-in-c
+
+find source on Url.IsLocalUrl
+            if (!Url.IsLocalUrl(returnUrl))
+                returnUrl = Url.RouteUrl("Home");
+
+如果不在Enum定义中， exception？ Enum.ToObject(typeof(TaxDisplayType), cusomterTaxType);
+
+
+DEBUG: GetLocalized
 TopicController, PrepareTopicModel 方法中, 学习expression tree
 
 https://www.asp.net/mvc/overview/older-versions/hands-on-labs/aspnet-mvc-4-dependency-injection
+
+正则学习:
+Email Regex: https://msdn.microsoft.com/en-us/library/01escwtf(v=vs.110).aspx
+http://deerchao.net/tutorials/regex/regex.htm
+test: http://regexr.com/      (\d{3})+\b
+((?<=\d)\d{3})+\b，用它对1234567890进行查找时结果是234567890。
+((?<=\d)\d{3})\b，用它对1234567890进行查找时结果是?。
+
 
 看看 Miniprofiler GlobalFilter
 

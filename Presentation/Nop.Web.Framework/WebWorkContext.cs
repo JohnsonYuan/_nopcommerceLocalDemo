@@ -313,6 +313,7 @@ namespace Nop.Web.Framework
         {
             get
             {
+
                 if (_cachedLanguage != null)
                     return _cachedLanguage;
 

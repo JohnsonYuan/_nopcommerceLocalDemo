@@ -117,8 +117,6 @@ namespace Nop.Services.Localization
             return result;
         }
 
-
-
         /// <summary>
         /// Get localized property of setting
         /// </summary>
