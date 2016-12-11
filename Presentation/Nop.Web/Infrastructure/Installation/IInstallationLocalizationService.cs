@@ -10,9 +10,9 @@ namespace Nop.Web.Infrastructure.Installation
         /// <summary>
         /// Get locale resource value
         /// </summary>
-        /// <param name="resouceName">Resource name</param>
-        /// <returns>Resouce value</returns>
-        string GetResource(string resouceName);
+        /// <param name="resourceName">Resource name</param>
+        /// <returns>Resource value</returns>
+        string GetResource(string resourceName);
 
         /// <summary>
         /// Get current language for the installation page
@@ -23,7 +23,7 @@ namespace Nop.Web.Infrastructure.Installation
         /// <summary>
         /// Save a language for the installation page
         /// </summary>
-        /// <param name="languageCode"></param>
+        /// <param name="languageCode">Language code</param>
         void SaveCurrentLanguage(string languageCode);
 
         /// <summary>

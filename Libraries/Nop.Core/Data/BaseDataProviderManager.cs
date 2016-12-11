@@ -11,7 +11,7 @@ namespace Nop.Core.Data
         /// Ctor
         /// </summary>
         /// <param name="settings">Data settings</param>
-        public BaseDataProviderManager(DataSettings settings)
+        protected BaseDataProviderManager(DataSettings settings)
         {
             if (settings == null)
                 throw new ArgumentNullException("settings");

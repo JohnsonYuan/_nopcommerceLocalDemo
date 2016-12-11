@@ -1,11 +1,11 @@
 ﻿using System.Web.Routing;
-using Nop.Web.Framework.Mvc.Routes;
 using Nop.Web.Framework.Localization;
+using Nop.Web.Framework.Mvc.Routes;
 using Nop.Web.Framework.Seo;
 
 namespace Nop.Web.Infrastructure
 {
-    public class GenericUrlRouteProvider : IRouteProvider
+    public partial class GenericUrlRouteProvider : IRouteProvider
     {
         public void RegisterRoutes(RouteCollection routes)
         {
@@ -16,9 +16,12 @@ namespace Nop.Web.Infrastructure
                 new[] { "Nop.Web.Controllers" });
 
             routes.MapLocalizedRoute("Topic",
-                "{SeName}",
-                new { controller = "Topic", action = "TopicDetails" },
-                new object[] { "Nop.Web.Controllers" });
+                            "{SeName}",
+                            new { controller = "Topic", action = "TopicDetails" },
+                            new[] { "Nop.Web.Controllers" });
+
+
+
             //the last route. it's used when none of registered routes could be used for the current request
             //but in this case we cannot process non-registered routes (/controller/action)
             //routes.MapLocalizedRoute(

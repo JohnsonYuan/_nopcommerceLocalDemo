@@ -20,7 +20,7 @@ namespace Nop.Core.Infrastructure
 
         #endregion
 
-        #region Utilitiess
+        #region Utilities
 
         /// <summary>
         /// Run startup tasks
@@ -32,7 +32,8 @@ namespace Nop.Core.Infrastructure
             var startUpTasks = new List<IStartupTask>();
             foreach (var startUpTaskType in startUpTaskTypes)
                 startUpTasks.Add((IStartupTask)Activator.CreateInstance(startUpTaskType));
-            startUpTasks.AsQueryable().OrderBy(st => st.Order).ToList();
+            //sort
+            startUpTasks = startUpTasks.AsQueryable().OrderBy(st => st.Order).ToList();
             foreach (var startUpTask in startUpTasks)
                 startUpTask.Execute();
         }
@@ -60,13 +61,14 @@ namespace Nop.Core.Infrastructure
 
             //register dependencies provided by other assemblies
             builder = new ContainerBuilder();
-            var drTypes = typeFinder.FindClassesOfType<IDependencyRegister>();
-            var drInstances = new List<IDependencyRegister>();
+            var drTypes = typeFinder.FindClassesOfType<IDependencyRegistrar>();
+            var drInstances = new List<IDependencyRegistrar>();
             foreach (var drType in drTypes)
-                drInstances.Add((IDependencyRegister)Activator.CreateInstance(drType));
-            drInstances.AsQueryable().OrderBy(st => st.Order).ToList();
-            foreach (var dependencyRegister in drInstances)
-                dependencyRegister.Register(builder, typeFinder, config);
+                drInstances.Add((IDependencyRegistrar) Activator.CreateInstance(drType));
+            //sort
+            drInstances = drInstances.AsQueryable().OrderBy(t => t.Order).ToList();
+            foreach (var dependencyRegistrar in drInstances)
+                dependencyRegistrar.Register(builder, typeFinder, config);
             builder.Update(container);
 
             //set dependency resolver
@@ -87,22 +89,40 @@ namespace Nop.Core.Infrastructure
             RegisterDependencies(config);
 
             //startup tasks
-            RunStartupTasks();
+            if (!config.IgnoreStartupTasks)
+            {
+                RunStartupTasks();
+            }
         }
 
+        /// <summary>
+        /// Resolve dependency
+        /// </summary>
+        /// <typeparam name="T">T</typeparam>
+        /// <returns></returns>
+        public T Resolve<T>() where T : class
+		{
+            return ContainerManager.Resolve<T>();
+		}
+
+        /// <summary>
+        ///  Resolve dependency
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <returns></returns>
         public object Resolve(Type type)
         {
-            return _containerManager.Resolve(type);
+            return ContainerManager.Resolve(type);
         }
-
-        public T Resolve<T>() where T : class
-        {
-            return _containerManager.Resolve<T>();
-        }
-
+        
+        /// <summary>
+        /// Resolve dependencies
+        /// </summary>
+        /// <typeparam name="T">T</typeparam>
+        /// <returns></returns>
         public T[] ResolveAll<T>()
         {
-            return _containerManager.ResolveAll<T>();
+            return ContainerManager.ResolveAll<T>();
         }
 
         #endregion
@@ -114,10 +134,7 @@ namespace Nop.Core.Infrastructure
         /// </summary>
         public ContainerManager ContainerManager
         {
-            get
-            {
-                return _containerManager;
-            }
+            get { return _containerManager; }
         }
 
         #endregion

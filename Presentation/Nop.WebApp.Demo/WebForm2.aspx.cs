@@ -10,14 +10,6 @@ namespace Nop.WebApp.Demo
 {
     public partial class WebForm2 : System.Web.UI.Page
     {
-        protected void Page_PreInit(object sender, EventArgs e)
-        {//Create a 'Httpcontext' object using 'Current' property
-            HttpContext myContext = HttpContext.Current;
-
-            Server.Transfer("Webform3.aspx");
-
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             var builder = new SqlConnectionStringBuilder(@"Data Source=|DataDirectory|\DatabaseFileName.sdf");
@@ -33,19 +25,34 @@ namespace Nop.WebApp.Demo
             {
                 Response.Write( cookies.Value + "<br/><br/><br/>");
             }
-            Response.Charset = "unicode";
-            Response.Headers.Add("hello", "WherE");
         }
 
         protected void check_Click(object sender, EventArgs e)
         {
             HttpCookie MyCookie = new HttpCookie("LastVisit");
-            for (int i = 0; i < 10; i++)
-            {
-                MyCookie.Values.Add("hello" + i, i + " " + DateTime.Now.ToString());
-            }
+            MyCookie.Value = DateTime.Now.Second.ToString();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    MyCookie.Values.Add("hello" + i, i + " " + DateTime.Now.ToString());
+            //}
            // MyCookie.Value = DateTime.Now.ToString();
             Response.Cookies.Add(MyCookie);
+
+
+        }
+
+        protected void check_Click2(object sender, EventArgs e)
+        {
+            HttpCookie cookie = new HttpCookie("languageCode");
+
+            cookie.Value = "en";
+            cookie.HttpOnly = true;
+            cookie.Expires = DateTime.Now.AddHours(1);
+
+            // MyCookie.Value = DateTime.Now.ToString();
+
+            Response.Cookies.Remove("languageCode");
+            Response.Cookies.Set(cookie);
         }
 
         protected void set_Click(object sender, EventArgs e)

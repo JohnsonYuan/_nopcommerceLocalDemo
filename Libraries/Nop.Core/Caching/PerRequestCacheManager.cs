@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using System.Collections;
 using System.Web;
+using System.Linq;
 
 namespace Nop.Core.Caching
 {
+    /// <summary>
+    /// Represents a manager for caching during an HTTP request (short term caching)
+    /// </summary>
     public partial class PerRequestCacheManager : ICacheManager
     {
         private readonly HttpContextBase _context;
@@ -50,13 +52,13 @@ namespace Nop.Core.Caching
         /// <param name="key">key</param>
         /// <param name="data">Data</param>
         /// <param name="cacheTime">Cache time</param>
-        public void Set(string key, object data, int cacheTime)
+        public virtual void Set(string key, object data, int cacheTime)
         {
             var items = GetItems();
             if (items == null)
                 return;
 
-            if(data != null)
+            if (data != null)
             {
                 if (items.Contains(key))
                     items[key] = data;
@@ -70,12 +72,12 @@ namespace Nop.Core.Caching
         /// </summary>
         /// <param name="key">key</param>
         /// <returns>Result</returns>
-        public bool IsSet(string key)
+        public virtual bool IsSet(string key)
         {
             var items = GetItems();
             if (items == null)
                 return false;
-
+            
             return (items[key] != null);
         }
 
@@ -83,7 +85,7 @@ namespace Nop.Core.Caching
         /// Removes the value with the specified key from the cache
         /// </summary>
         /// <param name="key">/key</param>
-        public void Remove(string key)
+        public virtual void Remove(string key)
         {
             var items = GetItems();
             if (items == null)
@@ -102,13 +104,13 @@ namespace Nop.Core.Caching
             if (items == null)
                 return;
 
-            this.RemoveByPattern(pattern, items.Keys.Cast<object>().Select(p=>p.ToString()));
+            this.RemoveByPattern(pattern, items.Keys.Cast<object>().Select(p => p.ToString()));
         }
 
         /// <summary>
         /// Clear all cache data
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
             var items = GetItems();
             if (items == null)

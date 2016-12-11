@@ -19,7 +19,7 @@ namespace Nop.Web.Framework.Mvc
         /// <param name="dependencyRegister">Dependency registrar</param>
         /// <param name="builder">Builder</param>
         /// <param name="contextName">Context name</param>
-        public static void RegisterPluginDataContext<T>(this IDependencyRegister dependencyRegister,
+        public static void RegisterPluginDataContext<T>(this IDependencyRegistrar dependencyRegister,
             ContainerBuilder builder, string contextName)
              where T : IDbContext
         {

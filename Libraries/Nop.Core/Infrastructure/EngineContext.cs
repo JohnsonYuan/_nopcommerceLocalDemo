@@ -11,13 +11,18 @@ namespace Nop.Core.Infrastructure
     {
         #region Methods
 
+        /// <summary>
+        /// Initializes a static instance of the Nop factory.
+        /// </summary>
+        /// <param name="forceRecreate">Creates a new factory instance even though the factory has been previously initialized.</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static IEngine Initialize(bool forceRecreate)
         {
-            if(Singleton<IEngine>.Instance == null || forceRecreate)
+            if (Singleton<IEngine>.Instance == null || forceRecreate)
             {
                 Singleton<IEngine>.Instance = new NopEngine();
-                 var config = ConfigurationManager.GetSection("NopConfig") as NopConfig;
+
+                var config = ConfigurationManager.GetSection("NopConfig") as NopConfig;
                 Singleton<IEngine>.Instance.Initialize(config);
             }
             return Singleton<IEngine>.Instance;
@@ -28,7 +33,7 @@ namespace Nop.Core.Infrastructure
         /// </summary>
         /// <param name="engine">The engine to use.</param>
         /// <remarks>Only use this method if you know what you're doing.</remarks>
-        public static void Replace(NopEngine engine)
+        public static void Replace(IEngine engine)
         {
             Singleton<IEngine>.Instance = engine;
         }

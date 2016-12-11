@@ -1,12 +1,13 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using Nop.Core;
 using Nop.Web.Models.Common;
 using Nop.Core.Domain.Tax;
-using System;
+using Nop.Web.Framework;
 
 namespace Nop.Web.Controllers
 {
-    public class CommonController : Controller
+    public partial class CommonController : BasePublicController
     {
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
@@ -18,7 +19,8 @@ namespace Nop.Web.Controllers
         public CommonController(IStoreContext storeContext,
             IWebHelper webHelper,
             IWorkContext workContext,
-            TaxSettings taxSettings)
+            TaxSettings taxSettings
+            )
         {
             this._storeContext = storeContext;
             this._webHelper = webHelper;
@@ -27,11 +29,6 @@ namespace Nop.Web.Controllers
         }
 
         #endregion
-
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         #region Methods
 
@@ -50,18 +47,19 @@ namespace Nop.Web.Controllers
             return PartialView(model);
         }
         //available even when navigation is not allowed
-        public ActionResult SetTaxType(int cusomterTaxType, string returnUrl = "")
+        [PublicStoreAllowNavigation(true)]
+        public ActionResult SetTaxType(int customerTaxType, string returnUrl = "")
         {
-            var taxDisplayType = (TaxDisplayType)Enum.ToObject(typeof(TaxDisplayType), cusomterTaxType);
+            var taxDisplayType = (TaxDisplayType)Enum.ToObject(typeof(TaxDisplayType), customerTaxType);
             _workContext.TaxDisplayType = taxDisplayType;
 
             //home page
             if (String.IsNullOrEmpty(returnUrl))
                 returnUrl = Url.RouteUrl("HomePage");
 
-            //prevent open redirection attach
+            //prevent open redirection attack
             if (!Url.IsLocalUrl(returnUrl))
-                returnUrl = Url.RouteUrl("Home");
+                returnUrl = Url.RouteUrl("HomePage");
 
             return Redirect(returnUrl);
         }
@@ -73,6 +71,12 @@ namespace Nop.Web.Controllers
             this.Response.TrySkipIisCustomErrors = true;
 
             return View();
+        }
+
+        public ActionResult GenericUrl()
+        {
+            //seems that no entity was found
+            return InvokeHttp404();
         }
 
         //favicon

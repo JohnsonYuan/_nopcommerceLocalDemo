@@ -63,7 +63,7 @@ namespace Nop.Web.Framework.Mvc.Routes
                 var provider = Activator.CreateInstance(providerType) as IRouteProvider;
                 routeProviders.Add(provider);
             }
-            routeProviders = routeProviders.OrderBy(rp => rp.Priority).ToList();
+            routeProviders = routeProviders.OrderByDescending(rp => rp.Priority).ToList();
             routeProviders.ForEach(rp => rp.RegisterRoutes(routes));
         }
     }

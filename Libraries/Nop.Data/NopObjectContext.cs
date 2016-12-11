@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using Nop.Core;
-using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using Nop.Core;
 using Nop.Data.Mapping;
 
 namespace Nop.Data
 {
     /// <summary>
-    /// Objec context
+    /// Object context
     /// </summary>
     public class NopObjectContext : DbContext, IDbContext
     {
@@ -33,17 +34,18 @@ namespace Nop.Data
             //System.Type configType = typeof(LanguageMap);   //any of your configuration classes here
             //var typesToRegister = Assembly.GetAssembly(configType).GetTypes()
 
-            var typesToResiter = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(type => !String.IsNullOrEmpty(type.Namespace))
-                .Where(type => type.BaseType != null && type.BaseType.IsGenericType &&
+            var typesToRegister = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(type => !String.IsNullOrEmpty(type.Namespace))
+            .Where(type => type.BaseType != null && type.BaseType.IsGenericType &&
                 type.BaseType.GetGenericTypeDefinition() == typeof(NopEntityTypeConfiguration<>));
-            foreach (var type in typesToResiter)
+            foreach (var type in typesToRegister)
             {
                 dynamic configurationInstance = Activator.CreateInstance(type);
                 modelBuilder.Configurations.Add(configurationInstance);
             }
             //...or do it manually below. For example,
             //modelBuilder.Configurations.Add(new LanguageMap());
+
 
 
             base.OnModelCreating(modelBuilder);
@@ -55,7 +57,7 @@ namespace Nop.Data
         /// <typeparam name="TEntity">TEntity</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>Attached entity</returns>
-        protected virtual TEntity AttachEntityToContext<TEntity>(TEntity entity) where TEntity : BaseEntity
+        protected virtual TEntity AttachEntityToContext<TEntity>(TEntity entity) where TEntity : BaseEntity, new()
         {
             //little hack here until Entity Framework really supports stored procedures
             //otherwise, navigation properties of loaded entities are not loaded until an entity is attached to the context
@@ -95,7 +97,7 @@ namespace Nop.Data
         }
 
         /// <summary>
-        /// Execute store procedure and load a list of entities at the end
+        /// Execute stores procedure and load a list of entities at the end
         /// </summary>
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="commandText">Command text</param>
@@ -106,7 +108,7 @@ namespace Nop.Data
             //add parameters to command
             if (parameters != null && parameters.Length > 0)
             {
-                for (int i = 0; i < parameters.Length - 1; i++)
+                for (int i = 0; i <= parameters.Length - 1; i++)
                 {
                     var p = parameters[i] as DbParameter;
                     if (p == null)
@@ -115,7 +117,7 @@ namespace Nop.Data
                     commandText += i == 0 ? " " : ", ";
 
                     commandText += "@" + p.ParameterName;
-                    if (p.Direction == System.Data.ParameterDirection.InputOutput || p.Direction == System.Data.ParameterDirection.Output)
+                    if (p.Direction == ParameterDirection.InputOutput || p.Direction == ParameterDirection.Output)
                     {
                         //output parameter
                         commandText += " output";
@@ -141,6 +143,13 @@ namespace Nop.Data
             return result;
         }
 
+        /// <summary>
+        /// Creates a raw SQL query that will return elements of the given generic type.  The type can be any type that has properties that match the names of the columns returned from the query, or can be a simple primitive type. The type does not have to be an entity type. The results of this query are never tracked by the context even if the type of object returned is an entity type.
+        /// </summary>
+        /// <typeparam name="TElement">The type of object returned by the query.</typeparam>
+        /// <param name="sql">The SQL query string.</param>
+        /// <param name="parameters">The parameters to apply to the SQL query string.</param>
+        /// <returns>Result</returns>
         public IEnumerable<TElement> SqlQuery<TElement>(string sql, params object[] parameters)
         {
             return this.Database.SqlQuery<TElement>(sql, parameters);
@@ -154,8 +163,7 @@ namespace Nop.Data
         /// <param name="timeout">Timeout value, in seconds. A null value indicates that the default value of the underlying provider will be used</param>
         /// <param name="parameters">The parameters to apply to the command string.</param>
         /// <returns>The result returned by the database after executing the command.</returns>
-
-        public int ExecuteSqlCommand(string sql, bool dbNotEnsureTransaction = false, int? timeout = default(int?), params object[] parameters)
+        public int ExecuteSqlCommand(string sql, bool doNotEnsureTransaction = false, int? timeout = null, params object[] parameters)
         {
             int? previousTimeout = null;
             if (timeout.HasValue)
@@ -165,18 +173,18 @@ namespace Nop.Data
                 ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = timeout;
             }
 
-            var transactionalBehavior = dbNotEnsureTransaction
+            var transactionalBehavior = doNotEnsureTransaction
                 ? TransactionalBehavior.DoNotEnsureTransaction
                 : TransactionalBehavior.EnsureTransaction;
             var result = this.Database.ExecuteSqlCommand(transactionalBehavior, sql, parameters);
 
             if (timeout.HasValue)
             {
-                //set previous timeout back
-                ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = previousTimeout;
+                //Set previous timeout back
+                ((IObjectContextAdapter) this).ObjectContext.CommandTimeout = previousTimeout;
             }
 
-            //return result;
+            //return result
             return result;
         }
 
@@ -199,13 +207,12 @@ namespace Nop.Data
         /// <summary>
         /// Gets or sets a value indicating whether proxy creation setting is enabled (used in EF)
         /// </summary>
-        public bool ProxyCreationEnabled
+        public virtual bool ProxyCreationEnabled
         {
             get
             {
                 return this.Configuration.ProxyCreationEnabled;
             }
-
             set
             {
                 this.Configuration.ProxyCreationEnabled = value;
@@ -215,13 +222,12 @@ namespace Nop.Data
         /// <summary>
         /// Gets or sets a value indicating whether auto detect changes setting is enabled (used in EF)
         /// </summary>
-        public bool AutoDetecChangesEnabled
+        public virtual bool AutoDetectChangesEnabled
         {
             get
             {
                 return this.Configuration.AutoDetectChangesEnabled;
             }
-
             set
             {
                 this.Configuration.AutoDetectChangesEnabled = value;

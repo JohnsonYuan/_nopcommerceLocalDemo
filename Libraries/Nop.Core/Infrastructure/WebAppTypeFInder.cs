@@ -43,6 +43,7 @@ namespace Nop.Core.Infrastructure
         {
             if (HostingEnvironment.IsHosted)
             {
+                //hosted
                 return HttpRuntime.BinDirectory;
             }
 

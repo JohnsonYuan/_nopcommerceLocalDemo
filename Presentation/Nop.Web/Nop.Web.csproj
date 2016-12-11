@@ -160,7 +160,6 @@
     <Content Include="App_Data\Localization\Installation\installation.ur.xml" />
     <Content Include="App_Data\Localization\Installation\installation.vi.xml" />
     <Content Include="App_Data\Localization\Installation\installation.zhs.xml" />
-    <Content Include="App_Data\Settings.txt" />
     <Content Include="Content\BBEditor\ed.js" />
     <Content Include="Content\BBEditor\images\bold.gif" />
     <Content Include="Content\BBEditor\images\code.gif" />
@@ -452,12 +451,15 @@
     <Content Include="Themes\NopShop\Scripts\respond.min.js" />
     <Content Include="Themes\NopShop\Scripts\styleSheetToogle.js" />
     <Content Include="Themes\NopShop\Views\preview.jpg" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BasePublicController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\InstallController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
@@ -467,6 +469,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Cache\ModelCacheEventConsumer.cs" />
+    <Compile Include="Infrastructure\DependencyRegistrar.cs" />
     <Compile Include="Infrastructure\GenericUrlRouteProvider.cs" />
     <Compile Include="Infrastructure\Installation\IInstallationLocalizationService.cs" />
     <Compile Include="Infrastructure\Installation\InstallationLanguage.cs" />
@@ -477,8 +480,10 @@
     <Compile Include="Models\Common\CurrencySelectorModel.cs" />
     <Compile Include="Models\Common\FaviconModel.cs" />
     <Compile Include="Models\Common\TaxTypeSelectorModel.cs" />
+    <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Topics\TopicModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\Install\InstallValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -705,6 +710,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
+    <Folder Include="Views\Demo\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>

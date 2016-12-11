@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,7 +38,7 @@ namespace Nop.Core
 
         #region Utilities
 
-        protected virtual bool IsRequestAvailable(HttpContextBase httpContext)
+        protected virtual Boolean IsRequestAvailable(HttpContextBase httpContext)
         {
             if (httpContext == null)
                 return false;
@@ -55,7 +55,6 @@ namespace Nop.Core
 
             return true;
         }
-
         protected virtual bool TryWriteWebConfig()
         {
             try
@@ -166,6 +165,7 @@ namespace Nop.Core
                     result = result.Substring(0, index);
             }
             return result;
+
         }
 
         /// <summary>
@@ -266,7 +266,6 @@ namespace Nop.Core
             {
                 result = string.Empty;
             }
-
             return result;
         }
 
@@ -297,7 +296,7 @@ namespace Nop.Core
                 if (currentStore == null)
                     throw new Exception("Current store cannot be loaded");
 
-                if (String.IsNullOrEmpty(httpHost))
+                if (String.IsNullOrWhiteSpace(httpHost))
                 {
                     //HTTP_HOST variable is not available.
                     //This scenario is possible only when HttpContext is not available (for example, running in a schedule task)
@@ -315,8 +314,8 @@ namespace Nop.Core
                         //In this case let's use the specified secure URL
                         currentStore.SecureUrl :
                         //Secure URL is not specified.
-                        //So a store owner wants it to be detected automatically
-                        result.Replace("http:/", "https://");
+                        //So a store owner wants it to be detected automatically.
+                        result.Replace("http:/", "https:/");
                 }
                 else
                 {
@@ -406,49 +405,6 @@ namespace Nop.Core
             if (extension == null) return false;
 
             return _staticFileExtensions.Contains(extension);
-        }
-
-        public virtual void RestartAppDomain(bool makeRedirect = false, string redirectUrl = "")
-        {
-            if (CommonHelper.GetTrustLevel() > AspNetHostingPermissionLevel.Medium)
-            {
-                //full trust
-                HttpRuntime.UnloadAppDomain();
-
-                TryWriteGlobalAsax();
-            }
-            else
-            {
-                //medium trust
-                bool success = TryWriteWebConfig();
-                if (!success)
-                {
-                    throw new NopException("nopCommerce needs to be restarted due to a configuration change, but was unable to do so." + Environment.NewLine +
-                        "To prevent this issue in the future, a change to the web server configuration is required:" + Environment.NewLine +
-                        "- run the application in a full trust environment, or" + Environment.NewLine +
-                        "- give the application write access to the 'web.config' file.");
-                }
-
-                success = TryWriteGlobalAsax();
-
-                if (!success)
-                {
-                    throw new NopException("nopCommerce needs to be restarted due to a configuration change, but was unable to do so." + Environment.NewLine +
-                        "To prevent this issue in the future, a change to the web server configuration is required:" + Environment.NewLine +
-                        "- run the application in a full trust environment, or" + Environment.NewLine +
-                        "- give the application write access to the 'Global.asax' file.");
-                }
-            }
-
-            // If setting up extensions/modules requires an AppDomain restart, it's very unlikely the
-            // current request can be processed correctly.  So, we redirect to the same URL, so that the
-            // new request will come to the newly started AppDomain.
-            if (_httpContext != null && makeRedirect)
-            {
-                if (String.IsNullOrEmpty(redirectUrl))
-                    redirectUrl = GetThisPageUrl(true);
-                _httpContext.Response.Redirect(redirectUrl, true /*endResponse*/);
-            }
         }
 
         /// <summary>
@@ -543,8 +499,8 @@ namespace Nop.Core
                             builder.Append("=");
                             builder.Append(dictionary[str5]);
                         }
-                        str = builder.ToString();
                     }
+                    str = builder.ToString();
                 }
                 else
                 {
@@ -556,7 +512,6 @@ namespace Nop.Core
             {
                 str2 = anchor;
             }
-
             return (url + (string.IsNullOrEmpty(str) ? "" : ("?" + str)) + (string.IsNullOrEmpty(str2) ? "" : ("#" + str2))).ToLowerInvariant();
         }
 
@@ -642,6 +597,53 @@ namespace Nop.Core
                 return CommonHelper.To<T>(queryParam);
 
             return default(T);
+        }
+
+        /// <summary>
+        /// Restart application domain
+        /// </summary>
+        /// <param name="makeRedirect">A value indicating whether we should made redirection after restart</param>
+        /// <param name="redirectUrl">Redirect URL; empty string if you want to redirect to the current page URL</param>
+        public virtual void RestartAppDomain(bool makeRedirect = false, string redirectUrl = "")
+        {
+            if (CommonHelper.GetTrustLevel() > AspNetHostingPermissionLevel.Medium)
+            {
+                //full trust
+                HttpRuntime.UnloadAppDomain();
+
+                TryWriteGlobalAsax();
+            }
+            else
+            {
+                //medium trust
+                bool success = TryWriteWebConfig();
+                if (!success)
+                {
+                    throw new NopException("nopCommerce needs to be restarted due to a configuration change, but was unable to do so." + Environment.NewLine +
+                        "To prevent this issue in the future, a change to the web server configuration is required:" + Environment.NewLine +
+                        "- run the application in a full trust environment, or" + Environment.NewLine +
+                        "- give the application write access to the 'web.config' file.");
+                }
+                success = TryWriteGlobalAsax();
+
+                if (!success)
+                {
+                    throw new NopException("nopCommerce needs to be restarted due to a configuration change, but was unable to do so." + Environment.NewLine +
+                        "To prevent this issue in the future, a change to the web server configuration is required:" + Environment.NewLine +
+                        "- run the application in a full trust environment, or" + Environment.NewLine +
+                        "- give the application write access to the 'Global.asax' file.");
+                }
+            }
+
+            // If setting up extensions/modules requires an AppDomain restart, it's very unlikely the
+            // current request can be processed correctly.  So, we redirect to the same URL, so that the
+            // new request will come to the newly started AppDomain.
+            if (_httpContext != null && makeRedirect)
+            {
+                if (String.IsNullOrEmpty(redirectUrl))
+                    redirectUrl = GetThisPageUrl(true);
+                _httpContext.Response.Redirect(redirectUrl, true /*endResponse*/);
+            }
         }
 
         /// <summary>

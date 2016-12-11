@@ -332,7 +332,7 @@
     <Compile Include="Html\ResolveLinksHelper.cs" />
     <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />
     <Compile Include="Infrastructure\DependencyManagement\ContainerManager.cs" />
-    <Compile Include="Infrastructure\DependencyManagement\IDependencyRegister.cs" />
+    <Compile Include="Infrastructure\DependencyManagement\IDependencyRegistrar.cs" />
     <Compile Include="Infrastructure\EngineContext.cs" />
     <Compile Include="Infrastructure\IEngine.cs" />
     <Compile Include="Infrastructure\IStartupTask.cs" />

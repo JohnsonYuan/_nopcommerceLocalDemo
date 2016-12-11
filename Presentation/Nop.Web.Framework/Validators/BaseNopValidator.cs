@@ -16,9 +16,8 @@ namespace Nop.Web.Framework.Validators
         /// Developers can override this method in custom partial classes
         /// in order to add some custom initialization code to constructors
         /// </summary>
-        protected void PostInitialize()
+        protected virtual void PostInitialize()
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>

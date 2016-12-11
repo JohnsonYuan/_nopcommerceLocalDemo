@@ -58,7 +58,7 @@ namespace Nop.Web.Framework
     /// <summary>
     /// Dependency registrar
     /// </summary>
-    public class DependencyRegistrar : IDependencyRegister
+    public class DependencyRegistrar : IDependencyRegistrar
     {
         /// <summary>
         /// Register services and interfaces
@@ -66,7 +66,7 @@ namespace Nop.Web.Framework
         /// <param name="builder">Container builder</param>
         /// <param name="typeFinder">Type finder</param>
         /// <param name="config">Config</param>
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
+        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
         {
             //HTTP context and other related stuff
             builder.Register(c =>
@@ -81,6 +81,9 @@ namespace Nop.Web.Framework
                 .InstancePerLifetimeScope();
             builder.Register(c => c.Resolve<HttpContextBase>().Response)
                 .As<HttpResponseBase>()
+                .InstancePerLifetimeScope();
+            builder.Register(c => c.Resolve<HttpContextBase>().Server)
+                .As<HttpServerUtilityBase>()
                 .InstancePerLifetimeScope();
             builder.Register(c => c.Resolve<HttpContextBase>().Session)
                 .As<HttpSessionStateBase>()
@@ -145,7 +148,7 @@ namespace Nop.Web.Framework
 
             //work context
             builder.RegisterType<WebWorkContext>().As<IWorkContext>().InstancePerLifetimeScope();
-            //work context
+            //store context
             builder.RegisterType<WebStoreContext>().As<IStoreContext>().InstancePerLifetimeScope();
 
             //services
@@ -207,7 +210,7 @@ namespace Nop.Web.Framework
             builder.RegisterType<StateProvinceService>().As<IStateProvinceService>().InstancePerLifetimeScope();
 
             builder.RegisterType<StoreService>().As<IStoreService>().InstancePerLifetimeScope();
-            //use static cache (between HTTP request)
+            //use static cache (between HTTP requests)
             builder.RegisterType<StoreMappingService>().As<IStoreMappingService>()
                 .WithParameter(ResolvedParameter.ForNamed<ICacheManager>("nop_cache_static"))
                 .InstancePerLifetimeScope();
@@ -366,10 +369,11 @@ namespace Nop.Web.Framework
     {
         static readonly MethodInfo BuildMethod = typeof(SettingsSource).GetMethod(
             "BuildRegistration",
-            BindingFlags.Static | BindingFlags.NonPublic
-            );
+            BindingFlags.Static | BindingFlags.NonPublic);
 
-        public IEnumerable<IComponentRegistration> RegistrationsFor(Service service, Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
+        public IEnumerable<IComponentRegistration> RegistrationsFor(
+                Service service,
+                Func<Service, IEnumerable<IComponentRegistration>> registrations)
         {
             var ts = service as TypedService;
             if (ts != null && typeof(ISettings).IsAssignableFrom(ts.ServiceType))

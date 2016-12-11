@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
 using System.Xml;
 using Nop.Core;
 using Nop.Core.Infrastructure;
-using System.Web;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Nop.Web.Infrastructure.Installation
 {
@@ -35,10 +35,10 @@ namespace Nop.Web.Infrastructure.Installation
         /// <returns>Resource value</returns>
         public string GetResource(string resourceName)
         {
-            var languages = GetCurrentLanguage();
-            if (languages == null)
+            var language = GetCurrentLanguage();
+            if (language == null)
                 return resourceName;
-            var resourceValue = languages.Resources
+            var resourceValue = language.Resources
                 .Where(r => r.Name.Equals(resourceName, StringComparison.InvariantCultureIgnoreCase))
                 .Select(r => r.Value)
                 .FirstOrDefault();
@@ -53,20 +53,20 @@ namespace Nop.Web.Infrastructure.Installation
         /// Get current language for the installation page
         /// </summary>
         /// <returns>Current language</returns>
-        public InstallationLanguage GetCurrentLanguage()
+        public virtual InstallationLanguage GetCurrentLanguage()
         {
             var httpContext = EngineContext.Current.Resolve<HttpContextBase>();
 
-            var cookieLanguageName = "";
+            var cookieLanguageCode = "";
             var cookie = httpContext.Request.Cookies[LanguageCookieName];
             if (cookie != null && !String.IsNullOrEmpty(cookie.Value))
-                cookieLanguageName = cookie.Value;
+                cookieLanguageCode = cookie.Value;
 
             //ensure it's available (it could be delete since the previous installation)
             var availableLanguages = GetAvailableLanguages();
 
             var language = availableLanguages
-                .FirstOrDefault(l => l.Code.Equals(cookieLanguageName, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(l => l.Code.Equals(cookieLanguageCode, StringComparison.InvariantCultureIgnoreCase));
             if (language != null)
                 return language;
 
@@ -98,7 +98,7 @@ namespace Nop.Web.Infrastructure.Installation
         /// Save a language for the installation page
         /// </summary>
         /// <param name="languageCode">Language code</param>
-        public void SaveCurrentLanguage(string languageCode)
+        public virtual void SaveCurrentLanguage(string languageCode)
         {
             var httpContext = EngineContext.Current.Resolve<HttpContextBase>();
 
@@ -114,7 +114,7 @@ namespace Nop.Web.Infrastructure.Installation
         /// Get a list of available languages
         /// </summary>
         /// <returns>Available installation languages</returns>
-        public IList<InstallationLanguage> GetAvailableLanguages()
+        public virtual IList<InstallationLanguage> GetAvailableLanguages()
         {
             if (_availableLanguages == null)
             {
@@ -132,14 +132,14 @@ namespace Nop.Web.Infrastructure.Installation
                     foreach (Match match in matches)
                         languageCode = match.Groups[1].Value;
 
-                    //get instance friendly name
+                    //get language friendly name
                     var languageName = xmlDocument.SelectSingleNode(@"//Language").Attributes["Name"].InnerText.Trim();
 
                     //is default
                     var isDefaultAttribute = xmlDocument.SelectSingleNode(@"//Language").Attributes["IsDefault"];
                     var isDefault = isDefaultAttribute != null && Convert.ToBoolean(isDefaultAttribute.InnerText.Trim());
 
-                    //is rightToLeft
+                    //is default
                     var isRightToLeftAttribute = xmlDocument.SelectSingleNode(@"//Language").Attributes["IsRightToLeft"];
                     var isRightToLeft = isRightToLeftAttribute != null && Convert.ToBoolean(isRightToLeftAttribute.InnerText.Trim());
 
@@ -176,9 +176,9 @@ namespace Nop.Web.Infrastructure.Installation
 
                     _availableLanguages.Add(language);
                     _availableLanguages = _availableLanguages.OrderBy(l => l.Name).ToList();
+
                 }
             }
-
             return _availableLanguages;
         }
     }
