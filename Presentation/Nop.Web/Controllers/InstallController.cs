@@ -336,7 +336,7 @@ namespace Nop.Web.Controllers
                             connectionString = "Data Source=" + databasePath + ";Psersist Security Info=False";
 
                             //drop database if exist
-                            string databaseFullPath = CommonHelper.MapPath("~/App_Data/" + databaseFileName;
+                            string databaseFullPath = CommonHelper.MapPath("~/App_Data/" + databaseFileName);
                             if (System.IO.File.Exists(databaseFullPath))
                             {
                                 System.IO.File.Delete(databaseFullPath);

@@ -460,6 +460,7 @@
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InstallController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
