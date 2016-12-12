@@ -169,8 +169,8 @@ namespace Nop.Data
             if (timeout.HasValue)
             {
                 //store previous timeout
-                previousTimeout = ((IObjectContextAdapter)this).ObjectContext.CommandTimeout;
-                ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = timeout;
+                previousTimeout = ((IObjectContextAdapter) this).ObjectContext.CommandTimeout;
+                ((IObjectContextAdapter) this).ObjectContext.CommandTimeout = timeout;
             }
 
             var transactionalBehavior = doNotEnsureTransaction

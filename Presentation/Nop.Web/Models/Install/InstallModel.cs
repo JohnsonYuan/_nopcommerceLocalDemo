@@ -8,7 +8,7 @@ using Nop.Web.Validators.Install;
 namespace Nop.Web.Models.Install
 {
     [Validator(typeof(InstallValidator))]
-    public class InstallModel : BaseNopModel
+    public partial class InstallModel : BaseNopModel
     {
         public InstallModel()
         {
@@ -30,7 +30,7 @@ namespace Nop.Web.Models.Install
         public string DatabaseConnectionString { get; set; }
         public string DataProvider { get; set; }
         public bool DisableSqlCompact { get; set; }
-        //SQL server properties
+        //SQL Server properties
         public string SqlConnectionInfo { get; set; }
         [AllowHtml]
         public string SqlServerName { get; set; }
@@ -48,7 +48,7 @@ namespace Nop.Web.Models.Install
         public string Collation { get; set; }
 
         public bool DisableSampleDataOption { get; set; }
-        public bool InstalSampleData { get; set; }
+        public bool InstallSampleData { get; set; }
 
         public List<SelectListItem> AvailableLanguages { get; set; }
     }

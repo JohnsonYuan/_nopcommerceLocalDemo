@@ -56,7 +56,7 @@ namespace Nop.Data.Initializers
                     var dbCreationScript = ((IObjectContextAdapter)context).ObjectContext.CreateDatabaseScript();
                     context.Database.ExecuteSqlCommand(dbCreationScript);
 
-                    //Seed(context)
+                    //Seed(context);
                     context.SaveChanges();
 
                     if (_customCommands != null && _customCommands.Length > 0)

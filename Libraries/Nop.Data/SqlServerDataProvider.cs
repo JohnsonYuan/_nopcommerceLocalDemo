@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
+using System.IO;
+using System.Text;
 using Nop.Core;
 using Nop.Core.Data;
 using Nop.Data.Initializers;
@@ -73,10 +73,10 @@ namespace Nop.Data
         /// </summary>
         public virtual void InitConnectionFactory()
         {
-            var connectionFacotry = new SqlConnectionFactory();
+            var connectionFactory = new SqlConnectionFactory();
             //TODO fix compilation warning (below)
             #pragma warning disable 0618
-            Database.DefaultConnectionFactory = connectionFacotry;
+            Database.DefaultConnectionFactory = connectionFactory;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Nop.Data
         /// <summary>
         /// Set database initializer
         /// </summary>
-        public void SetDatabaseInitializer()
+        public virtual void SetDatabaseInitializer()
         {
             //pass some table names to ensure that we have nopCommerce 2.X installed
             var tablesToValidate = new[] { "Customer", "Discount", "Order", "Product", "ShoppingCartItem" };
@@ -109,7 +109,7 @@ namespace Nop.Data
         /// <summary>
         /// A value indicating whether this data provider supports stored procedures
         /// </summary>
-        public bool StoredProceduredSupported
+        public virtual bool StoredProceduredSupported
         {
             get { return true; }
         }
@@ -126,7 +126,7 @@ namespace Nop.Data
         /// Gets a support database parameter object (used by stored procedures)
         /// </summary>
         /// <returns>Parameter</returns>
-        public DbParameter GetParameter()
+        public virtual DbParameter GetParameter()
         {
             return new SqlParameter();
         }
