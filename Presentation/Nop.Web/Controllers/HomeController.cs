@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Nop.Web.Framework.Security;
 
 namespace Nop.Web.Controllers
 {
     public class HomeController : Controller
     {
         // GET: Home
+        [NopHttpsRequirement(SslRequirement.No)]
         public ActionResult Index()
         {
-            return Content("Working on home page now...");
+            return View();
         }
     }
 }

@@ -72,8 +72,9 @@ namespace Nop.Web
             //start scheduled tasks
             if (databaseInstalled)
             {
-                TaskManager.Instance.Initialize();
-                TaskManager.Instance.Start();
+                //TODO temp dislabe tasks
+                //TaskManager.Instance.Initialize();
+                //TaskManager.Instance.Start();
             }
 
             //miniprofiler

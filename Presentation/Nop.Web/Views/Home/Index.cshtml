@@ -1,0 +1,30 @@
+﻿@using Nop.Core.Infrastructure;
+@using Nop.Core.Domain.Localization
+@using Nop.Services.Configuration
+@{
+    //Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <div> 
+        Tax type
+
+
+        @{
+            var settingSerivce = EngineContext.Current.Resolve<ISettingService>();
+            var localizationSettings = EngineContext.Current.Resolve<LocalizationSettings>();
+            localizationSettings.SeoFriendlyUrlsForLanguagesEnabled = true;
+            
+             settingSerivce.SaveSetting<LocalizationSettings>(localizationSettings);
+            @localizationSettings.SeoFriendlyUrlsForLanguagesEnabled
+        }
+</div>
+</body>
+</html>

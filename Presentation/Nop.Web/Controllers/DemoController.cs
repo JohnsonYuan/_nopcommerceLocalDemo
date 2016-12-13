@@ -6,12 +6,12 @@ using System.Web.Mvc;
 
 namespace Nop.Web.Controllers
 {
-    public class DemoController : Controller
+    public class DemoController : BasePublicController
     {
         // GET: Demo
         public ActionResult Index()
         {
-            return Content("");
+            return Content(ControllerContext.Controller.ToString());
         }
     }
 }

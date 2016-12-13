@@ -226,6 +226,14 @@
     <Content Include="Scripts\fineuploader\processing.gif" />
     <Content Include="Scripts\fineuploader\templates\default.html" />
     <Content Include="Scripts\fineuploader\templates\simple-thumbnails.html" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Common\TaxTypeSelector.cshtml" />
+    <Content Include="Views\Common\CurrencySelector.cshtml" />
+    <Content Include="Views\Common\JavaScriptDisabledWarning.cshtml" />
+    <Content Include="Views\Common\LanguageSelector.cshtml" />
+    <Content Include="Views\Shared\OldInternetExplorerWarning.cshtml" />
+    <Content Include="Views\Common\HeaderLinks.cshtml" />
+    <Content Include="Views\Common\AdminHeaderLinks.cshtml" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />
@@ -511,9 +519,13 @@
     <Compile Include="Infrastructure\Installation\InstallationLocalizationService.cs" />
     <Compile Include="Infrastructure\RouteProvider.cs" />
     <Compile Include="Models\Cms\RenderWidgetModel.cs" />
+    <Compile Include="Models\Common\AdminHeaderLinksModel.cs" />
     <Compile Include="Models\Common\CurrencyModel.cs" />
     <Compile Include="Models\Common\CurrencySelectorModel.cs" />
     <Compile Include="Models\Common\FaviconModel.cs" />
+    <Compile Include="Models\Common\HeaderLinksModel.cs" />
+    <Compile Include="Models\Common\LanguageModel.cs" />
+    <Compile Include="Models\Common\LanguageSelectorModel.cs" />
     <Compile Include="Models\Common\TaxTypeSelectorModel.cs" />
     <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Topics\TopicModel.cs" />
@@ -746,7 +758,6 @@
   <ItemGroup>
     <Folder Include="App_Start\" />
     <Folder Include="Views\Demo\" />
-    <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">

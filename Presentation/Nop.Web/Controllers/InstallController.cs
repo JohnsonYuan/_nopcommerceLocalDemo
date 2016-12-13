@@ -1,22 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using Nop.Core.Configuration;
-using Nop.Web.Infrastructure.Installation;
-using System.Data.SqlClient;
-using Nop.Core.Data;
-using Nop.Core.Infrastructure;
-using Nop.Core;
-using Nop.Web.Models.Install;
-using Nop.Web.Framework.Security;
 using System.Security.Principal;
 using System.Threading;
-using Nop.Core.Caching;
-using Nop.Services.Installation;
+using System.Web.Mvc;
+using System.Data.SqlClient;
+using Nop.Core;
+using Nop.Core.Configuration;
+using Nop.Core.Data;
+using Nop.Core.Infrastructure;
 using Nop.Core.Plugins;
-using System.Collections.Generic;
+using Nop.Services.Installation;
 using Nop.Services.Security;
+using Nop.Web.Framework.Security;
+using Nop.Web.Infrastructure.Installation;
+using Nop.Web.Models.Install;
 
 namespace Nop.Web.Controllers
 {

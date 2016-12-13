@@ -17,6 +17,24 @@ namespace Nop.Web.Infrastructure
                 new { controller = "Home", action = "Index" },
                 new[] { "Nop.Web.Controllers" });
 
+            //change currency (AJAX link)
+            routes.MapLocalizedRoute("ChangeCurrency",
+                "changecurrency/{customercurrency}",
+                new { controller = "Common", action = "SetCurrency" },
+                new[] { "Nop.Web.Controllers" });
+            //change language (AJAX link)
+            routes.MapLocalizedRoute("ChangeLanguage",
+                "changelanguage/{langid}",
+                new { controller = "Common", action = "SetLanguage" },
+                new { langid = @"\d+" },
+                new[] { "Nop.Web.Controllers" });
+            //change tax (AJAX link)
+            routes.MapLocalizedRoute("ChangeTaxType",
+                "changetaxtype/{customertaxtype}",
+                new { controller = "Common", action = "SetTaxType" },
+                new { customertaxtype = @"\d+" },
+                new[] { "Nop.Web.Controllers" });
+
             //authenticate topic AJAX link
             routes.MapLocalizedRoute("TopicAuthenticate",
                 "topic/authenticate",
