@@ -36,6 +36,7 @@ using Nop.Services.Seo;
 using Nop.Services.Messages;
 using Nop.Services.Topics;
 using Nop.Services.Catalog;
+using Nop.Services.Customers;
 
 // TODO learn genericattribue service
 namespace Nop.Web.Controllers
@@ -58,7 +59,7 @@ namespace Nop.Web.Controllers
         private readonly ISitemapGenerator _sitemapGenerator;
         private readonly IThemeContext _themeContext;
         private readonly IThemeProvider _themeProvider;
-        private readonly IForumService _forumservice;
+        private readonly IForumService _forumService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IWebHelper _webHelper;
         private readonly IPermissionService _permissionService;
@@ -135,7 +136,7 @@ namespace Nop.Web.Controllers
             this._sitemapGenerator = sitemapGenerator;
             this._themeContext = themeContext;
             this._themeProvider = themeProvider;
-            this._forumservice = forumService;
+            this._forumService = forumService;
             this._genericAttributeService = genericAttributeService;
             this._webHelper = webHelper;
             this._permissionService = permissionService;
@@ -186,6 +187,35 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Methods
+
+        //logo
+        [ChildActionOnly]
+        public ActionResult Logo()
+        {
+            var model = new LogoModel
+            {
+                StoreName = _storeContext.CurrentStore.GetLocalized(x => x.Name)
+            };
+
+            var cacheKey = string.Format(ModelCacheEventConsumer.STORE_LOGO_PATH, _storeContext.CurrentStore.Id, _themeContext.WorkingThemeName, _webHelper.IsCurrentConnectionSecured());
+            model.LogoPath = _cacheManager.Get(cacheKey, () =>
+            {
+                var logo = "";
+                var logoPictureId = _storeInformationSettings.LogoPictureId;
+                if (logoPictureId > 0)
+                {
+                    logo = _pictureService.GetPictureUrl(logoPictureId, showDefaultPicture: false);
+                }
+                if (String.IsNullOrEmpty(logo))
+                {
+                    //use default logo
+                    logo = string.Format("{0}Themes/{1}/Content/images/logo.png", _webHelper.GetStoreLocation(), _themeContext.WorkingThemeName);
+                }
+                return logo;
+            });
+
+            return PartialView(model);
+        }
 
         #region Language
         //language
@@ -424,6 +454,72 @@ namespace Nop.Web.Controllers
             return PartialView(model);
         }
 
+
+        //social
+        [ChildActionOnly]
+        public ActionResult Social()
+        {
+            //model
+            var model = new SocialModel
+            {
+                FacebookLink = _storeInformationSettings.FacebookLink,
+                TwitterLink = _storeInformationSettings.TwitterLink,
+                YoutubeLink = _storeInformationSettings.YoutubeLink,
+                GooglePlusLink = _storeInformationSettings.GooglePlusLink,
+                WorkingLanguageId = _workContext.WorkingLanguage.Id,
+                NewsEnabled = _newsSettings.Enabled,
+            };
+
+            return PartialView(model);
+        }
+
+        //footer
+        [ChildActionOnly]
+        public ActionResult Footer()
+        {
+            //footer topics
+            string topicCacheKey = string.Format(ModelCacheEventConsumer.TOPIC_FOOTER_MODEL_KEY,
+                _workContext.WorkingLanguage.Id,
+                _storeContext.CurrentStore.Id,
+                string.Join(",", _workContext.CurrentCustomer.GetCustomerRoleIds()));
+            var cachedTopicModel = _cacheManager.Get(topicCacheKey, () =>
+                _topicService.GetAllTopics(_storeContext.CurrentStore.Id)
+                    .Where(t => t.IncludeInFooterColumn1 || t.IncludeInFooterColumn2 || t.IncludeInFooterColumn3)
+                    .Select(t => new FooterModel.FooterTopicModel
+                    {
+                        Id = t.Id,
+                        Name = t.GetLocalized(x => x.Title),
+                        SeName = t.GetSeName(),
+                        IncludeInFooterColumn1 = t.IncludeInFooterColumn1,
+                        IncludeInFooterColumn2 = t.IncludeInFooterColumn2,
+                        IncludeInFooterColumn3 = t.IncludeInFooterColumn3
+                    })
+                    .ToList()
+            );
+
+            //model
+            var model = new FooterModel
+            {
+                StoreName = _storeContext.CurrentStore.GetLocalized(x => x.Name),
+                WishlistEnabled = _permissionService.Authorize(StandardPermissionProvider.EnableWishlist),
+                ShoppingCartEnabled = _permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart),
+                SitemapEnabled = _commonSettings.SitemapEnabled,
+                WorkingLanguageId = _workContext.WorkingLanguage.Id,
+                BlogEnabled = _blogSettings.Enabled,
+                CompareProductsEnabled = _catalogSettings.CompareProductsEnabled,
+                ForumEnabled = _forumSettings.ForumsEnabled,
+                NewsEnabled = _newsSettings.Enabled,
+                RecentlyViewedProductsEnabled = _catalogSettings.RecentlyViewedProductsEnabled,
+                NewProductsEnabled = _catalogSettings.NewProductsEnabled,
+                DisplayTaxShippingInfoFooter = _catalogSettings.DisplayTaxShippingInfoFooter,
+                HidePoweredByNopCommerce = _storeInformationSettings.HidePoweredByNopCommerce,
+                AllowCustomersToApplyForVendorAccount = _vendorSettings.AllowCustomersToApplyForVendorAccount,
+                Topics = cachedTopicModel
+            };
+
+            return PartialView(model);
+        }
+
         //page not found
         public ActionResult PageNotFound()
         {
@@ -433,11 +529,37 @@ namespace Nop.Web.Controllers
             return View();
         }
 
-        //logo
+        //EU Cookie law
         [ChildActionOnly]
-        public ActionResult Logo()
+        public ActionResult EuCookieLaw()
         {
+            if (_storeInformationSettings.DisplayEuCookieLawWarning)
+                //disabled
+                return Content("");
 
+            //ignore search engines because some pages could be indexed with the EU cookie as description
+            if (_workContext.CurrentCustomer.IsSearchEngineAccount())
+                return Content("");
+
+            if (_workContext.CurrentCustomer.GetAttribute<bool>(SystemCustomerAttributeNames.EuCookieLawAccepted, _storeContext.CurrentStore.Id))
+                return Content("");
+
+            return PartialView();
+        }
+        [HttpPost]
+        //available even when a store is closed
+        [StoreClosed(true)]
+        //available even when navigation is not allowed
+        [PublicStoreAllowNavigation(true)]
+        public ActionResult EuCookieLawAccept()
+        {
+            if (!_storeInformationSettings.DisplayEuCookieLawWarning)
+                //disabled
+                return Json(new { stored = false });
+
+            //save settings
+            _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, SystemCustomerAttributeNames.EuCookieLawAccepted, true, _storeContext.CurrentStore.Id);
+            return Json(new { stored = true });
         }
 
         public ActionResult GenericUrl()

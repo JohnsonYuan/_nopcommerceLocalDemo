@@ -2,7 +2,7 @@
 @using Nop.Core.Domain.Localization
 @using Nop.Services.Configuration
 @{
-    //Layout = null;
+//Layout = null;
 }
 
 <!DOCTYPE html>
@@ -13,18 +13,24 @@
     <title>Index</title>
 </head>
 <body>
-    <div> 
-        Tax type
-
-
+    <div>
         @{
+            var workContext = EngineContext.Current.Resolve<Nop.Core.IWorkContext>();
+            var customer = workContext.CurrentCustomer;
+
+            if (customer != null)
+            {
+                @Html.Raw("CustomerGuid&nbsp;&nbsp;")  <b>@customer.CustomerGuid</b> <br/>
+                @Html.Raw("Username&nbsp;&nbsp;") @customer.Username                <br />
+            }
+
             var settingSerivce = EngineContext.Current.Resolve<ISettingService>();
             var localizationSettings = EngineContext.Current.Resolve<LocalizationSettings>();
             localizationSettings.SeoFriendlyUrlsForLanguagesEnabled = true;
-            
-             settingSerivce.SaveSetting<LocalizationSettings>(localizationSettings);
+
+            //settingSerivce.SaveSetting<LocalizationSettings>(localizationSettings);
             @localizationSettings.SeoFriendlyUrlsForLanguagesEnabled
         }
-</div>
+    </div>
 </body>
 </html>

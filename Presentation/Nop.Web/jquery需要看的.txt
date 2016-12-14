@@ -1,0 +1,29 @@
+﻿Catalog\SearchBox.cshtml, 
+http://jqueryui.com/autocomplete/
+jquery autocomplete (捎带看看<text>)
+        <text>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#small-searchterms').autocomplete({
+                        delay: 500,
+                        miniLength: @(Model.SearchTermMinimumLength.ToString()),
+                        source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+                        appendTo: '.search-box',
+                        select: function(event, ui) {
+                            $("#small-searchterms").val(ui.item.label);
+                            setLocation(ui.item.producturl);
+                            return false;
+                        }
+                    })
+                    .data("ui-autocomplete")._renderItem = function (ul, item) {
+                        var t = item.label;
+                        //html encode
+                        t = htmlEncode(t);
+                        return $("<li></li>")
+                            .data("item.autocomplete", item)
+                            .append("<a>@(Model.ShowProductImagesInSearchAutoComplete ? Html.Raw("<img src='\" + item.productpictureurl + \"'>") : null)<span>" + t + "</span></a>")
+                                .appendTo(ul);
+                    };
+                });
+            </script>
+        </text>
