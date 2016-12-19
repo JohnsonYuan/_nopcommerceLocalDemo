@@ -113,6 +113,11 @@ FluentValidationModelValidatorProvider.Configure(provider => {
   provider.ValidatorFactory = new MyCustomValidatorFactory();
 });
 
+NopCommerce不是按上述方法配置， 参看Global.ascx
+DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false; 是什么作用？
+http://stackoverflow.com/questions/14452344/mvc3-removed-required-but-keeps-getting-data-val-required-attribute
+
+
 [Validator(typeof(PersonValidator))]
 public class Person { public int Id { get; set; } }
 
