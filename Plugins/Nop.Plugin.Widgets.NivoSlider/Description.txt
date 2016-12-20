@@ -1,6 +1,6 @@
 ﻿Group: Widgets
 FiendlyName: Nivo Slider
-SystemName: Widgets.NivoSilder
+SystemName: Widgets.NivoSlider
 Version: 1.09
 SupportedVersions: 3.80
 Author: nopCommerce team

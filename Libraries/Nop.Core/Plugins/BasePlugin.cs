@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nop.Core.Plugins
+﻿namespace Nop.Core.Plugins
 {
     /// <summary>
     /// Base plugin
@@ -17,6 +15,7 @@ namespace Nop.Core.Plugins
         /// </summary>
         public virtual void Install()
         {
+            PluginManager.MarkPluginAsInstalled(this.PluginDescriptor.SystemName);
         }
 
         /// <summary>
@@ -24,6 +23,7 @@ namespace Nop.Core.Plugins
         /// </summary>
         public virtual void Uninstall()
         {
+            PluginManager.MarkPluginAsUninstalled(this.PluginDescriptor.SystemName);
         }
     }
 }

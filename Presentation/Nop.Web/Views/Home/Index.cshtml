@@ -17,6 +17,38 @@
 </div>
 
     <div>
+        @{
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                @item.FullName
+                <br/>
+            }
+        }
+        @{ 
+            try
+            {
+                var assembly = System.Reflection.Assembly.Load(System.Reflection.AssemblyName.GetAssemblyName(Path.Combine(AppDomain.CurrentDomain.DynamicDirectory, "Nop.Plugin.Widgets.NivoSlider.dll")));
+                var test1 = assembly.GetType();
+                var test2 = assembly.GetTypes();
+                var test3 = assembly.GetType("NivoSliderPlugin");
+                var pluginType = assembly.GetType("Nop.Plugin.Widgets.NivoSlider.NivoSliderPlugin");
+                var result = EngineContext.Current.ContainerManager.ResolveUnregistered(pluginType);
+                var method = result.GetType().GetMethod("Install");
+
+                //method.Invoke(result, null);
+            }
+            catch (Exception ex)
+            {
+                @ex.Message
+            }
+            
+        }
+        <br />Referenced plugins:<br />
+        @foreach (var item in Nop.Core.Plugins.PluginManager.ReferencedPlugins)
+        {
+            @item.SystemName <br/>
+        }
+        <br />
         Application path: @Request.ApplicationPath
         AppDomainApp Virtual path: @HttpRuntime.AppDomainAppVirtualPath
         @{
