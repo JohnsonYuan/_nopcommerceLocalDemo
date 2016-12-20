@@ -73,8 +73,8 @@ namespace Nop.Web
             if (databaseInstalled)
             {
                 //TODO temp dislabe tasks
-                //TaskManager.Instance.Initialize();
-                //TaskManager.Instance.Start();
+                TaskManager.Instance.Initialize();
+                TaskManager.Instance.Start();
             }
 
             //miniprofiler

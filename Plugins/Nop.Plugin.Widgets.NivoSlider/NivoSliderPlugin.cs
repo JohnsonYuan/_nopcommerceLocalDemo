@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Web.Routing;
 using Nop.Core;
@@ -42,7 +42,7 @@ namespace Nop.Plugin.Widgets.NivoSlider
         /// <param name="actionName">Action name</param>
         /// <param name="controllerName">Controller name</param>
         /// <param name="routeValues">Route values</param>
-        public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
+        public void GetConfigurationRoute(out string actionName, out string controllerName, out System.Web.Routing.RouteValueDictionary routeValues)
         {
             actionName = "Configure";
             controllerName = "WidgetsNivoSlider";
@@ -56,7 +56,7 @@ namespace Nop.Plugin.Widgets.NivoSlider
         /// <param name="actionName">Action name</param>
         /// <param name="controllerName">Controller name</param>
         /// <param name="routeValues">Route values</param>
-        public void GetDisplayWidgetRoute(string widgetZone, out string actionName, out string controllerName, out RouteValueDictionary routeValues)
+        public void GetDisplayWidgetRoute(string widgetZone, out string actionName, out string controllerName, out System.Web.Routing.RouteValueDictionary routeValues)
         {
             actionName = "PublicInfo";
             controllerName = "WidgetsNivoSlider";
@@ -75,7 +75,6 @@ namespace Nop.Plugin.Widgets.NivoSlider
         {
             //pictures
             var sampleImagesPath = CommonHelper.MapPath("~/Plugins/Widgets.NivoSlider/Content/nivoslider/sample-images/");
-
 
             //settings
             var settings = new NivoSliderSettings

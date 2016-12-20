@@ -15,12 +15,41 @@ namespace Nop.Web.Infrastructure
                 new { controller = "Common", action = "GenericUrl" },
                 new[] { "Nop.Web.Controllers" });
 
+            //define this routes to use in UI views (in case if you want to customize some of them later)
+            routes.MapLocalizedRoute("Product",
+                         "{SeName}",
+                         new { controller = "Product", action = "ProductDetails" },
+                         new[] { "Nop.Web.Controllers" });
+
+            routes.MapLocalizedRoute("Category",
+                            "{SeName}",
+                            new { controller = "Catalog", action = "Category" },
+                            new[] { "Nop.Web.Controllers" });
+
+            routes.MapLocalizedRoute("Manufacturer",
+                            "{SeName}",
+                            new { controller = "Catalog", action = "Manufacturer" },
+                            new[] { "Nop.Web.Controllers" });
+
+            routes.MapLocalizedRoute("Vendor",
+                            "{SeName}",
+                            new { controller = "Catalog", action = "Vendor" },
+                            new[] { "Nop.Web.Controllers" });
+
+            routes.MapLocalizedRoute("NewsItem",
+                            "{SeName}",
+                            new { controller = "News", action = "NewsItem" },
+                            new[] { "Nop.Web.Controllers" });
+
+            routes.MapLocalizedRoute("BlogPost",
+                            "{SeName}",
+                            new { controller = "Blog", action = "BlogPost" },
+                            new[] { "Nop.Web.Controllers" });
+
             routes.MapLocalizedRoute("Topic",
                             "{SeName}",
                             new { controller = "Topic", action = "TopicDetails" },
                             new[] { "Nop.Web.Controllers" });
-
-
 
             //the last route. it's used when none of registered routes could be used for the current request
             //but in this case we cannot process non-registered routes (/controller/action)

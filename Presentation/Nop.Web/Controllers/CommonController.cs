@@ -533,7 +533,7 @@ namespace Nop.Web.Controllers
         [ChildActionOnly]
         public ActionResult EuCookieLaw()
         {
-            if (_storeInformationSettings.DisplayEuCookieLawWarning)
+            if (!_storeInformationSettings.DisplayEuCookieLawWarning)
                 //disabled
                 return Content("");
 

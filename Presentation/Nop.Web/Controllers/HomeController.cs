@@ -3,7 +3,7 @@ using Nop.Web.Framework.Security;
 
 namespace Nop.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BasePublicController
     {
         // GET: Home
         [NopHttpsRequirement(SslRequirement.No)]

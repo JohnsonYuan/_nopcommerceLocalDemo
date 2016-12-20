@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Mvc;
 
@@ -8,7 +8,6 @@ namespace Nop.Plugin.Widgets.NivoSlider.Models
     public class ConfigurationModel : BaseNopModel
     {
         public int ActiveStoreScopeConfiguration { get; set; }
-
 
         [NopResourceDisplayName("Plugins.Widgets.NivoSlider.Picture")]
         [UIHint("Picture")]

@@ -167,7 +167,6 @@ namespace Nop.Core.Plugins
                             throw fail;
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {

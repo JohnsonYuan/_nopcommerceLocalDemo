@@ -15,15 +15,14 @@ namespace Nop.Core.Plugins
         /// <summary>
         /// Install plugin
         /// </summary>
-        public void Install()
+        public virtual void Install()
         {
-
         }
 
         /// <summary>
         /// Uninstall plugin
         /// </summary>
-        public void Uninstall()
+        public virtual void Uninstall()
         {
         }
     }

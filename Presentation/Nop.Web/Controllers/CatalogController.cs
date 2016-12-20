@@ -275,6 +275,31 @@ namespace Nop.Web.Controllers
         }
 
         [ChildActionOnly]
+        public ActionResult HomepageCategories()
+        {
+            var pictureSize = _mediaSettings.CategoryThumbPictureSize;
+
+            return Content("");
+            string categoriesCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_HOMEPAGE_KEY,
+                pictureSize,
+                _storeContext.CurrentStore.Id,
+                _workContext.WorkingLanguage.Id,
+                _webHelper.IsCurrentConnectionSecured());
+
+            //TODO
+            //var model = _cacheManager.Get(categoriesCacheKey, () =>
+            //    _categoryService.GetAllCategoriesDisplayedOnHomePage()
+            //    .Select(x =>
+            //    {
+            //        var catModel = x.ToModel();
+
+            //        //prepare picture model
+            //        var categoryPictureCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_PICTURE_MODEL_KEY, x.Id, pictureSize, true, _workContext.WorkingLanguage.Id, _webHelper.IsCurrentConnectionSecured(), _storeContext.CurrentStore.Id);
+            //    }
+            //    );
+        }
+
+        [ChildActionOnly]
         public ActionResult SearchBox()
         {
             var model = new SearchBoxModel

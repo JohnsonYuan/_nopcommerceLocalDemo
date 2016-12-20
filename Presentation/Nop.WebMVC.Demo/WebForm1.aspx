@@ -17,6 +17,13 @@
         <br />
     ApplicationVirtualPath: <%= System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath%>
     </div>
+        <%=AppDomain.CurrentDomain.DynamicDirectory %>: <br /><br />
+        <% foreach (var item in AppDomain.CurrentDomain.GetAssemblies()
+                //.Where(x => !x.FullName.StartsWith("System", StringComparison.OrdinalIgnoreCase) && !x.FullName.StartsWith("sys", StringComparison.OrdinalIgnoreCase))
+                )
+            {
+                Response.Write(item.FullName + " <br/>");
+            } %>
     </form>
 </body>
 </html>

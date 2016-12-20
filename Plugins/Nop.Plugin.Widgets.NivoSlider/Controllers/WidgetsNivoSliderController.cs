@@ -1,13 +1,13 @@
 ﻿using System.Web.Mvc;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Plugin.Widgets.NivoSlider.Infrastructure.Cache;
-using Nop.Plugin.Widgets.NivoSlider.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Media;
 using Nop.Services.Stores;
 using Nop.Web.Framework.Controllers;
+using Nop.Plugin.Widgets.NivoSlider.Models;
+using Nop.Plugin.Widgets.NivoSlider.Infrastructure.Cache;
 
 namespace Nop.Plugin.Widgets.NivoSlider.Controllers
 {
@@ -23,7 +23,7 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
 
         public WidgetsNivoSliderController(IWorkContext workContext,
             IStoreContext storeContext,
-            IStoreService storeService, 
+            IStoreService storeService,
             IPictureService pictureService,
             ISettingService settingService,
             ICacheManager cacheManager,
@@ -94,7 +94,6 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
                 model.Text5_OverrideForStore = _settingService.SettingExists(nivoSliderSettings, x => x.Text5, storeScope);
                 model.Link5_OverrideForStore = _settingService.SettingExists(nivoSliderSettings, x => x.Link5, storeScope);
             }
-
             return View("~/Plugins/Widgets.NivoSlider/Views/WidgetsNivoSlider/Configure.cshtml", model);
         }
 
@@ -140,7 +139,7 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
             _settingService.SaveSettingOverridablePerStore(nivoSliderSettings, x => x.Picture5Id, model.Picture5Id_OverrideForStore, storeScope, false);
             _settingService.SaveSettingOverridablePerStore(nivoSliderSettings, x => x.Text5, model.Text5_OverrideForStore, storeScope, false);
             _settingService.SaveSettingOverridablePerStore(nivoSliderSettings, x => x.Link5, model.Link5_OverrideForStore, storeScope, false);
-            
+
             //now clear settings cache
             _settingService.ClearCache();
 
@@ -152,7 +151,6 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
         public ActionResult PublicInfo(string widgetZone, object additionalData = null)
         {
             var nivoSliderSettings = _settingService.LoadSetting<NivoSliderSettings>(_storeContext.CurrentStore.Id);
-
             var model = new PublicInfoModel();
             model.Picture1Url = GetPictureUrl(nivoSliderSettings.Picture1Id);
             model.Text1 = nivoSliderSettings.Text1;
@@ -179,7 +177,6 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
                 string.IsNullOrEmpty(model.Picture5Url))
                 //no pictures uploaded
                 return Content("");
-
 
             return View("~/Plugins/Widgets.NivoSlider/Views/WidgetsNivoSlider/PublicInfo.cshtml", model);
         }

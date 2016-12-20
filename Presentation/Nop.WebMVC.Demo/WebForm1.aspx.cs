@@ -12,6 +12,7 @@ namespace Nop.WebMVC.Demo.Views
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            return;
             //
             //var document = new XmlDocument();
             //document.LoadXml("");

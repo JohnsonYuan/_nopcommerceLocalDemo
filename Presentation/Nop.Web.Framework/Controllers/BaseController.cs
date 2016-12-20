@@ -22,7 +22,6 @@ namespace Nop.Web.Framework.Controllers
     [StoreLastVisitedPage]
     public abstract class BaseController : Controller
     {
-
         /// <summary>
         /// Render partial view to string
         /// </summary>

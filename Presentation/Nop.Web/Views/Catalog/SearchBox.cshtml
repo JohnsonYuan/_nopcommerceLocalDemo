@@ -25,7 +25,8 @@
                     $('#small-searchterms').autocomplete({
                         delay: 500,
                         miniLength: @(Model.SearchTermMinimumLength.ToString()),
-                        source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+                        source: ["lumia", "lumia59", "lumia590", "xbox1", "xbox2"],
+                        @*source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',*@
                         appendTo: '.search-box',
                         select: function(event, ui) {
                             $("#small-searchterms").val(ui.item.label);

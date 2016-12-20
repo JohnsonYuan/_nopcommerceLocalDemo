@@ -9,6 +9,8 @@ using Nop.Core.Fakes;
 using Nop.Core.Infrastructure;
 using System.Web.Routing;
 using System.ComponentModel;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Nop.Core.Tests
 {
@@ -58,9 +60,15 @@ namespace Nop.Core.Tests
         }
 
 
+        private static void TimerHandler(object state)
+        {
+            Console.WriteLine(DateTime.Now.ToLongTimeString());
+        }
+
 
         static void Main()
-        { 
+        {
+            return;
             // Lambda expression as executable code.
             Func<int, bool> deleg = i => i < 5;
             // Invoke the delegate and display the output.
@@ -84,14 +92,14 @@ namespace Nop.Core.Tests
 
             foreach (PropertyDescriptor item in props)
             {
-                Console.WriteLine( item.Name + " " + item.GetValue(routeValues).ToString());
+                Console.WriteLine(item.Name + " " + item.GetValue(routeValues).ToString());
             }
             Console.WriteLine();
             Console.WriteLine();
             var props2 = routeValues.GetType().GetProperties();
             foreach (var item in props2)
             {
-                Console.WriteLine( item.Name + " " + item.GetValue(routeValues).ToString());
+                Console.WriteLine(item.Name + " " + item.GetValue(routeValues).ToString());
             }
             return;
 
@@ -146,6 +154,7 @@ namespace Nop.Core.Tests
             Console.WriteLine(method.IsGenericMethod);
             return;
         }
+
     }
 
 
