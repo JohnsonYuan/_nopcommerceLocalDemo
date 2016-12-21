@@ -277,7 +277,6 @@ namespace Nop.Web.Controllers
         [ChildActionOnly]
         public ActionResult HomepageCategories()
         {
-            return Content("");
             var pictureSize = _mediaSettings.CategoryThumbPictureSize;
 
             string categoriesCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_HOMEPAGE_KEY,
@@ -287,17 +286,36 @@ namespace Nop.Web.Controllers
                 _workContext.WorkingLanguage.Id,
                 _webHelper.IsCurrentConnectionSecured());
 
-            //TODO
-            //var model = _cacheManager.Get(categoriesCacheKey, () =>
-            //    _categoryService.GetAllCategoriesDisplayedOnHomePage()
-            //    .Select(x =>
-            //    {
-            //        var catModel = x.ToModel();
+            var model = _cacheManager.Get(categoriesCacheKey, () =>
+                _categoryService.GetAllCategoriesDisplayedOnHomePage()
+                .Select(x =>
+                {
+                    var catModel = x.ToModel();
 
-            //        //prepare picture model
-            //        var categoryPictureCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_PICTURE_MODEL_KEY, x.Id, pictureSize, true, _workContext.WorkingLanguage.Id, _webHelper.IsCurrentConnectionSecured(), _storeContext.CurrentStore.Id);
-            //    }
-            //    );
+                    //prepare picture model
+                    var categoryPictureCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_PICTURE_MODEL_KEY, x.Id, pictureSize, true, _workContext.WorkingLanguage.Id, _webHelper.IsCurrentConnectionSecured(), _storeContext.CurrentStore.Id);
+                    catModel.PictureModel = _cacheManager.Get(categoryPictureCacheKey, () =>
+                    {
+                        var picture = _pictureService.GetPictureById(x.PictureId);
+                        var pictureModel = new PictureModel
+                        {
+                            FullSizeImageUrl = _pictureService.GetPictureUrl(picture),
+                            ImageUrl = _pictureService.GetPictureUrl(picture, pictureSize),
+                            Title = string.Format(_localizationService.GetResource("Media.Category.ImageLinkTitleFormat"), catModel.Name),
+                            AlternateText = string.Format(_localizationService.GetResource("Media.Category.ImageAlternateTextFormat"), catModel.Name)
+                        };
+                        return pictureModel;
+                    });
+
+                    return catModel;
+                })
+                .ToList()
+            );
+
+            if (!model.Any())
+                return Content("");
+
+            return PartialView(model);
         }
 
         [ChildActionOnly]

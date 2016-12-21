@@ -17,6 +17,15 @@
 </div>
 
     <div>
+        @{ 
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
+            var _storeContext = EngineContext.Current.Resolve<Nop.Core.IStoreContext>();
+            var nivoSliderSettings = _settingService.LoadSetting<Nop.Plugin.Widgets.NivoSlider.NivoSliderSettings>(_storeContext.CurrentStore.Id);
+            foreach (var item in nivoSliderSettings.GetType().GetProperties())
+            {
+                @item.Name <text> : </text> @item.GetValue(nivoSliderSettings)
+            }
+        }
         @{
             foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
             {

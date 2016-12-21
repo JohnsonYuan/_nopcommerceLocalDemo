@@ -48,6 +48,14 @@
       <HintPath>..\..\..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation.Mvc, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentValidation.MVC5.6.2.1.0\lib\Net45\FluentValidation.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -96,22 +104,233 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Notes.txt" />
+    <Content Include="TODOItems.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="AdminAreaRegistration.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Mapper\AutoMapperConfiguration.cs" />
+    <Compile Include="Infrastructure\Mapper\AutoMapperStartupTask.cs" />
+    <Compile Include="Models\Affiliates\AffiliatedOrderListModel.cs" />
+    <Compile Include="Models\Affiliates\AffiliateListModel.cs" />
+    <Compile Include="Models\Affiliates\AffiliateModel.cs" />
+    <Compile Include="Models\Blogs\BlogCommentModel.cs" />
+    <Compile Include="Models\Blogs\BlogPostModel.cs" />
+    <Compile Include="Models\Catalog\AddProductAttributeCombinationModel.cs" />
+    <Compile Include="Models\Catalog\BulkEditListModel.cs" />
+    <Compile Include="Models\Catalog\BulkEditProductModel.cs" />
+    <Compile Include="Models\Catalog\CategoryListModel.cs" />
+    <Compile Include="Models\Catalog\CategoryModel.cs" />
+    <Compile Include="Models\Catalog\CopyProductModel.cs" />
+    <Compile Include="Models\Catalog\LowStockProductModel.cs" />
+    <Compile Include="Models\Catalog\ManufacturerListModel.cs" />
+    <Compile Include="Models\Catalog\ManufacturerModel.cs" />
+    <Compile Include="Models\Catalog\ProductAttributeConditionModel.cs" />
+    <Compile Include="Models\Catalog\ProductAttributeModel.cs" />
+    <Compile Include="Models\Catalog\ProductListModel.cs" />
+    <Compile Include="Models\Catalog\ProductModel.cs" />
+    <Compile Include="Models\Catalog\ProductReviewListModel.cs" />
+    <Compile Include="Models\Catalog\ProductReviewModel.cs" />
+    <Compile Include="Models\Catalog\ProductSpecificationAttributeModel.cs" />
+    <Compile Include="Models\Catalog\ProductTagModel.cs" />
+    <Compile Include="Models\Catalog\SpecificationAttributeModel.cs" />
+    <Compile Include="Models\Catalog\SpecificationAttributeOptionModel.cs" />
+    <Compile Include="Models\Cms\RenderWidgetModel.cs" />
+    <Compile Include="Models\Cms\WidgetModel.cs" />
+    <Compile Include="Models\Common\AddressAttributeModel.cs" />
+    <Compile Include="Models\Common\AddressAttributeValueModel.cs" />
+    <Compile Include="Models\Common\AddressModel.cs" />
+    <Compile Include="Models\Common\LanguageSelectorModel.cs" />
+    <Compile Include="Models\Common\MaintenanceModel.cs" />
+    <Compile Include="Models\Common\SearchTermReportLineModel.cs" />
+    <Compile Include="Models\Common\SystemInfoModel.cs" />
+    <Compile Include="Models\Common\SystemWarningModel.cs" />
+    <Compile Include="Models\Common\UrlRecordListModel.cs" />
+    <Compile Include="Models\Common\UrlRecordModel.cs" />
+    <Compile Include="Models\Customers\BestCustomerReportLineModel.cs" />
+    <Compile Include="Models\Customers\BestCustomersReportModel.cs" />
+    <Compile Include="Models\Customers\CustomerAddressModel.cs" />
+    <Compile Include="Models\Customers\CustomerAttributeModel.cs" />
+    <Compile Include="Models\Customers\CustomerAttributeValueModel.cs" />
+    <Compile Include="Models\Customers\CustomerListModel.cs" />
+    <Compile Include="Models\Customers\CustomerModel.cs" />
+    <Compile Include="Models\Customers\CustomerReportsModel.cs" />
+    <Compile Include="Models\Customers\CustomerRoleModel.cs" />
+    <Compile Include="Models\Customers\OnlineCustomerModel.cs" />
+    <Compile Include="Models\Customers\RegisteredCustomerReportLineModel.cs" />
+    <Compile Include="Models\Directory\CountryModel.cs" />
+    <Compile Include="Models\Directory\CurrencyModel.cs" />
+    <Compile Include="Models\Directory\MeasureDimensionModel.cs" />
+    <Compile Include="Models\Directory\MeasureWeightModel.cs" />
+    <Compile Include="Models\Directory\StateProvinceModel.cs" />
+    <Compile Include="Models\Discounts\DiscountListModel.cs" />
+    <Compile Include="Models\Discounts\DiscountModel.cs" />
+    <Compile Include="Models\ExternalAuthentication\AuthenticationMethodModel.cs" />
+    <Compile Include="Models\Forums\ForumGroupModel.cs" />
+    <Compile Include="Models\Forums\ForumModel.cs" />
+    <Compile Include="Models\Home\CommonStatisticsModel.cs" />
+    <Compile Include="Models\Home\DashboardModel.cs" />
+    <Compile Include="Models\Home\NopCommerceNewsModel.cs" />
+    <Compile Include="Models\Localization\LanguageModel.cs" />
+    <Compile Include="Models\Localization\LanguageResourceModel.cs" />
+    <Compile Include="Models\Localization\LanguageResourcesListModel.cs" />
+    <Compile Include="Models\Logging\ActivityLogModel.cs" />
+    <Compile Include="Models\Logging\ActivityLogSearchModel.cs" />
+    <Compile Include="Models\Logging\ActivityLogTypeModel.cs" />
+    <Compile Include="Models\Logging\LogListModel.cs" />
+    <Compile Include="Models\Logging\LogModel.cs" />
+    <Compile Include="Models\Messages\CampaignListModel.cs" />
+    <Compile Include="Models\Messages\CampaignModel.cs" />
+    <Compile Include="Models\Messages\EmailAccountModel.cs" />
+    <Compile Include="Models\Messages\MessageTemplateListModel.cs" />
+    <Compile Include="Models\Messages\MessageTemplateModel.cs" />
+    <Compile Include="Models\Messages\NewsLetterSubscriptionListModel.cs" />
+    <Compile Include="Models\Messages\NewsLetterSubscriptionModel.cs" />
+    <Compile Include="Models\Messages\QueuedEmailListModel.cs" />
+    <Compile Include="Models\Messages\QueuedEmailModel.cs" />
+    <Compile Include="Models\Messages\TestMessageTemplateModel.cs" />
+    <Compile Include="Models\News\NewsCommentModel.cs" />
+    <Compile Include="Models\News\NewsItemListModel.cs" />
+    <Compile Include="Models\News\NewsItemModel.cs" />
+    <Compile Include="Models\Orders\BestsellersReportLineModel.cs" />
+    <Compile Include="Models\Orders\BestsellersReportModel.cs" />
+    <Compile Include="Models\Orders\CheckoutAttributeModel.cs" />
+    <Compile Include="Models\Orders\CheckoutAttributeValueModel.cs" />
+    <Compile Include="Models\Orders\CountryReportLineModel.cs" />
+    <Compile Include="Models\Orders\CountryReportModel.cs" />
+    <Compile Include="Models\Orders\GiftCardListModel.cs" />
+    <Compile Include="Models\Orders\GiftCardModel.cs" />
+    <Compile Include="Models\Orders\NeverSoldReportLineModel.cs" />
+    <Compile Include="Models\Orders\NeverSoldReportModel.cs" />
+    <Compile Include="Models\Orders\OrderAddressModel.cs" />
+    <Compile Include="Models\Orders\OrderAverageReportLineSummaryModel.cs" />
+    <Compile Include="Models\Orders\OrderIncompleteReportLineModel.cs" />
+    <Compile Include="Models\Orders\OrderListModel.cs" />
+    <Compile Include="Models\Orders\OrderModel.cs" />
+    <Compile Include="Models\Orders\RecurringPaymentModel.cs" />
+    <Compile Include="Models\Orders\ReturnRequestModel.cs" />
+    <Compile Include="Models\Orders\ShipmentListModel.cs" />
+    <Compile Include="Models\Orders\ShipmentModel.cs" />
+    <Compile Include="Models\Payments\PaymentMethodModel.cs" />
+    <Compile Include="Models\Payments\PaymentMethodRestrictionModel.cs" />
+    <Compile Include="Models\Plugins\MiscPluginModel.cs" />
+    <Compile Include="Models\Plugins\OfficialFeedListModel.cs" />
+    <Compile Include="Models\Plugins\PluginListModel.cs" />
+    <Compile Include="Models\Plugins\PluginModel.cs" />
+    <Compile Include="Models\Polls\PollAnswerModel.cs" />
+    <Compile Include="Models\Polls\PollModel.cs" />
+    <Compile Include="Models\Security\PermissionMappingModel.cs" />
+    <Compile Include="Models\Security\PermissionRecordModel.cs" />
+    <Compile Include="Models\Settings\AllSettingsListModel.cs" />
+    <Compile Include="Models\Settings\BlogSettingsModel.cs" />
+    <Compile Include="Models\Settings\CatalogSettingsModel.cs" />
+    <Compile Include="Models\Settings\CustomerUserSettingsModel.cs" />
+    <Compile Include="Models\Settings\ForumSettingsModel.cs" />
+    <Compile Include="Models\Settings\GeneralCommonSettingsModel.cs" />
+    <Compile Include="Models\Settings\MediaSettingsModel.cs" />
+    <Compile Include="Models\Settings\ModeModel.cs" />
+    <Compile Include="Models\Settings\NewsSettingsModel.cs" />
+    <Compile Include="Models\Settings\OrderSettingsModel.cs" />
+    <Compile Include="Models\Settings\ProductEditorSettingsModel.cs" />
+    <Compile Include="Models\Settings\ReturnRequestActionModel.cs" />
+    <Compile Include="Models\Settings\ReturnRequestReasonModel.cs" />
+    <Compile Include="Models\Settings\RewardPointsSettingsModel.cs" />
+    <Compile Include="Models\Settings\SettingModel.cs" />
+    <Compile Include="Models\Settings\ShippingSettingsModel.cs" />
+    <Compile Include="Models\Settings\ShoppingCartSettingsModel.cs" />
+    <Compile Include="Models\Settings\SortOptionModel.cs" />
+    <Compile Include="Models\Settings\StoreScopeConfigurationModel.cs" />
+    <Compile Include="Models\Settings\TaxSettingsModel.cs" />
+    <Compile Include="Models\Settings\VendorSettingsModel.cs" />
+    <Compile Include="Models\Shipping\DeliveryDateModel.cs" />
+    <Compile Include="Models\Shipping\PickupPointProviderModel.cs" />
+    <Compile Include="Models\Shipping\ShippingMethodModel.cs" />
+    <Compile Include="Models\Shipping\ShippingMethodRestrictionModel.cs" />
+    <Compile Include="Models\Shipping\ShippingRateComputationMethodModel.cs" />
+    <Compile Include="Models\Shipping\WarehouseModel.cs" />
+    <Compile Include="Models\ShoppingCart\ShoppingCartItemModel.cs" />
+    <Compile Include="Models\ShoppingCart\ShoppingCartModel.cs" />
+    <Compile Include="Models\Stores\StoreModel.cs" />
+    <Compile Include="Models\Tasks\ScheduleTaskModel.cs" />
+    <Compile Include="Models\Tax\TaxCategoryModel.cs" />
+    <Compile Include="Models\Tax\TaxProviderModel.cs" />
+    <Compile Include="Models\Templates\CategoryTemplateModel.cs" />
+    <Compile Include="Models\Templates\ManufacturerTemplateModel.cs" />
+    <Compile Include="Models\Templates\ProductTemplateModel.cs" />
+    <Compile Include="Models\Templates\TopicTemplateModel.cs" />
+    <Compile Include="Models\Topics\TopicListModel.cs" />
+    <Compile Include="Models\Topics\TopicModel.cs" />
+    <Compile Include="Models\Vendors\VendorListModel.cs" />
+    <Compile Include="Models\Vendors\VendorModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\Blogs\BlogPostValidator.cs" />
+    <Compile Include="Validators\Catalog\CategoryValidator.cs" />
+    <Compile Include="Validators\Catalog\ManufacturerValidator.cs" />
+    <Compile Include="Validators\Catalog\PredefinedProductAttributeValueModelValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductAttributeValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductAttributeValueModelValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductReviewValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductTagValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductValidator.cs" />
+    <Compile Include="Validators\Catalog\SpecificationAttributeOptionValidator.cs" />
+    <Compile Include="Validators\Catalog\SpecificationAttributeValidator.cs" />
+    <Compile Include="Validators\Common\AddressAttributeValidator.cs" />
+    <Compile Include="Validators\Common\AddressAttributeValueValidator.cs" />
+    <Compile Include="Validators\Common\AddressValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerAttributeValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerAttributeValueValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerRoleValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerValidator.cs" />
+    <Compile Include="Validators\Directory\CountryValidator.cs" />
+    <Compile Include="Validators\Directory\CurrencyValidator.cs" />
+    <Compile Include="Validators\Directory\MeasureDimensionValidator.cs" />
+    <Compile Include="Validators\Directory\MeasureWeightValidator.cs" />
+    <Compile Include="Validators\Directory\StateProvinceValidator.cs" />
+    <Compile Include="Validators\Discounts\DiscountValidator.cs" />
+    <Compile Include="Validators\Forums\ForumGroupValidator.cs" />
+    <Compile Include="Validators\Forums\ForumValidator.cs" />
+    <Compile Include="Validators\Localization\LanguageResourceValidator.cs" />
+    <Compile Include="Validators\Localization\LanguageValidator.cs" />
+    <Compile Include="Validators\Messages\CampaignValidator.cs" />
+    <Compile Include="Validators\Messages\EmailAccountValidator.cs" />
+    <Compile Include="Validators\Messages\MessageTemplateValidator.cs" />
+    <Compile Include="Validators\Messages\NewsLetterSubscriptionValidator.cs" />
+    <Compile Include="Validators\Messages\QueuedEmailValidator.cs" />
+    <Compile Include="Validators\Messages\TestMessageTemplateValidator.cs" />
+    <Compile Include="Validators\News\NewsItemValidator.cs" />
+    <Compile Include="Validators\Orders\CheckoutAttributeValidator.cs" />
+    <Compile Include="Validators\Orders\CheckoutAttributeValueValidator.cs" />
+    <Compile Include="Validators\Orders\ReturnRequestValidator.cs" />
+    <Compile Include="Validators\Plugins\PluginValidator.cs" />
+    <Compile Include="Validators\Polls\PollAnswerValidator.cs" />
+    <Compile Include="Validators\Polls\PollValidator.cs" />
+    <Compile Include="Validators\Settings\OrderSettingsValidator.cs" />
+    <Compile Include="Validators\Settings\ReturnRequestActionValidator.cs" />
+    <Compile Include="Validators\Settings\ReturnRequestReasonValidator.cs" />
+    <Compile Include="Validators\Settings\RewardPointsSettingsValidator.cs" />
+    <Compile Include="Validators\Settings\SettingValidator.cs" />
+    <Compile Include="Validators\Shipping\DeliveryDateValidator.cs" />
+    <Compile Include="Validators\Shipping\ShippingMethodValidator.cs" />
+    <Compile Include="Validators\Shipping\WarehouseValidator.cs" />
+    <Compile Include="Validators\Stores\StoreValidator.cs" />
+    <Compile Include="Validators\Tasks\ScheduleTaskValidator.cs" />
+    <Compile Include="Validators\Tax\TaxCategoryValidator.cs" />
+    <Compile Include="Validators\Templates\CategoryTemplateValidator.cs" />
+    <Compile Include="Validators\Templates\ManufacturerTemplateValidator.cs" />
+    <Compile Include="Validators\Templates\ProductTemplateValidator.cs" />
+    <Compile Include="Validators\Templates\TopicTemplateValidator.cs" />
+    <Compile Include="Validators\Topics\TopicValidator.cs" />
+    <Compile Include="Validators\ValidatorUtilities.cs" />
+    <Compile Include="Validators\Vendors\VendorValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
-    <Content Include="Areas\Admin\Views\web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -121,11 +340,25 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">
+      <Project>{defea0e4-7ec7-4855-81ea-f965469ddab0}</Project>
+      <Name>Nop.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Nop.Data\Nop.Data.csproj">
+      <Project>{ebe6ca2f-66ed-4289-be1d-bbad49085cb1}</Project>
+      <Name>Nop.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Nop.Services\Nop.Services.csproj">
+      <Project>{0497bf9c-e18f-4fb5-9c18-1a76493c0a41}</Project>
+      <Name>Nop.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Nop.Web.Framework\Nop.Web.Framework.csproj">
+      <Project>{c5cefe74-65a7-4783-a950-d780adbf94b1}</Project>
+      <Name>Nop.Web.Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -158,7 +391,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
