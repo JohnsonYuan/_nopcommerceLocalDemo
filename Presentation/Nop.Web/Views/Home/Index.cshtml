@@ -27,6 +27,14 @@
         @{ 
             try
             {
+                Nop.Core.Plugins.IPluginFinder _pluginFinder = EngineContext.Current.Resolve<Nop.Core.Plugins.IPluginFinder>();
+                var pluginDescriptor = _pluginFinder.GetPluginDescriptorBySystemName("Widgets.NivoSlider", Nop.Core.Plugins.LoadPluginsMode.All);
+
+                if (pluginDescriptor != null)
+                {
+                    //pluginDescriptor.Instance().Install();
+                }
+
                 var assembly = System.Reflection.Assembly.Load(System.Reflection.AssemblyName.GetAssemblyName(Path.Combine(AppDomain.CurrentDomain.DynamicDirectory, "Nop.Plugin.Widgets.NivoSlider.dll")));
                 var test1 = assembly.GetType();
                 var test2 = assembly.GetTypes();

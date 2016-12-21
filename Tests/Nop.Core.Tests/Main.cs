@@ -10,6 +10,7 @@ using Nop.Core.Infrastructure;
 using System.Web.Routing;
 using System.ComponentModel;
 using System.Threading;
+using AutoMapper;
 using System.Collections.Generic;
 
 namespace Nop.Core.Tests
@@ -44,30 +45,39 @@ namespace Nop.Core.Tests
             }
         }
 
-        public class MagicClass
+        public class Order
         {
-            private int magicBaseValue;
-
-            public MagicClass()
+            public int orDerid { get; set; }
+            public int orderid { get; set; }
+            public Customer Customer { get; set; }
+            public decimal GetTotal()
             {
-                magicBaseValue = 9;
-            }
-
-            public int ItsMagic(int preMagic)
-            {
-                return preMagic * magicBaseValue;
+                return (decimal)2.9;
             }
         }
-
-
-        private static void TimerHandler(object state)
+        public class Customer
         {
-            Console.WriteLine(DateTime.Now.ToLongTimeString());
+            public string Name { get; set; }
         }
-
-
+        public class OrderDto
+        {
+            public int ORDERID { get; set; }
+            public string CustomerName { get; set; }
+            public decimal Total { get; set; }
+            public List<int> TotalCounts { get; set; }
+        }
         static void Main()
         {
+            Mapper.Initialize(cfg => 
+            cfg.CreateMap<Order, OrderDto>()
+            .ForMember(dest=>dest.ORDERID, mo => mo.Ignore()));
+            Order order = new Order { orderid= 1231, orDerid = 222};
+            order.Customer = new Customer { Name = "JOHNSON" };
+            OrderDto dto = Mapper.Map<OrderDto>(order);
+            Console.WriteLine(dto.CustomerName);
+            Console.WriteLine(dto.Total);
+            Console.WriteLine("order id: " + dto.ORDERID);
+            Console.WriteLine(dto.TotalCounts);
             return;
             // Lambda expression as executable code.
             Func<int, bool> deleg = i => i < 5;

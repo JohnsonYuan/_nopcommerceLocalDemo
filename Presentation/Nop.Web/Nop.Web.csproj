@@ -137,7 +137,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\browscap.xml" />
-    <Content Include="App_Data\InstalledPlugins.txt" />
     <Content Include="App_Data\Install\Fast\create_required_data.sql" />
     <Content Include="App_Data\Install\Fast\create_sample_data.sql" />
     <Content Include="App_Data\Install\Fast\readme.txt" />

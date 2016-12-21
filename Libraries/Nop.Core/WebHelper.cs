@@ -376,7 +376,7 @@ namespace Nop.Core
                 result += "/";
 
             return result.ToLowerInvariant();
-        }
+         }
 
         /// <summary>
         /// Returns true if the requested resource is one of the typical resources that needn't be processed by the cms engine.

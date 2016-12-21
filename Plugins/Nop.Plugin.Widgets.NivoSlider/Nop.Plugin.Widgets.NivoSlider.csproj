@@ -68,9 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="web.config">
-      <SubType>Designer</SubType>
-    </None>
+    <Content Include="web.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="Controllers\WidgetsNivoSliderController.cs" />
     <Compile Include="Infrastructure\Cache\ModelCacheEventConsumer.cs" />
     <Compile Include="Infrastructure\DependencyRegistrar.cs" />
@@ -82,7 +82,9 @@
     <None Include="Views\WidgetsNivoSlider\PublicInfo.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="Views\WidgetsNivoSlider\Configure.cshtml" />
+    <Content Include="Views\WidgetsNivoSlider\Configure.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\nivoslider\license.txt" />

@@ -277,10 +277,11 @@ namespace Nop.Web.Controllers
         [ChildActionOnly]
         public ActionResult HomepageCategories()
         {
+            return Content("");
             var pictureSize = _mediaSettings.CategoryThumbPictureSize;
 
-            return Content("");
             string categoriesCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_HOMEPAGE_KEY,
+                string.Join(",", _workContext.CurrentCustomer.GetCustomerRoleIds()),
                 pictureSize,
                 _storeContext.CurrentStore.Id,
                 _workContext.WorkingLanguage.Id,
