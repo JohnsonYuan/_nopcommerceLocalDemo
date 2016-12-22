@@ -1,11 +1,11 @@
-﻿using Nop.Core.Domain.Catalog;
-using Nop.Services.Localization;
-using Nop.Services.Seo;
-using Nop.Web.Models.Catalog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Nop.Core.Domain.Catalog;
+using Nop.Services.Localization;
+using Nop.Services.Seo;
+using Nop.Web.Models.Catalog;
 
 namespace Nop.Web.Extensions
 {

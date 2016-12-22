@@ -8,7 +8,7 @@ using Nop.Services.Localization;
 
 namespace Nop.Web.Controllers
 {
-    public class NewsController : Controller
+    public class NewsController : ProductController
     {
         #region Fields
 

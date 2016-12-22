@@ -4,7 +4,6 @@
 
 @using Nop.Services.Common;
 
-
 <div class="page home-page">
     <div class="page-body">
         @Html.Widget("home_page_top")
@@ -13,6 +12,24 @@
         <!-- start HomepageCategories -->
         @Html.Action("HomepageCategories", "Catalog")
         <!-- end HomepageCategories -->
+        <!-- start HomepageProducts -->
+        @Html.Widget("home_page_before_products")
+        @Html.Action("HomepageProducts", "Product")
+        <!-- end HomepageProducts -->
+
+        @*<!-- start HomepageBestSellers -->
+        @Html.Widget("home_page_before_best_sellers")
+        @Html.Action("HomepageBestSellers", "Product")
+        <!-- end HomepageBestSellers -->
+        <!-- start HomePageNews -->
+        @Html.Widget("home_page_before_news")
+        @Html.Action("HomePageNews", "News")
+        <!-- end HomePageNews -->
+        <!-- start HomePagePolls -->
+        @Html.Widget("home_page_before_poll")
+        @Html.Action("HomePagePolls", "Poll")
+        <!-- end HomePagePolls -->
+        @Html.Widget("home_page_bottom")*@
     </div>
 </div>
 

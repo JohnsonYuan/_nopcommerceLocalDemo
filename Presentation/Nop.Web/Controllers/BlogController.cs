@@ -8,7 +8,7 @@ using Nop.Services.Localization;
 
 namespace Nop.Web.Controllers
 {
-    public class BlogController : Controller
+    public class BlogController : ProductController
     {
         #region Fields
 

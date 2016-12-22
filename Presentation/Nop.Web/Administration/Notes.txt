@@ -27,24 +27,32 @@ OrderDto dto = mapper.Map<OrderDto>(order);
 // or
 OrderDto dto = Mapper.Map<OrderDto>(order);
 
-2. Custom value resolvers
+2. （optional） 查看是否dest所有属性都能在source找到
+// AutoMapper checks to make sure that every single Destination type member has a corresponding type member on the source type.
+Mapper.Configuration.AssertConfigurationIsValid();
+
+如果没找到，会报 Unmapped members were found ...  然后是没找到的属性详细信息
+
+2.1 destination 不需要map的属性 （比如不想map destination的StateProvinces, 相当于不初始化该属性）
+(Nop.Web\Administration\Infrastructure\Mapper\AutoMapperConfiguration.cs)
+cfg.CreateMap<CountryModel, Country>()
+        .ForMember(dest => dest.StateProvinces, mo => mo.Ignore())
+
+2.2. 或者想map到source别的属性MapFrom
+map.ForMember(d => d.Name, mo => mo.MapFrom(s => s.Publisher.Name));
+
+
+3. Custom value resolvers
 AutoMapper will ignore null reference exceptions when mapping your source to your target. This is by design.
 If you don't like this approach, use Custom value resolvers
 https://github.com/AutoMapper/AutoMapper/wiki/Custom-value-resolvers
 
-ForMember(dest)
-2.1 destination 不需要map的属性 （比如不想map destination的StateProvinces, 相当于不初始化该属性）
-// 如果不ignore, destination 的 StateProvinces 会被赋值
-cfg.CreateMap<CountryModel, Country>()
-        .ForMember(dest => dest.StateProvinces, mo => mo.Ignore())
-
-
-2.2 3 ways using customer resolver:
+3 ways using customer resolver:
 ResolveUsing<TValueResolver>
 ResolveUsing(typeof(CustomValueResolver))
 ResolveUsing(aValueResolverInstance)
 
-e.g. 使用第一种:
+e.g. 使用第一种ResolveUsing<TValueResolver>:
 public class CustomResolver : IValueResolver<Source, Destination, int>
 {
     public int Resolve(Source source, Destination destination, int member, ResolutionContext context)

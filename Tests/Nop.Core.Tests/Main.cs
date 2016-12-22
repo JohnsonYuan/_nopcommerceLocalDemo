@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nop.Core.Tests
 {
@@ -61,23 +62,30 @@ namespace Nop.Core.Tests
         }
         public class OrderDto
         {
-            public int ORDERID { get; set; }
+            public int ORDERID2 { get; set; }
             public string CustomerName { get; set; }
             public decimal Total { get; set; }
             public List<int> TotalCounts { get; set; }
         }
         static void Main()
         {
-            Mapper.Initialize(cfg => 
-            cfg.CreateMap<Order, OrderDto>()
-            .ForMember(dest=>dest.ORDERID, mo => mo.Ignore()));
-            Order order = new Order { orderid= 1231, orDerid = 222};
-            order.Customer = new Customer { Name = "JOHNSON" };
-            OrderDto dto = Mapper.Map<OrderDto>(order);
-            Console.WriteLine(dto.CustomerName);
-            Console.WriteLine(dto.Total);
-            Console.WriteLine("order id: " + dto.ORDERID);
-            Console.WriteLine(dto.TotalCounts);
+            string sentence = "the quick brown fox jumps over the lazy dog";
+
+            // Split the string into individual words.
+            string[] words = sentence.Split(' ');
+
+            // Prepend each word to the beginning of the 
+            // new sentence to reverse the word order.
+            string reversed = words.Aggregate((workingSentence, next) =>
+            {
+                Console.WriteLine("current: " + workingSentence + "\t" + next);
+                return next + " " + workingSentence;
+            });
+
+            Console.WriteLine(reversed);
+
+            //Mapper.Configuration.AssertConfigurationIsValid();
+            
             return;
             // Lambda expression as executable code.
             Func<int, bool> deleg = i => i < 5;
