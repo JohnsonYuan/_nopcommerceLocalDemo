@@ -5,10 +5,12 @@ using System.Web.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.News;
 using Nop.Services.Localization;
+using Nop.Web.Framework.Security;
 
 namespace Nop.Web.Controllers
 {
-    public class NewsController : ProductController
+    [NopHttpsRequirement(SslRequirement.No)]
+    public class NewsController : BasePublicController
     {
         #region Fields
 
@@ -35,6 +37,16 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Utilities
+
+        [NonAction]
+        protected virtual void PrepareNewsItemModel(NewsItemModel model, NewsItem newsItem, bool prepareComments)
+        {
+
+        }
+
+        #endregion
+
+        #region Methods
 
         [ChildActionOnly]
         public ActionResult RssHeaderLink()

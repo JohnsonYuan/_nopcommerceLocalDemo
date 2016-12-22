@@ -10,7 +10,6 @@ using Nop.Core.Infrastructure;
 using System.Web.Routing;
 using System.ComponentModel;
 using System.Threading;
-using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 

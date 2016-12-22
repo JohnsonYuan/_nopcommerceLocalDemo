@@ -11,7 +11,7 @@ using Nop.Web.Models.Cms;
 
 namespace Nop.Web.Controllers
 {
-    public class WidgetController : ProductController
+    public class WidgetController : BasePublicController
     {
         #region Fields
 

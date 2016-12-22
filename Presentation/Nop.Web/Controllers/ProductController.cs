@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using Nop.Web.Extensions;
 using System.Web.Mvc;
 using System.Linq;
+using Nop.Web.Infrastructure.Cache;
 
 namespace Nop.Web.Controllers
 {
@@ -186,10 +187,37 @@ namespace Nop.Web.Controllers
 
         #endregion
 
-        #region Methods
+        #region Home page bestsellers and products
 
         [ChildActionOnly]
-        public ActionResult HomepageProducts(int productThumbPictureSize)
+        public ActionResult HomepageBestSellers(int? productThumbPictureSize)
+        {
+            if (!_catalogSettings.ShowBestsellersOnHomepage || _catalogSettings.NumberOfBestsellersOnHomepage == 0)
+                return Content("");
+
+            //load and cache report
+            var report = _cacheManager.Get(string.Format(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY, _storeContext.CurrentStore.Id),
+                () => _orderReportService.BestSellersReport(
+                    storeId: _storeContext.CurrentStore.Id,
+                    pageSize: _catalogSettings.NumberOfBestsellersOnHomepage)
+                    .ToList());
+
+            //load products
+            var products = _productService.GetProductsByIds(report.Select(x => x.ProductId).ToArray());
+            //ACL and store mapping
+            products = products.Where(p => _aclService.Authorize(p) && _storeMappingService.Authorize(p)).ToList();
+            //availability dates
+            products = products.Where(p => p.IsAvailable()).ToList();
+
+            if (!products.Any())
+                return Content("");
+
+            var model = PrepareProductOverviewModels(products, true, true, productThumbPictureSize).ToList();
+            return PartialView(model);
+        }
+
+        [ChildActionOnly]
+        public ActionResult HomepageProducts(int? productThumbPictureSize)
         {
             var products = _productService.GetAllProductsDisplayedOnHomePage();
             //ACL and store mapping
@@ -205,6 +233,5 @@ namespace Nop.Web.Controllers
         }
 
         #endregion
-
     }
 }
