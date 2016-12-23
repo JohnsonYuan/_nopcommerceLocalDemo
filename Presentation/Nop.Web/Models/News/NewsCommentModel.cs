@@ -1,4 +1,5 @@
-﻿using Nop.Web.Framework.Mvc;
+﻿using System;
+using Nop.Web.Framework.Mvc;
 
 namespace Nop.Web.Models.News
 {

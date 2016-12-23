@@ -503,6 +503,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InstallController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
@@ -558,8 +559,10 @@
     <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Media\PictureModel.cs" />
     <Compile Include="Models\News\AddNewsCommentModel.cs" />
+    <Compile Include="Models\News\HomePageNewsItemsModel.cs" />
     <Compile Include="Models\News\NewsCommentModel.cs" />
     <Compile Include="Models\News\NewsItemModel.cs" />
+    <Compile Include="Models\Polls\PollModel.cs" />
     <Compile Include="Models\ShoppingCart\MiniShoppingCartModel.cs" />
     <Compile Include="Models\Topics\TopicModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -787,6 +790,11 @@
     <Content Include="Views\Catalog\HomepageCategories.cshtml" />
     <Content Include="Views\Product\HomepageProducts.cshtml" />
     <Content Include="Views\Shared\_ProductBox.cshtml" />
+    <Content Include="Views\Product\HomepageBestSellers.cshtml" />
+    <Content Include="Views\News\HomePageNews.cshtml" />
+    <Content Include="Views\Poll\_Poll.cshtml" />
+    <Content Include="Views\Poll\HomePagePolls.cshtml" />
+    <Content Include="Views\Poll\PollBlock.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -796,7 +804,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
-    <Folder Include="Views\Demo\" />
+    <Folder Include="Views\BasePublicController\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">
