@@ -68,6 +68,8 @@ namespace Nop.Core.Tests
         }
         static void Main()
         {
+            
+            return;
             string sentence = "the quick brown fox jumps over the lazy dog";
 
             // Split the string into individual words.

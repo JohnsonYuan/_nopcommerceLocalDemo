@@ -37,6 +37,7 @@ using Nop.Services.Messages;
 using Nop.Services.Topics;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
+using Nop.Web.Framework.Security;
 
 // TODO learn genericattribue service
 namespace Nop.Web.Controllers
@@ -518,6 +519,60 @@ namespace Nop.Web.Controllers
             };
 
             return PartialView(model);
+        }
+
+        //SEO sitemap page
+        [NopHttpsRequirement(SslRequirement.No)]
+        //available even when store is closed
+        [StoreClosed(true)]
+        public ActionResult SitemapXml()
+        {
+            if (!_commonSettings.SitemapEnabled)
+                return RedirectToRoute("HomePage");
+
+            string cacheKey = string.Format(ModelCacheEventConsumer.SITEMAP_SEO_MODEL_KEY,
+                _workContext.WorkingLanguage.Id,
+                string.Join(",", _workContext.CurrentCustomer.GetCustomerRoleIds()),
+                _storeContext.CurrentStore.Id);
+            var siteMap = _cacheManager.Get(cacheKey, () => _sitemapGenerator.Generate(this.Url));
+            return Content(siteMap, "text/xml");
+        }
+
+        //store theme
+        [ChildActionOnly]
+        public ActionResult StoreThemeSelector()
+        {
+            if (!_storeInformationSettings.AllowCustomerToSelectTheme)
+                return Content("");
+
+            var model = new StoreThemeSelectorModel();
+            var currentTheme = _themeProvider.GetThemeConfiguration(_themeContext.WorkingThemeName);
+            model.CurrentStoreTheme = new StoreThemeModel
+            {
+                Name = currentTheme.ThemeName,
+                Title = currentTheme.ThemeTitle
+            };
+            model.AvailableStoreThemes = _themeProvider.GetThemeConfigurations()
+                .Select(x => new StoreThemeModel
+                {
+                    Name = x.ThemeName,
+                    Title = x.ThemeTitle
+                })
+                .ToList();
+            return PartialView(model);
+        }
+        public ActionResult SetStoreTheme(string themeName, string returnUrl = "")
+        {
+            _themeContext.WorkingThemeName = themeName;
+
+            if (String.IsNullOrEmpty(returnUrl))
+                returnUrl = Url.RouteUrl("HomePage");
+
+            //prevent open redirection attack
+            if (!Url.IsLocalUrl(returnUrl))
+                returnUrl = Url.RouteUrl("HomePage");
+
+            return Redirect(returnUrl);
         }
 
         //page not found

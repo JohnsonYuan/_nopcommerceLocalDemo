@@ -78,7 +78,7 @@ namespace Nop.Web.Framework.Themes
                 if (_workContext.CurrentCustomer == null)
                     return;
 
-                _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, SystemCustomerAttributeNames.WorkingThemeName, _storeContext.CurrentStore.Id);
+                _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, SystemCustomerAttributeNames.WorkingThemeName, value, _storeContext.CurrentStore.Id);
             }
         }
     }

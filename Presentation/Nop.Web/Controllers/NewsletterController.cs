@@ -64,7 +64,7 @@ namespace Nop.Web.Controllers
                 var subscription = _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreId(email, _storeContext.CurrentStore.Id);
                 if (subscription != null)
                 {
-                    if(subscribe)
+                    if (subscribe)
                     {
                         if (!subscription.Active)
                         {

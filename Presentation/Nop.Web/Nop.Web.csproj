@@ -72,10 +72,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="MiniProfiler, Version=3.2.0.157, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MiniProfiler.3.2.0.157\lib\net40\MiniProfiler.dll</HintPath>
       <Private>True</Private>
@@ -556,6 +552,8 @@
     <Compile Include="Models\Common\LogoModel.cs" />
     <Compile Include="Models\Common\PagerModel.cs" />
     <Compile Include="Models\Common\SocialModel.cs" />
+    <Compile Include="Models\Common\StoreThemeModel.cs" />
+    <Compile Include="Models\Common\StoreThemeSelectorModel.cs" />
     <Compile Include="Models\Common\TaxTypeSelectorModel.cs" />
     <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Media\PictureModel.cs" />
@@ -801,6 +799,7 @@
     <Content Include="Views\Common\Social.cshtml" />
     <Content Include="Views\Newsletter\NewsletterBox.cshtml" />
     <Content Include="Views\Newsletter\SubscriptionActivation.cshtml" />
+    <Content Include="Views\Common\StoreThemeSelector.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -810,7 +809,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
-    <Folder Include="Views\BasePublicController\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">

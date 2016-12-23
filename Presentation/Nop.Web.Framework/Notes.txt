@@ -113,7 +113,13 @@ FluentValidationModelValidatorProvider.Configure(provider => {
   provider.ValidatorFactory = new MyCustomValidatorFactory();
 });
 
-NopCommerce不是按上述方法配置， 参看Global.ascx
+NopCommerce 参看Global.ascx
+        DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
+        ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new NopValidatorFactory()));
+
+本质还是使用第二种方法配置（自定义validator）， FluentValidationModelValidatorProvider.Configure 源码， 可以发现调的还是这两行
+https://github.com/JeremySkinner/FluentValidation/blob/master/src/FluentValidation.Mvc4/FluentValidationModelValidatorProvider.cs
+
 DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false; 是什么作用？
 http://stackoverflow.com/questions/14452344/mvc3-removed-required-but-keeps-getting-data-val-required-attribute
 
