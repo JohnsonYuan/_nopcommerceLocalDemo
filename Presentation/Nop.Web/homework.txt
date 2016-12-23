@@ -1,4 +1,14 @@
-﻿先把controllerfactory看了
+﻿Validateinput vs AllowHtml
+Validate Input(false) attribute 
+http://www.c-sharpcorner.com/UploadFile/sourabh_mishra1/validate-input-in-Asp-Net-mvc/
+AllowHtml
+http://www.aspsnippets.com/Articles/ValidateInputfalse-vs-AllowHtml-Difference-between-ValidateInputfalse-and-AllowHtml-in-ASPNet-MVC.aspx
+
+
+gettimezonebyid: 
+https://msdn.microsoft.com/zh-tw/library/system.timezoneinfo.findsystemtimezonebyid(v=vs.100).aspx
+
+先把controllerfactory看了
 https://www.codeproject.com/articles/599189/defaultcontrollerfactory-in-asp-net-mvc
 https://www.codeproject.com/articles/595520/mvcroutehandler-and-mvchandler-in-asp-net-mvc-fram
 http://stackoverflow.com/questions/8447/what-does-the-flags-enum-attribute-mean-in-c

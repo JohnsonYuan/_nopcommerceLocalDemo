@@ -498,6 +498,7 @@
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\NewsletterController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -558,6 +559,8 @@
     <Compile Include="Models\Common\TaxTypeSelectorModel.cs" />
     <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Media\PictureModel.cs" />
+    <Compile Include="Models\Newsletter\NewsletterBoxModel.cs" />
+    <Compile Include="Models\Newsletter\SubscriptionActivationModel.cs" />
     <Compile Include="Models\News\AddNewsCommentModel.cs" />
     <Compile Include="Models\News\HomePageNewsItemsModel.cs" />
     <Compile Include="Models\News\NewsCommentModel.cs" />
@@ -795,6 +798,9 @@
     <Content Include="Views\Poll\_Poll.cshtml" />
     <Content Include="Views\Poll\HomePagePolls.cshtml" />
     <Content Include="Views\Poll\PollBlock.cshtml" />
+    <Content Include="Views\Common\Social.cshtml" />
+    <Content Include="Views\Newsletter\NewsletterBox.cshtml" />
+    <Content Include="Views\Newsletter\SubscriptionActivation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
