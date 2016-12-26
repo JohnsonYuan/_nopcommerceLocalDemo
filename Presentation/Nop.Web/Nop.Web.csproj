@@ -541,7 +541,11 @@
     <Compile Include="Models\Catalog\VendorModel.cs" />
     <Compile Include="Models\Catalog\VendorNavigationModel.cs" />
     <Compile Include="Models\Cms\RenderWidgetModel.cs" />
+    <Compile Include="Models\Common\AddressAttributeModel.cs" />
+    <Compile Include="Models\Common\AddressModel.cs" />
     <Compile Include="Models\Common\AdminHeaderLinksModel.cs" />
+    <Compile Include="Models\Common\ContactUsModel.cs" />
+    <Compile Include="Models\Common\ContactVendorModel.cs" />
     <Compile Include="Models\Common\CurrencyModel.cs" />
     <Compile Include="Models\Common\CurrencySelectorModel.cs" />
     <Compile Include="Models\Common\FaviconModel.cs" />
@@ -562,15 +566,26 @@
     <Compile Include="Models\News\AddNewsCommentModel.cs" />
     <Compile Include="Models\News\HomePageNewsItemsModel.cs" />
     <Compile Include="Models\News\NewsCommentModel.cs" />
+    <Compile Include="Models\News\NewsItemListModel.cs" />
     <Compile Include="Models\News\NewsItemModel.cs" />
+    <Compile Include="Models\News\NewsPagingFilteringModel.cs" />
     <Compile Include="Models\Polls\PollModel.cs" />
+    <Compile Include="Models\ShoppingCart\EstimateShippingModel.cs" />
     <Compile Include="Models\ShoppingCart\MiniShoppingCartModel.cs" />
+    <Compile Include="Models\ShoppingCart\OrderTotalsModel.cs" />
+    <Compile Include="Models\ShoppingCart\ShoppingCartModel.cs" />
+    <Compile Include="Models\ShoppingCart\WishlistEmailAFriendModel.cs" />
+    <Compile Include="Models\ShoppingCart\WishlistModel.cs" />
     <Compile Include="Models\Topics\TopicModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validators\Catalog\ProductEmailAFriendValidator.cs" />
     <Compile Include="Validators\Catalog\ProductReviewsValidator.cs" />
+    <Compile Include="Validators\Common\AddressValidator.cs" />
+    <Compile Include="Validators\Common\ContactUsValidator.cs" />
+    <Compile Include="Validators\Common\ContactVendorValidator.cs" />
     <Compile Include="Validators\Install\InstallValidator.cs" />
     <Compile Include="Validators\News\NewsItemValidator.cs" />
+    <Compile Include="Validators\ShoppingCart\WishlistEmailAFriendValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -800,6 +815,8 @@
     <Content Include="Views\Newsletter\NewsletterBox.cshtml" />
     <Content Include="Views\Newsletter\SubscriptionActivation.cshtml" />
     <Content Include="Views\Common\StoreThemeSelector.cshtml" />
+    <Content Include="Views\Common\StoreClosed.cshtml" />
+    <Content Include="Views\Home\Index2.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

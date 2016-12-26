@@ -15,7 +15,7 @@ namespace Nop.Web.Models.Install
             this.AvailableLanguages = new List<SelectListItem>();
         }
 
-        [AllowHtml]
+        //[AllowHtml]
         public string AdminEmail { get; set; }
         [AllowHtml]
         [NoTrim]

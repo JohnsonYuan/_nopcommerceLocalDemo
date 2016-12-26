@@ -30,6 +30,7 @@ using Nop.Web.Extensions;
 using System.Web.Mvc;
 using System.Linq;
 using Nop.Web.Infrastructure.Cache;
+using Nop.Web.Framework.Security;
 
 namespace Nop.Web.Controllers
 {
@@ -230,6 +231,92 @@ namespace Nop.Web.Controllers
 
             var model = PrepareProductOverviewModels(products, true, true, productThumbPictureSize).ToList();
             return PartialView(model);
+        }
+
+        #endregion
+
+        #region Comparing products
+
+        [HttpPost]
+        public ActionResult AddProductToCompareList(int productId)
+        {
+            var product = _productService.GetProductById(productId);
+            if (product == null || product.Deleted || !product.Published)
+                return Json(new
+                {
+                    success = false,
+                    message = "No product found with the specified ID"
+                });
+
+            if (!_catalogSettings.CompareProductsEnabled)
+                return Json(new
+                {
+                    success = false,
+                    message = "Product comparison is disabled"
+                });
+
+            _compareProductsService.AddProductToCompareList(productId);
+
+            //activity log
+            _customerActivityService.InsertActivity("PublicStore.AddToCompareList", _localizationService.GetResource("ActivityLog.PublicStore.AddToCompareList"), product.Name);
+
+            return Json(new
+            {
+                success = true,
+                message = string.Format(_localizationService.GetResource("Products.ProductHasBeenAddedToCompareList.Link"), Url.RouteUrl("CompareProducts"))
+                //use the code below (commented) if you want a customer to be automatically redirected to the compare products page
+                //redirect = Url.RouteUrl("CompareProducts"),
+            });
+        }
+
+        public ActionResult RemoveProductFromCompareList(int productId)
+        {
+            var product = _productService.GetProductById(productId);
+            if (product == null)
+                return RedirectToRoute("HomePage");
+
+            if (!_catalogSettings.CompareProductsEnabled)
+                return RedirectToRoute("HomePage");
+
+            _compareProductsService.RemoveProductFromCompareList(productId);
+
+            return RedirectToRoute("CompareProducts");
+        }
+
+        [NopHttpsRequirement(SslRequirement.No)]
+        public ActionResult CompareProducts()
+        {
+            if (!_catalogSettings.CompareProductsEnabled)
+                return RedirectToRoute("HomePage");
+
+            var model = new CompareProductsModel
+            {
+                IncludeShortDescriptionInCompareProducts = _catalogSettings.IncludeShortDescriptionInCompareProducts,
+                IncludeFullDescriptionInCompareProducts = _catalogSettings.IncludeFullDescriptionInCompareProducts,
+            };
+
+            var products = _compareProductsService.GetComparedProducts();
+
+            //ACL and store mapping
+            products = products.Where(p => _aclService.Authorize(p) && _storeMappingService.Authorize(p)).ToList();
+            //availability dates
+            products = products.Where(p => p.IsAvailable()).ToList();
+
+            //prepare model
+            PrepareProductOverviewModels(products, prepareSpecificationAttributes: true)
+                .ToList()
+                .ForEach(model.Products.Add);
+            return View(model);
+        }
+
+        public ActionResult ClearCompareList()
+        {
+            if (!_catalogSettings.CompareProductsEnabled)
+                return RedirectToRoute("HomePage");
+
+            _compareProductsService.ClearCompareProducts();
+
+            return RedirectToRoute("CompareProducts");
         }
 
         #endregion

@@ -178,6 +178,33 @@ namespace Nop.Web.Controllers
             return PartialView(model);
         }
 
+        public ActionResult List(NewsPagingFilteringModel command)
+        {
+            if (!_newsSettings.Enabled)
+                return RedirectToRoute("HomePage");
+
+            var model = new NewsItemListModel();
+            model.WorkingLanguageId = _workContext.WorkingLanguage.Id;
+
+            if (command.PageSize <= 0) command.PageSize = _newsSettings.NewsArchivePageSize;
+            if (command.PageNumber <= 0) command.PageNumber = 1;
+
+            var newsItems = _newsService.GetAllNews(_workContext.WorkingLanguage.Id, _storeContext.CurrentStore.Id,
+                command.PageNumber - 1, command.PageSize);
+            model.PagingFilteringContext.LoadPagedList(newsItems);
+
+            model.NewsItems = newsItems
+                .Select(x =>
+                {
+                    var newsModel = new NewsItemModel();
+                    PrepareNewsItemModel(newsModel, x, false);
+                    return newsModel;
+                })
+                .ToList();
+
+            return View(model);
+        }
+
         [ChildActionOnly]
         public ActionResult RssHeaderLink()
         {

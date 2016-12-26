@@ -170,7 +170,10 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Methods
-
+        public ActionResult Index2()
+        {
+            return View();
+        }
         public ActionResult Index()
         {
             if (DataSettingsHelper.DatabaseIsInstalled())

@@ -38,6 +38,8 @@ using Nop.Services.Topics;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
 using Nop.Web.Framework.Security;
+using System.Text;
+using System.Collections.Generic;
 
 // TODO learn genericattribue service
 namespace Nop.Web.Controllers
@@ -617,13 +619,170 @@ namespace Nop.Web.Controllers
             return Json(new { stored = true });
         }
 
+        //robots.txt file
+        //available even when a store is closed
+        [StoreClosed(true)]
+        //available even when navigation is not allowed
+        [PublicStoreAllowNavigation(true)]
+        public ActionResult RobotsTextFile()
+        {
+            var sb = new StringBuilder();
+
+            //if robots.custom.txt exists, let's use it instead of hard-coded data below
+            string robotsFilePath = System.IO.Path.Combine(CommonHelper.MapPath("~/"), "robots.custom.txt");
+            if (System.IO.File.Exists(robotsFilePath))
+            {
+                //the robots.txt file exists
+                string robotsFileContent = System.IO.File.ReadAllText(robotsFilePath);
+                sb.Append(robotsFileContent);
+            }
+            else
+            {
+                //doesn't exist. Let's generate it (default behavior)
+
+                var disallowPaths = new List<string>
+                {
+                    "/bin/",
+                    "/content/files/",
+                    "/content/files/exportimport/",
+                    "/country/getstatesbycountryid",
+                    "/install",
+                    "/setproductreviewhelpfulness",
+                };
+                var localizableDisallowPaths = new List<string>
+                {
+                    "/addproducttocart/catalog/",
+                    "/addproducttocart/details/",
+                    "/backinstocksubscriptions/manage",
+                    "/boards/forumsubscriptions",
+                    "/boards/forumwatch",
+                    "/boards/postedit",
+                    "/boards/postdelete",
+                    "/boards/postcreate",
+                    "/boards/topicedit",
+                    "/boards/topicdelete",
+                    "/boards/topiccreate",
+                    "/boards/topicmove",
+                    "/boards/topicwatch",
+                    "/cart",
+                    "/checkout",
+                    "/checkout/billingaddress",
+                    "/checkout/completed",
+                    "/checkout/confirm",
+                    "/checkout/shippingaddress",
+                    "/checkout/shippingmethod",
+                    "/checkout/paymentinfo",
+                    "/checkout/paymentmethod",
+                    "/clearcomparelist",
+                    "/compareproducts",
+                    "/compareproducts/add/*",
+                    "/customer/avatar",
+                    "/customer/activation",
+                    "/customer/addresses",
+                    "/customer/changepassword",
+                    "/customer/checkusernameavailability",
+                    "/customer/downloadableproducts",
+                    "/customer/info",
+                    "/deletepm",
+                    "/emailwishlist",
+                    "/inboxupdate",
+                    "/newsletter/subscriptionactivation",
+                    "/onepagecheckout",
+                    "/order/history",
+                    "/orderdetails",
+                    "/passwordrecovery/confirm",
+                    "/poll/vote",
+                    "/privatemessages",
+                    "/returnrequest",
+                    "/returnrequest/history",
+                    "/rewardpoints/history",
+                    "/sendpm",
+                    "/sentupdate",
+                    "/shoppingcart/*",
+                    "/storeclosed",
+                    "/subscribenewsletter",
+                    "/topic/authenticate",
+                    "/viewpm",
+                    "/uploadfileproductattribute",
+                    "/uploadfilecheckoutattribute",
+                    "/wishlist",
+                };
+
+                const string newLine = "\r\n";
+                sb.Append("User-agent: *");
+                sb.Append(newLine);
+                //sitemaps
+                if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
+                {
+                    //URLs are localizable. Append SEO code
+                    foreach (var language in _languageService.GetAllLanguages(storeId: _storeContext.CurrentStore.Id))
+                    {
+                        sb.AppendFormat("Sitemap: {0}{1}/sitemap.xml", _storeContext.CurrentStore.Url, language.UniqueSeoCode);
+                        sb.Append(newLine);
+                    }
+                }
+                else
+                {
+                    //localizable paths (without SEO code)
+                    sb.AppendFormat("Sitemap: {0}sitemap.xml", _storeContext.CurrentStore.Url);
+                    sb.Append(newLine);
+                }
+
+                //usual paths
+                foreach (var path in disallowPaths)
+                {
+                    sb.AppendFormat("Disallow: {0}", path);
+                    sb.Append(newLine);
+                }
+                //localizable paths (without SEO code)
+                foreach (var path in localizableDisallowPaths)
+                {
+                    sb.AppendFormat("Disallow: {0}", path);
+                    sb.Append(newLine);
+                }
+                if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
+                {
+                    //URLs are localizable. Append SEO code
+                    foreach (var language in _languageService.GetAllLanguages(storeId: _storeContext.CurrentStore.Id))
+                    {
+                        foreach (var path in localizableDisallowPaths)
+                        {
+                            sb.AppendFormat("Disallow: {0}{1}", language.UniqueSeoCode, path);
+                            sb.Append(newLine);
+                        }
+                    }
+                }
+
+                //load and add robots.txt additions to the end of file.
+                string robotsAdditionsFile = System.IO.Path.Combine(CommonHelper.MapPath("~/"), "robots.additions.txt");
+                if (System.IO.File.Exists(robotsAdditionsFile))
+                {
+                    string robotsFileContent = System.IO.File.ReadAllText(robotsAdditionsFile);
+                    sb.Append(robotsFileContent);
+                }
+            }
+
+            Response.ContentType = MimeTypes.TextPlain;
+            Response.Write(sb.ToString());
+            return null;
+        }
+
         public ActionResult GenericUrl()
         {
             //seems that no entity was found
             return InvokeHttp404();
         }
 
+        //store is closed
+        //available even when a store is closed
+        [StoreClosed(true)]
+        public ActionResult StoreClosed()
+        {
+            return View();
+        }
+
         //favicon
+        [ChildActionOnly]
         public ActionResult Favicon()
         {
             //try loading a store specific favicon
