@@ -38,6 +38,24 @@ namespace Nop.Web.Extensions
             return model;
         }
 
+        //manufacturer
+        public static ManufacturerModel ToModel(this Manufacturer entity)
+        {
+            if (entity == null)
+                return null;
+
+            var model = new ManufacturerModel
+            {
+                Id = entity.Id,
+                Name = entity.GetLocalized(x => x.Name),
+                Description = entity.GetLocalized(x => x.Description),
+                MetaKeywords = entity.GetLocalized(x => x.MetaKeywords),
+                MetaDescription = entity.GetLocalized(x => x.MetaDescription),
+                MetaTitle = entity.GetLocalized(x => x.MetaTitle),
+                SeName = entity.GetSeName(),
+            };
+            return model;
+        }
 
         //address
         /// <summary>

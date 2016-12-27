@@ -68,7 +68,9 @@ namespace Nop.Core.Tests
         }
         static void Main()
         {
-            
+            var dt = new DateTime(2017, 01, 12); 
+            Console.WriteLine(dt);
+            Console.WriteLine(dt.AddMonths(1).AddSeconds(-1));
             return;
             string sentence = "the quick brown fox jumps over the lazy dog";
 

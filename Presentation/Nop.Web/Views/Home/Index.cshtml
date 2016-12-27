@@ -43,7 +43,7 @@
             }
         }
         @{
-            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies().Take(5))
             {
                 @item.FullName
                 <br/>

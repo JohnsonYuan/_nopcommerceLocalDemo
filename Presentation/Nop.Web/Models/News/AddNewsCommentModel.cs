@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nop.Web.Models.News
 {

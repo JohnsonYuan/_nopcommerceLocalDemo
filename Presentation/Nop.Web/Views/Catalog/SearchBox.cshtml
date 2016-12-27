@@ -8,7 +8,7 @@
     if (Model.SearchTermMinimumLength > 0)
     {
         <script type="text/javascript">
-            $('#small-search-box-form').submit(function(event) {
+            $("#small-search-box-form").submit(function(event) {
                 if ($("#small-searchterms").val() == "") {
                     alert('@Html.Raw(HttpUtility.JavaScriptStringEncode(T("Search.EnterSearchTerms").Text))');
                     $("#small-searchterms").focus();
@@ -21,28 +21,27 @@
     {
         <text>
             <script type="text/javascript">
-                $(document).ready(function () {
+                $(document).ready(function() {
                     $('#small-searchterms').autocomplete({
-                        delay: 500,
-                        miniLength: @(Model.SearchTermMinimumLength.ToString()),
-                        source: ["lumia", "lumia59", "lumia590", "xbox1", "xbox2"],
-                        @*source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',*@
-                        appendTo: '.search-box',
-                        select: function(event, ui) {
-                            $("#small-searchterms").val(ui.item.label);
-                            setLocation(ui.item.producturl);
-                            return false;
-                        }
-                    })
-                    .data("ui-autocomplete")._renderItem = function (ul, item) {
-                        var t = item.label;
-                        //html encode
-                        t = htmlEncode(t);
-                        return $("<li></li>")
-                            .data("item.autocomplete", item)
-                            .append("<a>@(Model.ShowProductImagesInSearchAutoComplete ? Html.Raw("<img src='\" + item.productpictureurl + \"'>") : null)<span>" + t + "</span></a>")
+                            delay: 500,
+                            minLength: @(Model.SearchTermMinimumLength.ToString()),
+                            source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+                            appendTo: '.search-box',
+                            select: function(event, ui) {
+                                $("#small-searchterms").val(ui.item.label);
+                                setLocation(ui.item.producturl);
+                                return false;
+                            }
+                        })
+                        .data("ui-autocomplete")._renderItem = function(ul, item) {
+                            var t = item.label;
+                            //html encode
+                            t = htmlEncode(t);
+                            return $("<li></li>")
+                                .data("item.autocomplete", item)
+                                .append("<a>@(Model.ShowProductImagesInSearchAutoComplete ? Html.Raw("<img src='\" + item.productpictureurl + \"'>") : null)<span>" + t + "</span></a>")
                                 .appendTo(ul);
-                    };
+                        };
                 });
             </script>
         </text>

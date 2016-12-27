@@ -2,6 +2,16 @@
 NonAction
 ChildAcion
 
+Nop.Web.Framework.Seo、GenericPathRoute.cs中
+data.Values["controller"] = "Product";
+data.Values["action"] = "ProductDetails";
+data.Values["productid"] = urlRecord.EntityId;
+data.Values["SeName"] = urlRecord.Slug;
+当前razor view中获取controller，action
+Url.RequestContext.RouteData.Values["controller"].ToString()
+Url.RequestContext.RouteData.Values["action"].ToString()
+Url.RequestContext.RouteData.Values["categoryId"]
+
 Filter:
 
 _ViewStart.cshtml

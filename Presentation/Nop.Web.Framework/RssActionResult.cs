@@ -1,8 +1,8 @@
-﻿using Nop.Core;
-using System;
+﻿using System;
 using System.ServiceModel.Syndication;
 using System.Web.Mvc;
 using System.Xml;
+using Nop.Core;
 
 namespace Nop.Web.Framework
 {

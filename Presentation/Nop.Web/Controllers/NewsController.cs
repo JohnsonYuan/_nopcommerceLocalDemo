@@ -22,6 +22,10 @@ using Nop.Web.Framework.Security.Captcha;
 using Nop.Services.Customers;
 using Nop.Services.Common;
 using Nop.Web.Infrastructure.Cache;
+using System.ServiceModel.Syndication;
+using Nop.Web.Framework;
+using System.Collections.Generic;
+using Nop.Web.Framework.Controllers;
 
 namespace Nop.Web.Controllers
 {
@@ -81,6 +85,9 @@ namespace Nop.Web.Controllers
             this._workflowMessageService = workflowMessageService;
             this._webHelper = webHelper;
             this._cacheManager = cacheManager;
+            this._customerActivityService = customerActivityService;
+            this._storeMappingService = storeMappingService;
+            this._permissionService = permissionService;
 
             this._mediaSettings = mediaSettings;
             this._newsSettings = newsSettings;
@@ -202,6 +209,111 @@ namespace Nop.Web.Controllers
                 })
                 .ToList();
 
+            return View(model);
+        }
+
+        public ActionResult ListRss(int languageId)
+        {
+            var feed = new SyndicationFeed(
+                                    string.Format("{0}: News", _storeContext.CurrentStore.GetLocalized(x => x.Name)),
+                                    "News",
+                                    new Uri(_webHelper.GetStoreLocation(false)),
+                                    string.Format("urn:store:{0}:news", _storeContext.CurrentStore.Id),
+                                    DateTime.UtcNow);
+
+            if (!_newsSettings.Enabled)
+                return new RssActionResult { Feed = feed };
+
+            var items = new List<SyndicationItem>();
+            var newsItems = _newsService.GetAllNews(languageId, _storeContext.CurrentStore.Id);
+            foreach (var n in newsItems)
+            {
+                string newsUrl = Url.RouteUrl("NewsItem", new { SeName = n.GetSeName(n.LanguageId, ensureTwoPublishedLanguages: false) }, _webHelper.IsCurrentConnectionSecured() ? "https" : "http");
+                items.Add(new SyndicationItem(n.Title, n.Short, new Uri(newsUrl), String.Format("urn:store:{0}:news:blog:{1}", _storeContext.CurrentStore.Id, n.Id), n.CreatedOnUtc));
+            }
+            feed.Items = items;
+            return new RssActionResult { Feed = feed };
+        }
+
+        public ActionResult NewsItem(int newsItemId)
+        {
+            if (!_newsSettings.Enabled)
+                return RedirectToRoute("HomePage");
+
+            var newsItem = _newsService.GetNewsById(newsItemId);
+            if (newsItem == null ||
+                !newsItem.Published ||
+                (newsItem.StartDateUtc.HasValue && newsItem.StartDateUtc.Value >= DateTime.UtcNow) ||
+                (newsItem.EndDateUtc.HasValue && newsItem.EndDateUtc.Value <= DateTime.UtcNow) ||
+                //Store mapping
+                !_storeMappingService.Authorize(newsItem))
+                return RedirectToRoute("HomePage");
+
+            var model = new NewsItemModel();
+            PrepareNewsItemModel(model, newsItem, true);
+
+            //display "edit" (manage) link
+            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageNews))
+                DisplayEditLink(Url.Action("Edit", "News", new { id = newsItem.Id, area = "Admin" }));
+
+            return View(model);
+        }
+
+        [HttpPost, ActionName("NewsItem")]
+        [PublicAntiForgery]
+        [FormValueRequired("add-comment")]
+        [CaptchaValidator]
+        public ActionResult NewsCommentAdd(int newsItemId, NewsItemModel model, bool captchaValid)
+        {
+            if (!_newsSettings.Enabled)
+                return RedirectToRoute("HomePage");
+
+            var newsItem = _newsService.GetNewsById(newsItemId);
+            if (newsItem == null || !newsItem.Published || !newsItem.AllowComments)
+                return RedirectToRoute("HomePage");
+
+            //validate CAPTCHA
+            if (_captchaSettings.Enabled && _captchaSettings.ShowOnNewsCommentPage && !captchaValid)
+            {
+                ModelState.AddModelError("", _captchaSettings.GetWrongCaptchaMessage(_localizationService));
+            }
+
+            if (_workContext.CurrentCustomer.IsGuest() && !_newsSettings.AllowNotRegisteredUsersToLeaveComments)
+            {
+                ModelState.AddModelError("", _localizationService.GetResource("News.Comments.OnlyRegisteredUsersLeaveComments"));
+            }
+
+            if (ModelState.IsValid)
+            {
+                var comment = new NewsComment
+                {
+                    NewsItemId = newsItem.Id,
+                    CustomerId = _workContext.CurrentCustomer.Id,
+                    CommentTitle = model.AddNewComment.CommentTitle,
+                    CommentText = model.AddNewComment.CommentText,
+                    CreatedOnUtc = DateTime.UtcNow,
+                };
+                newsItem.NewsComments.Add(comment);
+                //update totals
+                newsItem.CommentCount = newsItem.NewsComments.Count;
+                _newsService.UpdateNews(newsItem);
+
+
+                //notify a store owner;
+                if (_newsSettings.NotifyAboutNewNewsComments)
+                    _workflowMessageService.SendNewsCommentNotificationMessage(comment, _localizationSettings.DefaultAdminLanguageId);
+
+                //activity log
+                _customerActivityService.InsertActivity("PublicStore.AddNewsComment", _localizationService.GetResource("ActivityLog.PublicStore.AddNewsComment"));
+
+                //The text boxes should be cleared after a comment has been posted
+                //That' why we reload the page
+                TempData["nop.news.addcomment.result"] = _localizationService.GetResource("News.Comments.SuccessfullyAdded");
+                return RedirectToAction("NewsItem", new { SeName = newsItem.GetSeName(newsItem.LanguageId, ensureTwoPublishedLanguages: false) });
+            }
+
+            //If we got this far, something failed, redisplay form
+            PrepareNewsItemModel(model, newsItem, true);
             return View(model);
         }
 
