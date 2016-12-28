@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Nop.Core.Tests
 {
@@ -68,9 +69,15 @@ namespace Nop.Core.Tests
         }
         static void Main()
         {
-            var dt = new DateTime(2017, 01, 12); 
-            Console.WriteLine(dt);
-            Console.WriteLine(dt.AddMonths(1).AddSeconds(-1));
+            var str = "[quote=(yuan)]123123";
+            str = Regex.Replace(str, @"\[quote=(.+?)\]", String.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Console.WriteLine(str);
+            str = "[quote=(yuan)]123123";
+            Console.WriteLine(Regex.Matches(str, @"\[quote=(.+?)\]").Count);
+            foreach (Match item in Regex.Matches(str, @"\[quote=(.+?)\]"))
+            {
+                Console.WriteLine(item.Groups.Count);
+            }
             return;
             string sentence = "the quick brown fox jumps over the lazy dog";
 

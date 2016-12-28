@@ -883,6 +883,14 @@
     <Content Include="Views\Boards\ForumGroup.cshtml" />
     <Content Include="Views\Boards\Forum.cshtml" />
     <Content Include="Views\Boards\ForumBreadcrumb.cshtml" />
+    <Content Include="Views\Boards\Search.cshtml" />
+    <Content Include="Views\Boards\PostEdit.cshtml" />
+    <Content Include="Views\Boards\CustomerForumSubscriptions.cshtml" />
+    <Content Include="Views\Boards\PostCreate.cshtml" />
+    <Content Include="Views\Boards\Topic.cshtml" />
+    <Content Include="Views\Boards\TopicCreate.cshtml" />
+    <Content Include="Views\Boards\TopicEdit.cshtml" />
+    <Content Include="Views\Boards\TopicMove.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

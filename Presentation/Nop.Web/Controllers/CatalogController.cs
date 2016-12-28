@@ -187,7 +187,6 @@ namespace Nop.Web.Controllers
             }
         }
 
-
         [NonAction]
         protected virtual void PrepareViewModes(CatalogPagingFilteringModel pagingFilteringModel, CatalogPagingFilteringModel command)
         {

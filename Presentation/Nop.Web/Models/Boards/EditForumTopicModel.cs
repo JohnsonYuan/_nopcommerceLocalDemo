@@ -34,6 +34,5 @@ namespace Nop.Web.Models.Boards
 
         public bool IsCustomerAllowedToSubscribe { get; set; }
         public bool Subscribed { get; set; }
-
     }
 }
