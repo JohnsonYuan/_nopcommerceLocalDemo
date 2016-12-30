@@ -59,7 +59,8 @@
                                 @group.ToList().Aggregate(string.Empty, (current, next) =>
                                     string.Format("{0}{1}", string.IsNullOrEmpty(current) ? string.Empty 
                                     : string.Format("{0} {1}", current, T("Filtering.SpecificationFilter.Separator")), next.SpecificationAttributeOptionName))
-                            </li>
+                                <br/>
+                             </li>
                         }
                     </ul>
                 </div>

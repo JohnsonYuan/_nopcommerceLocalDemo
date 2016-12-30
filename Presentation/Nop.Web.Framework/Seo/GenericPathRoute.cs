@@ -96,7 +96,7 @@ namespace Nop.Web.Framework.Seo
                 if (!urlRecord.IsActive)
                 {
                     //URL record is not active. let's find the latest one
-                    var activeSlug = urlRecordService.GetActiveSlug(urlRecord.Id, urlRecord.EntityName, urlRecord.LanguageId);
+                    var activeSlug = urlRecordService.GetActiveSlug(urlRecord.EntityId, urlRecord.EntityName, urlRecord.LanguageId);
                     if (string.IsNullOrWhiteSpace(activeSlug))
                     {
                         //no active slug found
