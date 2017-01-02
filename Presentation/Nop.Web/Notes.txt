@@ -17,6 +17,15 @@ NewsController.cs\RssHeaderLink,  GetLocalized方法，学习Expression tree, ex
 string link = string.Format("<link href=\"{0}\" rel=\"alternate\" type=\"{1}\" title=\"{2}: News\" />",
     Url.RouteUrl("NewsRSS", new { languageId = _workContext.WorkingLanguage.Id }, _webHelper.IsCurrentConnectionSecured() ? "https" : "http"), MimeTypes.ApplicationRssXml, _storeContext.CurrentStore.GetLocalized(x => x.Name));
 
+为什么nop要使用keep alive， application pool 有Idle timeout, 默认20分钟
+Large ASP.NET apps take a while to initially load into memory.  Once loaded, the ASP app pool will unload your app if it goes idle (20 minutes by default).
+Why does my home page take so long to load? (为什么用keep alive): http://docs.nopcommerce.com/display/en/FAQ
+配置idle time: https://technet.microsoft.com/en-us/library/cc771956(v=ws.10).aspx
+
+
+怎么配置multi-store : CName 把B 域名转到A域名
+http://www.nopaccelerate.com/setup-nopcommerce-multi-store-shared-hosting-environment/
+http://www.nopcommerce.com/boards/t/21356/multi-store-roadmap-lets-discuss-update-done.aspx?p=3#89679
 
 =======================================
 需要看的东西

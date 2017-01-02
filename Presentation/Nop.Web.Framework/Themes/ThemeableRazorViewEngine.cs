@@ -3,6 +3,12 @@ using System.Web.Mvc;
 
 namespace Nop.Web.Framework.Themes
 {
+    /// <summary>
+    /// 我的注释：
+    /// 其实是参考RazorViewEngie 增加了view， area， master这些view的寻找位置
+    /// “~/Administration/Views/{1}/{0}.cshtml” 这个很重要 mvc默认寻找area位置是 ~/Area/。。。 但Admin位置在~/Administrator下面， 如果不这样写找不到view
+    /// http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/RazorViewEngine.cs
+    /// </summary>
     public class ThemeableRazorViewEngine : ThemeableVirtualPathProviderViewEngine
     {
         public ThemeableRazorViewEngine()

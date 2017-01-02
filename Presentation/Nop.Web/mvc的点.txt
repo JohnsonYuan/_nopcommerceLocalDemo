@@ -82,3 +82,81 @@ public static MvcHtmlString IdFor<TModel, TProperty>(this HtmlHelper<TModel> htm
 {
     return Id(html, ExpressionHelper.GetExpressionText(expression));
 }
+
+ViewBag 如何 wrap ViewData
+WebViewPage.cs http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/WebViewPage.cs
+private ViewDataDictionary _viewData;
+private DynamicViewDataDictionary _dynamicViewData;
+public dynamic ViewBag
+{
+    get
+    {
+        if (_dynamicViewData == null)
+        {
+            _dynamicViewData = new DynamicViewDataDictionary(() => ViewData);
+        }
+        return _dynamicViewData;
+    }
+}
+再看DynamicViewDataDictionary : 继承DynamicObject, 重写TryGetMember，TrySetMember 实现对ViewData操作
+    internal sealed class DynamicViewDataDictionary : DynamicObject
+    {
+        private readonly Func<ViewDataDictionary> _viewDataThunk;
+
+        public DynamicViewDataDictionary(Func<ViewDataDictionary> viewDataThunk)
+        {
+            _viewDataThunk = viewDataThunk;
+        }
+
+        private ViewDataDictionary ViewData
+        {
+            get
+            {
+                ViewDataDictionary viewData = _viewDataThunk();
+                Debug.Assert(viewData != null);
+                return viewData;
+            }
+        }
+
+        // Implementing this function improves the debugging experience as it provides the debugger with the list of all
+        // the properties currently defined on the object
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return ViewData.Keys;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = ViewData[binder.Name];
+            // since ViewDataDictionary always returns a result even if the key does not exist, always return true
+            return true;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            ViewData[binder.Name] = value;
+            // you can always set a key in the dictionary so return true
+            return true;
+        }
+    }
+可以学习
+Dynamic in C# 4.0: Creating Wrappers with DynamicObject
+https://blogs.msdn.microsoft.com/csharpfaq/2009/10/19/dynamic-in-c-4-0-creating-wrappers-with-dynamicobject/
+
+
+ShoppingCartController里面更新购物车, 继续购物， 结算等action都有属性ActionName("Cart")]， 默认情况下如果直接post， 会报错（多个action，不知道选择哪个）：
+The current request for action 'Cart' on controller type 'ShoppingCartController' is ambiguous between the following action methods:
+System.Web.Mvc.ActionResult UpdateCart(System.Web.Mvc.FormCollection) on type Nop.Web.Controllers.ShoppingCartController
+System.Web.Mvc.ActionResult ContinueShopping() on type Nop.Web.Controllers.ShoppingCartController
+System.Web.Mvc.ActionResult StartCheckout(System.Web.Mvc.FormCollection) on type Nop.Web.Controllers.ShoppingCartController
+====》 用ActionMethodSelectorAttribute可以解决该问题, 继承该类, 重写IsValidForRequest
+如 Nop.Web.Framework.Controllers, FormValueRequiredAttribute : ActionMethodSelectorAttribute
+给相同的action， 加上该属性即可
+[HttpPost, ActionName("Cart")]
+[FormValueRequired("updatecart")]
+public ActionResult UpdateCart(FormCollection form)
+
+[HttpPost, ActionName("Cart")]
+[FormValueRequired("continueshopping")]
+public ActionResult ContinueShopping()
+http://www.dotnetcurry.com/aspnet-mvc/724/handle-multiple-submit-buttons-aspnet-mvc-action-methods

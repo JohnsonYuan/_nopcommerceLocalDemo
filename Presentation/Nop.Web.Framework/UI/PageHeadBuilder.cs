@@ -452,7 +452,7 @@ namespace Nop.Web.Framework.UI
                 return "";
 
             var result = new StringBuilder();
-            foreach (var path in _scriptParts)
+            foreach (var path in _headCustomParts)
             {
                 result.Append(path);
                 result.Append(Environment.NewLine);

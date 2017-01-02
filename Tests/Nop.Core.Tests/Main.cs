@@ -69,6 +69,16 @@ namespace Nop.Core.Tests
         }
         static void Main()
         {
+            var builderx = new ContainerBuilder();
+            builderx.RegisterType<ConsoleOutput> ().As< IOutput> ().InstancePerLifetimeScope();
+            var containerx = builderx.Build();
+            using (var scope1 = containerx.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                var outputer = scope1.Resolve<IOutput>();
+                outputer.Write("hello");
+            }
+
+            return; 
             var str = "[quote=(yuan)]123123";
             str = Regex.Replace(str, @"\[quote=(.+?)\]", String.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             Console.WriteLine(str);

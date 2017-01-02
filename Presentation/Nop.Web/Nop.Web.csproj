@@ -43,6 +43,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
@@ -116,6 +120,10 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web.Razor">
@@ -496,6 +504,8 @@
     <Compile Include="Controllers\BoardsController.cs" />
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\ExternalAuthenticationController.cs" />
     <Compile Include="Controllers\NewsletterController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
@@ -506,6 +516,7 @@
     <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
+    <Compile Include="Extensions\AttributeParserHelper.cs" />
     <Compile Include="Extensions\ControllerExtensions.cs" />
     <Compile Include="Extensions\HtmlExtensions.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
@@ -565,6 +576,17 @@
     <Compile Include="Models\Catalog\TopMenuModel.cs" />
     <Compile Include="Models\Catalog\VendorModel.cs" />
     <Compile Include="Models\Catalog\VendorNavigationModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutBillingAddressModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutCompletedModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutConfirmModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutPaymentInfoModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutPaymentMethodModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutPickupPointModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutProgressModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutShippingAddressModel.cs" />
+    <Compile Include="Models\Checkout\CheckoutShippingMethodModel.cs" />
+    <Compile Include="Models\Checkout\OnePageCheckoutModel.cs" />
+    <Compile Include="Models\Checkout\UpdateSectionJsonModel.cs" />
     <Compile Include="Models\Cms\RenderWidgetModel.cs" />
     <Compile Include="Models\Common\AddressAttributeModel.cs" />
     <Compile Include="Models\Common\AddressModel.cs" />
@@ -584,6 +606,21 @@
     <Compile Include="Models\Common\StoreThemeModel.cs" />
     <Compile Include="Models\Common\StoreThemeSelectorModel.cs" />
     <Compile Include="Models\Common\TaxTypeSelectorModel.cs" />
+    <Compile Include="Models\Customer\AccountActivationModel.cs" />
+    <Compile Include="Models\Customer\ChangePasswordModel.cs" />
+    <Compile Include="Models\Customer\CustomerAddressEditModel.cs" />
+    <Compile Include="Models\Customer\CustomerAddressListModel.cs" />
+    <Compile Include="Models\Customer\CustomerAttributeModel.cs" />
+    <Compile Include="Models\Customer\CustomerAvatarModel.cs" />
+    <Compile Include="Models\Customer\CustomerDownloadableProductsModel.cs" />
+    <Compile Include="Models\Customer\CustomerInfoModel.cs" />
+    <Compile Include="Models\Customer\CustomerNavigationModel.cs" />
+    <Compile Include="Models\Customer\ExternalAuthenticationMethodModel.cs" />
+    <Compile Include="Models\Customer\LoginModel.cs" />
+    <Compile Include="Models\Customer\PasswordRecoveryConfirmModel.cs" />
+    <Compile Include="Models\Customer\PaswordRecoveryModel.cs" />
+    <Compile Include="Models\Customer\RegisterModel.cs" />
+    <Compile Include="Models\Customer\RegisterResultModel.cs" />
     <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Media\PictureModel.cs" />
     <Compile Include="Models\Newsletter\NewsletterBoxModel.cs" />
@@ -611,6 +648,12 @@
     <Compile Include="Validators\Common\AddressValidator.cs" />
     <Compile Include="Validators\Common\ContactUsValidator.cs" />
     <Compile Include="Validators\Common\ContactVendorValidator.cs" />
+    <Compile Include="Validators\Customer\ChangePasswordValidator.cs" />
+    <Compile Include="Validators\Customer\CustomerInfoValidator.cs" />
+    <Compile Include="Validators\Customer\LoginValidator.cs" />
+    <Compile Include="Validators\Customer\PasswordRecoveryConfirmValidator.cs" />
+    <Compile Include="Validators\Customer\PasswordRecoveryValidator.cs" />
+    <Compile Include="Validators\Customer\RegisterValidator.cs" />
     <Compile Include="Validators\Install\InstallValidator.cs" />
     <Compile Include="Validators\News\NewsItemValidator.cs" />
     <Compile Include="Validators\ShoppingCart\WishlistEmailAFriendValidator.cs" />
@@ -891,6 +934,72 @@
     <Content Include="Views\Boards\TopicCreate.cshtml" />
     <Content Include="Views\Boards\TopicEdit.cshtml" />
     <Content Include="Views\Boards\TopicMove.cshtml" />
+    <Content Include="Views\Product\ProductTemplate.cshtml" />
+    <Content Include="Views\Product\ProductTemplate.Grouped.cshtml" />
+    <Content Include="Views\Product\_AddToCart.cshtml" />
+    <Content Include="Views\Product\_AddToWishlist.cshtml" />
+    <Content Include="Views\Product\_Availability.cshtml" />
+    <Content Include="Views\Product\_BackInStockSubscription.cshtml" />
+    <Content Include="Views\Product\_CompareProductsButton.cshtml" />
+    <Content Include="Views\Product\_DeliveryInfo.cshtml" />
+    <Content Include="Views\Product\_Discontinued.cshtml" />
+    <Content Include="Views\Product\_DownloadSample.cshtml" />
+    <Content Include="Views\Product\_GiftCardInfo.cshtml" />
+    <Content Include="Views\Product\_ProductAttributes.cshtml" />
+    <Content Include="Views\Product\_ProductBreadcrumb.cshtml" />
+    <Content Include="Views\Product\_ProductDetailsPictures.cshtml" />
+    <Content Include="Views\Product\_ProductEmailAFriendButton.cshtml" />
+    <Content Include="Views\Product\_ProductManufacturers.cshtml" />
+    <Content Include="Views\Product\_ProductPrice.cshtml" />
+    <Content Include="Views\Product\_ProductReviewHelpfulness.cshtml" />
+    <Content Include="Views\Product\_ProductReviewOverview.cshtml" />
+    <Content Include="Views\Product\_ProductSpecifications.cshtml" />
+    <Content Include="Views\Product\_ProductTags.cshtml" />
+    <Content Include="Views\Product\_ProductTierPrices.cshtml" />
+    <Content Include="Views\Product\_RentalInfo.cshtml" />
+    <Content Include="Views\Product\_ShareButton.cshtml" />
+    <Content Include="Views\Product\_SKU_Man_GTIN_Ven.cshtml" />
+    <Content Include="Views\Product\CompareProducts.cshtml" />
+    <Content Include="Views\Product\CrossSellProducts.cshtml" />
+    <Content Include="Views\Product\CustomerProductReviews.cshtml" />
+    <Content Include="Views\Product\NewProducts.cshtml" />
+    <Content Include="Views\Product\ProductEmailAFriend.cshtml" />
+    <Content Include="Views\Product\ProductReviews.cshtml" />
+    <Content Include="Views\Product\ProductsAlsoPurchased.cshtml" />
+    <Content Include="Views\Product\RelatedProducts.cshtml" />
+    <Content Include="Views\Product\ProductTemplate.Simple.cshtml" />
+    <Content Include="Views\ShoppingCart\Cart.cshtml" />
+    <Content Include="Views\ShoppingCart\OrderSummary.cshtml" />
+    <Content Include="Views\ShoppingCart\EmailWishlist.cshtml" />
+    <Content Include="Views\ShoppingCart\EstimateShipping.cshtml" />
+    <Content Include="Views\ShoppingCart\OrderTotals.cshtml" />
+    <Content Include="Views\ShoppingCart\Wishlist.cshtml" />
+    <Content Include="Views\ShoppingCart\_ButtonPaymentMethod.cshtml" />
+    <Content Include="Views\ShoppingCart\_CheckoutAttributes.cshtml" />
+    <Content Include="Views\ShoppingCart\_DiscountBox.cshtml" />
+    <Content Include="Views\ShoppingCart\_EstimateShippingResult.cshtml" />
+    <Content Include="Views\ShoppingCart\_GiftCardBox.cshtml" />
+    <Content Include="Views\ShoppingCart\_OrderReviewData.cshtml" />
+    <Content Include="Views\Customer\AccountActivation.cshtml" />
+    <Content Include="Views\Customer\AddressAdd.cshtml" />
+    <Content Include="Views\Customer\AddressEdit.cshtml" />
+    <Content Include="Views\Customer\Addresses.cshtml" />
+    <Content Include="Views\Customer\Avatar.cshtml" />
+    <Content Include="Views\Customer\ChangePassword.cshtml" />
+    <Content Include="Views\Customer\CustomerNavigation.cshtml" />
+    <Content Include="Views\Customer\DownloadableProducts.cshtml" />
+    <Content Include="Views\Customer\Info.cshtml" />
+    <Content Include="Views\Customer\Login.cshtml" />
+    <Content Include="Views\Customer\PasswordRecovery.cshtml" />
+    <Content Include="Views\Customer\PasswordRecoveryConfirm.cshtml" />
+    <Content Include="Views\Customer\Register.cshtml" />
+    <Content Include="Views\Customer\RegisterResult.cshtml" />
+    <Content Include="Views\Customer\UserAgreement.cshtml" />
+    <Content Include="Views\Customer\_CheckUsernameAvailability.cshtml" />
+    <Content Include="Views\Customer\_CustomerAttributes.cshtml" />
+    <Content Include="Views\Customer\_ExternalAuthentication.AssociateMessage.cshtml" />
+    <Content Include="Views\Customer\_ExternalAuthentication.Errors.cshtml" />
+    <Content Include="Views\ExternalAuthentication\ExternalMethods.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -900,6 +1009,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
+    <Folder Include="Content\magnific-popup\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">
