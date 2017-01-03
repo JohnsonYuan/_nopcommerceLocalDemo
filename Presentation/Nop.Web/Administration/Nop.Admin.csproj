@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="AutoMapper, Version=5.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
@@ -102,20 +106,77 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Global.asax" />
+    <Content Include="Content\adminLTE\AdminLTE-2.3.0.css" />
+    <Content Include="Content\adminLTE\AdminLTE-2.3.0.min.css" />
+    <Content Include="Content\adminLTE\AdminLTE-2.3.0.rtl.css" />
+    <Content Include="Content\adminLTE\img\avatar.png" />
+    <Content Include="Content\adminLTE\img\avatar04.png" />
+    <Content Include="Content\adminLTE\img\avatar2.png" />
+    <Content Include="Content\adminLTE\img\avatar3.png" />
+    <Content Include="Content\adminLTE\img\avatar5.png" />
+    <Content Include="Content\adminLTE\img\boxed-bg.jpg" />
+    <Content Include="Content\adminLTE\img\boxed-bg.png" />
+    <Content Include="Content\adminLTE\img\credit\american-express.png" />
+    <Content Include="Content\adminLTE\img\credit\cirrus.png" />
+    <Content Include="Content\adminLTE\img\credit\mastercard.png" />
+    <Content Include="Content\adminLTE\img\credit\mestro.png" />
+    <Content Include="Content\adminLTE\img\credit\paypal.png" />
+    <Content Include="Content\adminLTE\img\credit\paypal2.png" />
+    <Content Include="Content\adminLTE\img\credit\visa.png" />
+    <Content Include="Content\adminLTE\img\default-50x50.gif" />
+    <Content Include="Content\adminLTE\img\icons.png" />
+    <Content Include="Content\adminLTE\img\photo1.png" />
+    <Content Include="Content\adminLTE\img\photo2.png" />
+    <Content Include="Content\adminLTE\img\photo3.jpg" />
+    <Content Include="Content\adminLTE\img\photo4.jpg" />
+    <Content Include="Content\adminLTE\img\user1-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user2-160x160.jpg" />
+    <Content Include="Content\adminLTE\img\user3-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user4-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user5-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user6-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user7-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user8-128x128.jpg" />
+    <Content Include="Content\adminLTE\skins\skin-black-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-black-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-black.css" />
+    <Content Include="Content\adminLTE\skins\skin-black.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-green-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-green-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-green.css" />
+    <Content Include="Content\adminLTE\skins\skin-green.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-red-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-red-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-red.css" />
+    <Content Include="Content\adminLTE\skins\skin-red.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow.min.css" />
+    <Content Include="Content\adminLTE\skins\_all-skins.css" />
+    <Content Include="Content\adminLTE\skins\_all-skins.min.css" />
+    <Content Include="Note.Html&amp;js.txt" />
     <Content Include="Notes.txt" />
     <Content Include="TODOItems.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="AdminAreaRegistration.cs" />
+    <Compile Include="Controllers\BaseAdminController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
+    <Compile Include="Infrastructure\DependencyRegistrar.cs" />
     <Compile Include="Infrastructure\Mapper\AutoMapperConfiguration.cs" />
     <Compile Include="Infrastructure\Mapper\AutoMapperStartupTask.cs" />
+    <Compile Include="Infrastructure\Mapper\Cache\ModelCacheEventConsumer.cs" />
     <Compile Include="Models\Affiliates\AffiliatedOrderListModel.cs" />
     <Compile Include="Models\Affiliates\AffiliateListModel.cs" />
     <Compile Include="Models\Affiliates\AffiliateModel.cs" />
@@ -331,6 +392,8 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_AdminLayout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -340,7 +403,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
+    <Folder Include="Content\bootstrap\" />
+    <Folder Include="Content\kendo\" />
+    <Folder Include="NewFolder1\" />
+    <Folder Include="Scripts\adminLTE\" />
+    <Folder Include="Scripts\bootstrap\" />
+    <Folder Include="Scripts\kendo\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">

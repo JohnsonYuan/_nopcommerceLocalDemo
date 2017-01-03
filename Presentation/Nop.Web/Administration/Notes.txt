@@ -1,4 +1,8 @@
-﻿Install-Package AutoMapper
+﻿AutoMapper: 
+~\Administration\Infrastructure\Mapper\AutoMapperConfiguration.cs 配置entity -> model, model -> entity map规则
+~\Administration\Extensions\MappingExtensions.cs	extension method entity 调用 ToModel， model可以调用ToEntity （调用Mapper 的MapTo方法）
+
+Install-Package AutoMapper
 https://github.com/AutoMapper/AutoMapper/wiki/Getting-started
 
 1. Getting Started
@@ -6,7 +10,7 @@ https://github.com/AutoMapper/AutoMapper/wiki/Getting-started
 
 介绍一下：
 First, you need both a source and destination type to work with. 
-如果source的属性名和destination的属性名一样， 就会自动mapp （也可以custom map）
+如果source的属性名和destination的属性名一样， 就会自动map （也可以custom map）
 If you have a source member called "FirstName", this will automatically be mapped to a destination member with the name "FirstName". 
 （map的时候 not case sensitive）
 
@@ -40,7 +44,6 @@ cfg.CreateMap<CountryModel, Country>()
 
 2.2. 或者想map到source别的属性MapFrom
 map.ForMember(d => d.Name, mo => mo.MapFrom(s => s.Publisher.Name));
-
 
 3. Custom value resolvers
 AutoMapper will ignore null reference exceptions when mapping your source to your target. This is by design.

@@ -11,5 +11,9 @@ namespace Nop.Web.Controllers
         {
             return View();
         }
+        public ActionResult Index2()
+        {
+            return View();
+        }
     }
 }

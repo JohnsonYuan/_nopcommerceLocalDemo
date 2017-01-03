@@ -15,7 +15,7 @@ namespace Nop.Web.Framework.Security
         /// Anti-forgery security attribute
         /// </summary>
         /// <param name="ignore">Pass false in order to ignore this security validation</param>
-        public AdminAntiForgeryAttribute(bool ignore)
+        public AdminAntiForgeryAttribute(bool ignore = false)
         {
             this._ignore = ignore;
         }

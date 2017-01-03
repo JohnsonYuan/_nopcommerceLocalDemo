@@ -496,6 +496,8 @@
     <Compile Include="Controllers\BoardsController.cs" />
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\ExternalAuthenticationController.cs" />
     <Compile Include="Controllers\NewsletterController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
@@ -584,6 +586,21 @@
     <Compile Include="Models\Common\StoreThemeModel.cs" />
     <Compile Include="Models\Common\StoreThemeSelectorModel.cs" />
     <Compile Include="Models\Common\TaxTypeSelectorModel.cs" />
+    <Compile Include="Models\Customer\AccountActivationModel.cs" />
+    <Compile Include="Models\Customer\ChangePasswordModel.cs" />
+    <Compile Include="Models\Customer\CustomerAddressEditModel.cs" />
+    <Compile Include="Models\Customer\CustomerAddressListModel.cs" />
+    <Compile Include="Models\Customer\CustomerAttributeModel.cs" />
+    <Compile Include="Models\Customer\CustomerAvatarModel.cs" />
+    <Compile Include="Models\Customer\CustomerDownloadableProductsModel.cs" />
+    <Compile Include="Models\Customer\CustomerInfoModel.cs" />
+    <Compile Include="Models\Customer\CustomerNavigationModel.cs" />
+    <Compile Include="Models\Customer\ExternalAuthenticationMethodModel.cs" />
+    <Compile Include="Models\Customer\LoginModel.cs" />
+    <Compile Include="Models\Customer\PasswordRecoveryConfirmModel.cs" />
+    <Compile Include="Models\Customer\PaswordRecoveryModel.cs" />
+    <Compile Include="Models\Customer\RegisterModel.cs" />
+    <Compile Include="Models\Customer\RegisterResultModel.cs" />
     <Compile Include="Models\Install\InstallModel.cs" />
     <Compile Include="Models\Media\PictureModel.cs" />
     <Compile Include="Models\Newsletter\NewsletterBoxModel.cs" />
@@ -611,6 +628,12 @@
     <Compile Include="Validators\Common\AddressValidator.cs" />
     <Compile Include="Validators\Common\ContactUsValidator.cs" />
     <Compile Include="Validators\Common\ContactVendorValidator.cs" />
+    <Compile Include="Validators\Customer\ChangePasswordValidator.cs" />
+    <Compile Include="Validators\Customer\CustomerInfoValidator.cs" />
+    <Compile Include="Validators\Customer\LoginValidator.cs" />
+    <Compile Include="Validators\Customer\PasswordRecoveryConfirmValidator.cs" />
+    <Compile Include="Validators\Customer\PasswordRecoveryValidator.cs" />
+    <Compile Include="Validators\Customer\RegisterValidator.cs" />
     <Compile Include="Validators\Install\InstallValidator.cs" />
     <Compile Include="Validators\News\NewsItemValidator.cs" />
     <Compile Include="Validators\ShoppingCart\WishlistEmailAFriendValidator.cs" />
@@ -891,6 +914,9 @@
     <Content Include="Views\Boards\TopicCreate.cshtml" />
     <Content Include="Views\Boards\TopicEdit.cshtml" />
     <Content Include="Views\Boards\TopicMove.cshtml" />
+    <Content Include="Views\Customer\Login.cshtml" />
+    <Content Include="Views\Customer\_ExternalAuthentication.AssociateMessage.cshtml" />
+    <Content Include="Views\Customer\_ExternalAuthentication.Errors.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -900,6 +926,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
+    <Folder Include="Views\ExternalAuthentication\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">

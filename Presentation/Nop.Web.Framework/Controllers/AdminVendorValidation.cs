@@ -15,7 +15,7 @@ namespace Nop.Web.Framework.Controllers
     {
         private readonly bool _ignore;
 
-        public AdminVendorValidation(bool ignore)
+        public AdminVendorValidation(bool ignore = false)
         {
             this._ignore = ignore;
         }

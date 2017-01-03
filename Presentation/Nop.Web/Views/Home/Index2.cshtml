@@ -34,6 +34,15 @@
 
     <div>
         @{ 
+            var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (cookie != null)
+            {
+                @cookie.Value <br/>
+
+                @cookie.Expires <br />
+            }
+        }
+        @{ 
             var _settingService = EngineContext.Current.Resolve<ISettingService>();
             var _storeContext = EngineContext.Current.Resolve<Nop.Core.IStoreContext>();
             var nivoSliderSettings = _settingService.LoadSetting<Nop.Plugin.Widgets.NivoSlider.NivoSliderSettings>(_storeContext.CurrentStore.Id);

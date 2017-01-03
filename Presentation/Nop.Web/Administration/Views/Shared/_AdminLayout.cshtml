@@ -1,0 +1,33 @@
+﻿@using Nop.Core.Domain.Customers
+@using Nop.Web.Framework.UI;
+@using Nop.Core;
+@using Nop.Core.Domain
+@using Nop.Core.Domain.Common;
+@using Nop.Core.Domain.Localization
+@using Nop.Core.Domain.Media
+@using Nop.Services.Common
+@using Nop.Services.Customers
+@using Nop.Services.Media
+@using Nop.Services.Security;
+@{
+    var kendoVersion = "2014.1.318";
+    var supportRtl = EngineContext.Current.Resolve<IWorkContext>().WorkingLanguage.Rtl &&
+        !EngineContext.Current.Resolve<LocalizationSettings>().IgnoreRtlPropertyForAdminArea;
+
+    //CSS resources
+    if (supportRtl)
+    {
+        Html.AppendCssFileParts("~/Administration/Content/styles.rtl.css");
+        Html.AppendCssFileParts("~/Administration/Content/adminLTE/AdminLTE-2.3.0.rtl.css");
+        Html.AppendCssFileParts("~/Administration/Content/bootstrap/css/bootstrap.rtl.css");
+    }
+    else
+    {
+        Html.AppendCssFileParts("~/Administration/Content/styles.css");
+        Html.AppendCssFileParts("~/Administration/Content/adminLTE/AdminLTE-2.3.0.min.css");
+        Html.AppendCssFileParts("~/Administration/Content/bootstrap/css/bootstrap.min.css");
+    }
+}
+
+<h2>View</h2>
+

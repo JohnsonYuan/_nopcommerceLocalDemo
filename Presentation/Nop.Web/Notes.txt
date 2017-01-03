@@ -17,6 +17,16 @@ NewsController.cs\RssHeaderLink,  GetLocalized方法，学习Expression tree, ex
 string link = string.Format("<link href=\"{0}\" rel=\"alternate\" type=\"{1}\" title=\"{2}: News\" />",
     Url.RouteUrl("NewsRSS", new { languageId = _workContext.WorkingLanguage.Id }, _webHelper.IsCurrentConnectionSecured() ? "https" : "http"), MimeTypes.ApplicationRssXml, _storeContext.CurrentStore.GetLocalized(x => x.Name));
 
+注册页面根据用户生日计算用户年龄 （RegisterValidator 调用 CommonHelper.GetDifferenceInYears(dateOfBirth.Value, DateTime.Today)）
+How do I calculate someone's age in C#?
+// Save today's date.
+var today = DateTime.Today;    
+// Calculate the age.
+var age = today.Year - birthdate.Year;
+// Do stuff with it.
+if (birthdate > today.AddYears(-age)) age--;  // 如果生日+age > 当天日期， 则不满一年， age-1
+
+authentication froms timeout="43200" 43200分钟是720小时， 30天， 默认的用户登录cookie会保存30天
 
 =======================================
 需要看的东西
