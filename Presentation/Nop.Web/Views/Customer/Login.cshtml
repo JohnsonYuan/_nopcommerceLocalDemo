@@ -2,18 +2,11 @@
 @using Nop.Web.Models.Customer;
 @using Nop.Core;
 @using Nop.Core.Infrastructure;
-<<<<<<< HEAD
 
-@{
-    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
-
-    // title
-=======
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
 
     //title
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
     Html.AddTitleParts(T("PageTitle.Login").Text);
     //page class
     Html.AppendPageCssClassParts("html-login-page");
@@ -116,15 +109,5 @@
                 }
             </div>
         </div>
-<<<<<<< HEAD
     </div>
 </div>
-
-=======
-        <div class="external-authentication">
-            @Html.Action("ExternalMethods", "ExternalAuthentication")
-        </div>
-        @Html.Action("TopicBlock", "Topic", new { systemName = "LoginRegistrationInfo" })
-    </div>
-</div>
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec

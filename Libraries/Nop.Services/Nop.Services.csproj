@@ -359,6 +359,7 @@
     <Compile Include="Orders\RewardPointService.cs" />
     <Compile Include="Orders\ShoppingCartExtensions.cs" />
     <Compile Include="Orders\ShoppingCartService.cs" />
+    <Compile Include="Orders\UpdateOrderParameters.cs" />
     <Compile Include="Payments\CancelRecurringPaymentRequest.cs" />
     <Compile Include="Payments\CancelRecurringPaymentResult.cs" />
     <Compile Include="Payments\CapturePaymentRequest.cs" />

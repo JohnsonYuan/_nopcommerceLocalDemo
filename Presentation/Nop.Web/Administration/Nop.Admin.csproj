@@ -73,6 +73,7 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -203,6 +204,7 @@
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
@@ -423,6 +425,44 @@
     <Compile Include="Validators\Topics\TopicValidator.cs" />
     <Compile Include="Validators\ValidatorUtilities.cs" />
     <Compile Include="Validators\Vendors\VendorValidator.cs" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\NopCommerceNews.cshtml" />
+    <Content Include="Views\Home\CommonStatistics.cshtml" />
+    <Content Include="Views\Common\AclDisabledWarning.cshtml" />
+    <Content Include="Views\Common\Maintenance.cshtml" />
+    <Content Include="Views\Common\MultistoreDisabledWarning.cshtml" />
+    <Content Include="Views\Common\PopularSearchTermsReport.cshtml" />
+    <Content Include="Views\Common\SeNames.cshtml" />
+    <Content Include="Views\Common\SystemInfo.cshtml" />
+    <Content Include="Views\Common\Warnings.cshtml" />
+    <Content Include="Views\Order\AddProductToOrder.cshtml" />
+    <Content Include="Views\Order\AddProductToOrderDetails.cshtml" />
+    <Content Include="Views\Order\AddressEdit.cshtml" />
+    <Content Include="Views\Order\AddShipment.cshtml" />
+    <Content Include="Views\Order\BestsellersBriefReportByAmount.cshtml" />
+    <Content Include="Views\Order\BestsellersBriefReportByQuantity.cshtml" />
+    <Content Include="Views\Order\BestsellersReport.cshtml" />
+    <Content Include="Views\Order\CountryReport.cshtml" />
+    <Content Include="Views\Order\Edit.cshtml" />
+    <Content Include="Views\Order\LatestOrders.cshtml" />
+    <Content Include="Views\Order\List.cshtml" />
+    <Content Include="Views\Order\NeverSoldReport.cshtml" />
+    <Content Include="Views\Order\OrderAverageReport.cshtml" />
+    <Content Include="Views\Order\OrderIncompleteReport.cshtml" />
+    <Content Include="Views\Order\OrderStatistics.cshtml" />
+    <Content Include="Views\Order\PartiallyRefundOrderPopup.cshtml" />
+    <Content Include="Views\Order\ShipmentDetails.cshtml" />
+    <Content Include="Views\Order\ShipmentList.cshtml" />
+    <Content Include="Views\Order\UploadLicenseFilePopup.cshtml" />
+    <Content Include="Views\Order\_CreateOrUpdateAddress.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Billing.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Info.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Notes.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Products.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Shipping.cshtml" />
+    <Content Include="Views\Order\_ProductAddAttributes.cshtml" />
+    <Content Include="Views\Order\_ProductAddGiftCardInfo.cshtml" />
+    <Content Include="Views\Order\_ProductAddRentalInfo.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -451,6 +491,8 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\bootstrap\" />
     <Folder Include="Content\fontAwesome\" />
+    <Folder Include="Content\images\" />
+    <Folder Include="Content\jquery-ui-themes\" />
     <Folder Include="Content\kendo\" />
     <Folder Include="Content\typeahead\" />
     <Folder Include="Scripts\adminLTE\" />
