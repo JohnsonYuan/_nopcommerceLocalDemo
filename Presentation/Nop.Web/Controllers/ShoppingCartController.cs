@@ -42,7 +42,6 @@ using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
 using Nop.Web.Models.ShoppingCart;
 
-
 namespace Nop.Web.Controllers
 {
     public partial class ShoppingCartController : BasePublicController
@@ -1395,23 +1394,6 @@ namespace Nop.Web.Controllers
 
         #endregion
 
-        #region Methods
-
-        [ChildActionOnly]
-        public ActionResult FlyoutShoppingCart()
-        {
-            if (!_shoppingCartSettings.MiniShoppingCartEnabled)
-                return Content("");
-
-            if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
-                return Content("");
-
-            var model = PrepareMiniShoppingCartModel();
-            return PartialView(model);
-        }
-
-        #endregion
-
         #region Shopping cart
 
         //add product to cart using AJAX
@@ -1826,6 +1808,996 @@ namespace Nop.Web.Controllers
 
 
             #endregion
+        }
+
+        //handle product attribute selection event. this way we return new price, overridden gtin/sku/mpn
+        //currently we use this method on the product details pages
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult ProductDetails_AttributeChange(int productId, bool validateAttributeConditions,
+            bool loadPicture, FormCollection form)
+        {
+            var product = _productService.GetProductById(productId);
+            if (product == null)
+                return new NullJsonResult();
+
+            string attributeXml = ParseProductAttributes(product, form);
+
+            //rental attributes
+            DateTime? rentalStartDate = null;
+            DateTime? rentalEndDate = null;
+            if (product.IsRental)
+            {
+                ParseRentalDates(product, form, out rentalStartDate, out rentalEndDate);
+            }
+
+            //sku, mpn, gtin
+            string sku = product.FormatSku(attributeXml, _productAttributeParser);
+            string mpn = product.FormatMpn(attributeXml, _productAttributeParser);
+            string gtin = product.FormatGtin(attributeXml, _productAttributeParser);
+
+            //price
+            string price = "";
+            if (_permissionService.Authorize(StandardPermissionProvider.DisplayPrices) && !product.CustomerEntersPrice)
+            {
+                //we do not calculate price of "customer enters price" option is enabled
+                List<Discount> scDiscounts;
+                decimal discountAmount;
+                decimal finalPrice = _priceCalculationService.GetUnitPrice(product,
+                    _workContext.CurrentCustomer,
+                    ShoppingCartType.ShoppingCart,
+                    1, attributeXml, 0,
+                    rentalStartDate, rentalEndDate,
+                    true, out discountAmount, out scDiscounts);
+                decimal taxRate;
+                decimal finalPriceWithDiscountBase = _taxService.GetProductPrice(product, finalPrice, out taxRate);
+                decimal finalPriceWithDiscount = _currencyService.ConvertFromPrimaryStoreCurrency(finalPriceWithDiscountBase, _workContext.WorkingCurrency);
+                price = _priceFormatter.FormatPrice(finalPriceWithDiscount);
+            }
+
+            //stock
+            var stockAvailability = product.FormatStockMessage(attributeXml, _localizationService, _productAttributeParser);
+
+            //conditional attributes
+            var enabledAttributeMappingIds = new List<int>();
+            var disabledAttributeMappingIds = new List<int>();
+            if (validateAttributeConditions)
+            {
+                var attributes = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id);
+                foreach (var attribute in attributes)
+                {
+                    var conditionMet = _productAttributeParser.IsConditionMet(attribute, attributeXml);
+                    if (conditionMet.HasValue)
+                    {
+                        if (conditionMet.Value)
+                            enabledAttributeMappingIds.Add(attribute.Id);
+                        else
+                            disabledAttributeMappingIds.Add(attribute.Id);
+                    }
+                }
+            }
+
+            //picture. used when we want to override a default product picture when some attribute is selected
+            var pictureFullSizeUrl = "";
+            var pictureDefaultSizeUrl = "";
+            if (loadPicture)
+            {
+                //just load (return) the first found picture (in case if we have several distinct attributes with associated pictures)
+                //actually we're going to support pictures associated to attribute combinations (not attribute values) soon. it'll more flexible approach
+                var attributeValues = _productAttributeParser.ParseProductAttributeValues(attributeXml);
+                var attributeValueWithPicture = attributeValues.FirstOrDefault(x => x.PictureId > 0);
+                if (attributeValueWithPicture != null)
+                {
+                    var productAttributePictureCacheKey = string.Format(ModelCacheEventConsumer.PRODUCTATTRIBUTE_PICTURE_MODEL_KEY,
+                                    attributeValueWithPicture.PictureId,
+                                    _webHelper.IsCurrentConnectionSecured(),
+                                    _storeContext.CurrentStore.Id);
+                    var pictureModel = _cacheManager.Get(productAttributePictureCacheKey, () =>
+                    {
+                        var valuePicture = _pictureService.GetPictureById(attributeValueWithPicture.PictureId);
+                        if (valuePicture != null)
+                        {
+                            return new PictureModel
+                            {
+                                FullSizeImageUrl = _pictureService.GetPictureUrl(valuePicture),
+                                ImageUrl = _pictureService.GetPictureUrl(valuePicture, _mediaSettings.ProductDetailsPictureSize)
+                            };
+                        }
+                        return new PictureModel();
+                    });
+                    pictureFullSizeUrl = pictureModel.FullSizeImageUrl;
+                    pictureDefaultSizeUrl = pictureModel.ImageUrl;
+                }
+
+            }
+
+            return Json(new
+            {
+                gtin = gtin,
+                mpn = mpn,
+                sku = sku,
+                price = price,
+                stockAvailability = stockAvailability,
+                enabledattributemappingids = enabledAttributeMappingIds.ToArray(),
+                disabledattributemappingids = disabledAttributeMappingIds.ToArray(),
+                pictureFullSizeUrl = pictureFullSizeUrl,
+                pictureDefaultSizeUrl = pictureDefaultSizeUrl
+            });
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult CheckoutAttributeChange(FormCollection form)
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            ParseAndSaveCheckoutAttributes(cart, form);
+            var attributeXml = _workContext.CurrentCustomer.GetAttribute<string>(SystemCustomerAttributeNames.CheckoutAttributes,
+                _genericAttributeService, _storeContext.CurrentStore.Id);
+
+            var enabledAttributeIds = new List<int>();
+            var disabledAttributeIds = new List<int>();
+            var attributes = _checkoutAttributeService.GetAllCheckoutAttributes(_storeContext.CurrentStore.Id, !cart.RequiresShipping());
+            foreach (var attribute in attributes)
+            {
+                var conditionMet = _checkoutAttributeParser.IsConditionMet(attribute, attributeXml);
+                if (conditionMet.HasValue)
+                {
+                    if (conditionMet.Value)
+                        enabledAttributeIds.Add(attribute.Id);
+                    else
+                        disabledAttributeIds.Add(attribute.Id);
+                }
+            }
+
+            return Json(new
+            {
+                enabledattributeids = enabledAttributeIds.ToArray(),
+                disabledattributeids = disabledAttributeIds.ToArray()
+            });
+        }
+
+        [HttpPost]
+        public ActionResult UploadFileProductAttribute(int attributeId)
+        {
+            var attribute = _productAttributeService.GetProductAttributeMappingById(attributeId);
+            if (attribute == null || attribute.AttributeControlType != AttributeControlType.FileUpload)
+            {
+                return Json(new
+                {
+                    success = false,
+                    downloadGuid = Guid.Empty,
+                }, MimeTypes.TextPlain);
+            }
+
+            //we process it distinct ways based on a browser
+            //find more info here http://stackoverflow.com/questions/4884920/mvc3-valums-ajax-file-upload
+            Stream stream = null;
+            var fileName = "";
+            var contentType = "";
+            if (String.IsNullOrEmpty(Request["qqfile"]))
+            {
+                // IE
+                HttpPostedFileBase httpPostedFile = Request.Files[0];
+                if (httpPostedFile == null)
+                    throw new ArgumentException("No file uploaded");
+                stream = httpPostedFile.InputStream;
+                fileName = Path.GetFileName(httpPostedFile.FileName);
+                contentType = httpPostedFile.ContentType;
+            }
+            else
+            {
+                //Webkit, Mozilla
+                stream = Request.InputStream;
+                fileName = Request["qqfile"];
+            }
+
+            var fileBinary = new byte[stream.Length];
+            stream.Read(fileBinary, 0, fileBinary.Length);
+
+            var fileExtension = Path.GetExtension(fileName);
+            if (!String.IsNullOrEmpty(fileExtension))
+                fileExtension = fileExtension.ToLowerInvariant();
+
+            if (attribute.ValidationFileMaximumSize.HasValue)
+            {
+                //compare in bytes
+                var maxFileSizeBytes = attribute.ValidationFileMaximumSize.Value * 1024;
+                if (fileBinary.Length > maxFileSizeBytes)
+                {
+                    //when returning JSON the mime-type must be set to text/plain
+                    //otherwise some browsers will pop-up a "Save As" dialog.
+                    return Json(new
+                    {
+                        success = false,
+                        message = string.Format(_localizationService.GetResource("ShoppingCart.MaximumUploadedFileSize"), attribute.ValidationFileMaximumSize.Value),
+                        downloadGuid = Guid.Empty,
+                    }, MimeTypes.TextPlain);
+                }
+            }
+
+            var download = new Download
+            {
+                DownloadGuid = Guid.NewGuid(),
+                UseDownloadUrl = false,
+                DownloadUrl = "",
+                DownloadBinary = fileBinary,
+                ContentType = contentType,
+                //we store filename without extension for downloads
+                Filename = Path.GetFileNameWithoutExtension(fileName),
+                Extension = fileExtension,
+                IsNew = true
+            };
+            _downloadService.InsertDownload(download);
+
+            //when returning JSON the mime-type must be set to text/plain
+            //otherwise some browsers will pop-up a "Save As" dialog.
+            return Json(new
+            {
+                success = true,
+                message = _localizationService.GetResource("ShoppingCart.FileUploaded"),
+                downloadUrl = Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }),
+                downloadGuid = download.DownloadGuid,
+            }, MimeTypes.TextPlain);
+        }
+
+        [HttpPost]
+        public ActionResult UploadFileCheckoutAttribute(int attributeId)
+        {
+            var attribute = _checkoutAttributeService.GetCheckoutAttributeById(attributeId);
+            if (attribute == null || attribute.AttributeControlType != AttributeControlType.FileUpload)
+            {
+                return Json(new
+                {
+                    success = false,
+                    downloadGuid = Guid.Empty,
+                }, MimeTypes.TextPlain);
+            }
+
+            //we process it distinct ways based on a browser
+            //find more info here http://stackoverflow.com/questions/4884920/mvc3-valums-ajax-file-upload
+            Stream stream = null;
+            var fileName = "";
+            var contentType = "";
+            if (String.IsNullOrEmpty(Request["qqfile"]))
+            {
+                // IE
+                HttpPostedFileBase httpPostedFile = Request.Files[0];
+                if (httpPostedFile == null)
+                    throw new ArgumentException("No file uploaded");
+                stream = httpPostedFile.InputStream;
+                fileName = Path.GetFileName(httpPostedFile.FileName);
+                contentType = httpPostedFile.ContentType;
+            }
+            else
+            {
+                //Webkit, Mozilla
+                stream = Request.InputStream;
+                fileName = Request["qqfile"];
+            }
+
+            var fileBinary = new byte[stream.Length];
+            stream.Read(fileBinary, 0, fileBinary.Length);
+
+            var fileExtension = Path.GetExtension(fileName);
+            if (!String.IsNullOrEmpty(fileExtension))
+                fileExtension = fileExtension.ToLowerInvariant();
+
+            if (attribute.ValidationFileMaximumSize.HasValue)
+            {
+                //compare in bytes
+                var maxFileSizeBytes = attribute.ValidationFileMaximumSize.Value * 1024;
+                if (fileBinary.Length > maxFileSizeBytes)
+                {
+                    //when returning JSON the mime-type must be set to text/plain
+                    //otherwise some browsers will pop-up a "Save As" dialog.
+                    return Json(new
+                    {
+                        success = false,
+                        message = string.Format(_localizationService.GetResource("ShoppingCart.MaximumUploadedFileSize"), attribute.ValidationFileMaximumSize.Value),
+                        downloadGuid = Guid.Empty,
+                    }, MimeTypes.TextPlain);
+                }
+            }
+
+            var download = new Download
+            {
+                DownloadGuid = Guid.NewGuid(),
+                UseDownloadUrl = false,
+                DownloadUrl = "",
+                DownloadBinary = fileBinary,
+                ContentType = contentType,
+                //we store filename without extension for downloads
+                Filename = Path.GetFileNameWithoutExtension(fileName),
+                Extension = fileExtension,
+                IsNew = true
+            };
+            _downloadService.InsertDownload(download);
+
+            //when returning JSON the mime-type must be set to text/plain
+            //otherwise some browsers will pop-up a "Save As" dialog.
+            return Json(new
+            {
+                success = true,
+                message = _localizationService.GetResource("ShoppingCart.FileUploaded"),
+                downloadUrl = Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }),
+                downloadGuid = download.DownloadGuid,
+            }, MimeTypes.TextPlain);
+        }
+
+
+        [NopHttpsRequirement(SslRequirement.Yes)]
+        public ActionResult Cart()
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
+                return RedirectToRoute("HomePage");
+
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = new ShoppingCartModel();
+            PrepareShoppingCartModel(model, cart);
+            return View(model);
+        }
+
+        [ChildActionOnly]
+        public ActionResult OrderSummary(bool? prepareAndDisplayOrderReviewData)
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = new ShoppingCartModel();
+            PrepareShoppingCartModel(model, cart,
+                isEditable: false,
+                prepareEstimateShippingIfEnabled: false,
+                prepareAndDisplayOrderReviewData: prepareAndDisplayOrderReviewData.GetValueOrDefault());
+            return PartialView(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired("updatecart")]
+        public ActionResult UpdateCart(FormCollection form)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
+                return RedirectToRoute("HomePage");
+
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            var allIdsToRemove = form["removefromcart"] != null ? form["removefromcart"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList() : new List<int>();
+
+            //current warnings <cart item identifier, warnings>
+            var innerWarnings = new Dictionary<int, IList<string>>();
+            foreach (var sci in cart)
+            {
+                bool remove = allIdsToRemove.Contains(sci.Id);
+                if (remove)
+                    _shoppingCartService.DeleteShoppingCartItem(sci, ensureOnlyActiveCheckoutAttributes: true);
+                else
+                {
+                    foreach (string formKey in form.AllKeys)
+                        if (formKey.Equals(string.Format("itemquantity{0}", sci.Id), StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            int newQuantity;
+                            if (int.TryParse(form[formKey], out newQuantity))
+                            {
+                                var currSciWarnings = _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
+                                    sci.Id, sci.AttributesXml, sci.CustomerEnteredPrice,
+                                    sci.RentalStartDateUtc, sci.RentalEndDateUtc,
+                                    newQuantity, true);
+                                innerWarnings.Add(sci.Id, currSciWarnings);
+                            }
+                            break;
+                        }
+                }
+            }
+
+            //parse and save checkout attributes
+            ParseAndSaveCheckoutAttributes(cart, form);
+
+            //updated cart
+            cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = new ShoppingCartModel();
+            PrepareShoppingCartModel(model, cart);
+            //update current warnings
+            foreach (var kvp in innerWarnings)
+            {
+                //kvp = <cart item identifier, warnings>
+                var sciId = kvp.Key;
+                var warnings = kvp.Value;
+                //find model
+                var sciModel = model.Items.FirstOrDefault(x => x.Id == sciId);
+                if (sciModel != null)
+                    foreach (var w in warnings)
+                        if (!sciModel.Warnings.Contains(w))
+                            sciModel.Warnings.Add(w);
+            }
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired("continueshopping")]
+        public ActionResult ContinueShopping()
+        {
+            var returnUrl = _workContext.CurrentCustomer.GetAttribute<string>(SystemCustomerAttributeNames.LastContinueShoppingPage, _storeContext.CurrentStore.Id);
+            if (!String.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToRoute("HomePage");
+            }
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired("checkout")]
+        public ActionResult StartCheckout(FormCollection form)
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            //parse and save checkout attributes
+            ParseAndSaveCheckoutAttributes(cart, form);
+
+            //validate attributes
+            var checkoutAttributes = _workContext.CurrentCustomer.GetAttribute<string>(SystemCustomerAttributeNames.CheckoutAttributes, _genericAttributeService, _storeContext.CurrentStore.Id);
+            var checkoutAttributeWarnings = _shoppingCartService.GetShoppingCartWarnings(cart, checkoutAttributes, true);
+            if (checkoutAttributeWarnings.Any())
+            {
+                //something wrong, redisplay the page with warnings
+                var model = new ShoppingCartModel();
+                PrepareShoppingCartModel(model, cart, validateCheckoutAttributes: true);
+                return View(model);
+            }
+
+            //everything is OK
+            if (_workContext.CurrentCustomer.IsGuest())
+            {
+                bool downloadableProductsRequireRegistration =
+                    _customerSettings.RequireRegistrationForDownloadableProducts && cart.Any(sci => sci.Product.IsDownload);
+
+                if (!_orderSettings.AnonymousCheckoutAllowed
+                    || downloadableProductsRequireRegistration)
+                    return new HttpUnauthorizedResult();
+
+                return RedirectToRoute("LoginCheckoutAsGuest", new { returnUrl = Url.RouteUrl("ShoppingCart") });
+            }
+
+            return RedirectToRoute("Checkout");
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired("applydiscountcouponcode")]
+        public ActionResult ApplyDiscountCoupon(string discountcouponcode, FormCollection form)
+        {
+            //trim
+            if (discountcouponcode != null)
+                discountcouponcode = discountcouponcode.Trim();
+
+            //cart
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            //parse and save checkout attributes
+            ParseAndSaveCheckoutAttributes(cart, form);
+
+            var model = new ShoppingCartModel();
+            if (!String.IsNullOrWhiteSpace(discountcouponcode))
+            {
+                //we find even hidden records here. this way we can display a user-friendly message if it's expired
+                var discount = _discountService.GetDiscountByCouponCode(discountcouponcode, true);
+                if (discount != null && discount.RequiresCouponCode)
+                {
+                    var validationResult = _discountService.ValidateDiscount(discount, _workContext.CurrentCustomer, discountcouponcode);
+                    if (validationResult.IsValid)
+                    {
+                        //valid
+                        _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, SystemCustomerAttributeNames.DiscountCouponCode, discountcouponcode);
+                        model.DiscountBox.Message = _localizationService.GetResource("ShoppingCart.DiscountCouponCode.Applied");
+                        model.DiscountBox.IsApplied = true;
+                    }
+                    else
+                    {
+                        if (!String.IsNullOrEmpty(validationResult.UserError))
+                        {
+                            //some user error
+                            model.DiscountBox.Message = validationResult.UserError;
+                            model.DiscountBox.IsApplied = false;
+                        }
+                        else
+                        {
+                            //general error text
+                            model.DiscountBox.Message = _localizationService.GetResource("ShoppingCart.DiscountCouponCode.WrongDiscount");
+                            model.DiscountBox.IsApplied = false;
+                        }
+                    }
+                }
+                else
+                {
+                    //discount cannot be found
+                    model.DiscountBox.Message = _localizationService.GetResource("ShoppingCart.DiscountCouponCode.WrongDiscount");
+                    model.DiscountBox.IsApplied = false;
+                }
+            }
+            else
+            {
+                //empty coupon code
+                model.DiscountBox.Message = _localizationService.GetResource("ShoppingCart.DiscountCouponCode.WrongDiscount");
+                model.DiscountBox.IsApplied = false;
+            }
+
+            PrepareShoppingCartModel(model, cart);
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired("applygiftcardcouponcode")]
+        public ActionResult ApplyGiftCard(string giftcardcouponcode, FormCollection form)
+        {
+            //trim
+            if (giftcardcouponcode != null)
+                giftcardcouponcode = giftcardcouponcode.Trim();
+
+            //cart
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            //parse and save checkout attributes
+            ParseAndSaveCheckoutAttributes(cart, form);
+
+            var model = new ShoppingCartModel();
+            if (!cart.IsRecurring())
+            {
+                if (!String.IsNullOrWhiteSpace(giftcardcouponcode))
+                {
+                    var giftCard = _giftCardService.GetAllGiftCards(giftCardCouponCode: giftcardcouponcode).FirstOrDefault();
+                    bool isGiftCardValid = giftCard != null && giftCard.IsGiftCardValid();
+                    if (isGiftCardValid)
+                    {
+                        _workContext.CurrentCustomer.ApplyGiftCardCouponCode(giftcardcouponcode);
+                        _customerService.UpdateCustomer(_workContext.CurrentCustomer);
+                        model.GiftCardBox.Message = _localizationService.GetResource("ShoppingCart.GiftCardCouponCode.Applied");
+                        model.GiftCardBox.IsApplied = true;
+                    }
+                    else
+                    {
+                        model.GiftCardBox.Message = _localizationService.GetResource("ShoppingCart.GiftCardCouponCode.WrongGiftCard");
+                        model.GiftCardBox.IsApplied = false;
+                    }
+                }
+                else
+                {
+                    model.GiftCardBox.Message = _localizationService.GetResource("ShoppingCart.GiftCardCouponCode.WrongGiftCard");
+                    model.GiftCardBox.IsApplied = false;
+                }
+            }
+            else
+            {
+                model.GiftCardBox.Message = _localizationService.GetResource("ShoppingCart.GiftCardCouponCode.DontWorkWithAutoshipProducts");
+                model.GiftCardBox.IsApplied = false;
+            }
+
+            PrepareShoppingCartModel(model, cart);
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [PublicAntiForgery]
+        [HttpPost]
+        public ActionResult GetEstimateShipping(int? countryId, int? stateProvinceId, string zipPostalCode, FormCollection form)
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            //parse and save checkout attributes
+            ParseAndSaveCheckoutAttributes(cart, form);
+
+            var model = new EstimateShippingResultModel();
+
+            if (cart.RequiresShipping())
+            {
+                var address = new Address
+                {
+                    CountryId = countryId,
+                    Country = countryId.HasValue ? _countryService.GetCountryById(countryId.Value) : null,
+                    StateProvinceId = stateProvinceId,
+                    StateProvince = stateProvinceId.HasValue ? _stateProvinceService.GetStateProvinceById(stateProvinceId.Value) : null,
+                    ZipPostalCode = zipPostalCode,
+                };
+                GetShippingOptionResponse getShippingOptionResponse = _shippingService
+                    .GetShippingOptions(cart, address, "", _storeContext.CurrentStore.Id);
+                if (getShippingOptionResponse.Success)
+                {
+                    if (getShippingOptionResponse.ShippingOptions.Any())
+                    {
+                        foreach (var shippingOption in getShippingOptionResponse.ShippingOptions)
+                        {
+                            var soModel = new EstimateShippingResultModel.ShippingOptionModel
+                            {
+                                Name = shippingOption.Name,
+                                Description = shippingOption.Description,
+
+                            };
+                            //calculate discounted and taxed rate
+                            List<Discount> appliedDiscounts = null;
+                            decimal shippingTotal = _orderTotalCalculationService.AdjustShippingRate(shippingOption.Rate,
+                                cart, out appliedDiscounts);
+
+                            decimal rateBase = _taxService.GetShippingPrice(shippingTotal, _workContext.CurrentCustomer);
+                            decimal rate = _currencyService.ConvertFromPrimaryStoreCurrency(rateBase, _workContext.WorkingCurrency);
+                            soModel.Price = _priceFormatter.FormatShippingPrice(rate, true);
+                            model.ShippingOptions.Add(soModel);
+                        }
+                    }
+                }
+                else
+                    foreach (var error in getShippingOptionResponse.Errors)
+                        model.Warnings.Add(error);
+
+                if (_shippingSettings.AllowPickUpInStore)
+                {
+                    var pickupPointsResponse = _shippingService.GetPickupPoints(address, null, _storeContext.CurrentStore.Id);
+                    if (pickupPointsResponse.Success)
+                    {
+                        if (pickupPointsResponse.PickupPoints.Any())
+                        {
+                            var soModel = new EstimateShippingResultModel.ShippingOptionModel
+                            {
+                                Name = _localizationService.GetResource("Checkout.PickupPoints"),
+                                Description = _localizationService.GetResource("Checkout.PickupPoints.Description"),
+                            };
+                            var pickupFee = pickupPointsResponse.PickupPoints.Min(x => x.PickupFee);
+                            if (pickupFee > 0)
+                            {
+                                pickupFee = _taxService.GetShippingPrice(pickupFee, _workContext.CurrentCustomer);
+                                pickupFee = _currencyService.ConvertFromPrimaryStoreCurrency(pickupFee, _workContext.WorkingCurrency);
+                            }
+                            soModel.Price = _priceFormatter.FormatShippingPrice(pickupFee, true);
+                            model.ShippingOptions.Add(soModel);
+                        }
+                    }
+                    else
+                        foreach (var error in pickupPointsResponse.Errors)
+                            model.Warnings.Add(error);
+                }
+
+            }
+
+            return PartialView("_EstimateShippingResult", model);
+        }
+
+        [ChildActionOnly]
+        public ActionResult OrderTotals(bool isEditable)
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = PrepareOrderTotalsModel(cart, isEditable);
+            return PartialView(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired("removesubtotaldiscount", "removeordertotaldiscount", "removediscountcouponcode")]
+        public ActionResult RemoveDiscountCoupon()
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = new ShoppingCartModel();
+
+            _genericAttributeService.SaveAttribute<string>(_workContext.CurrentCustomer,
+                SystemCustomerAttributeNames.DiscountCouponCode, null);
+
+            PrepareShoppingCartModel(model, cart);
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Cart")]
+        [FormValueRequired(FormValueRequirement.StartsWith, "removegiftcard-")]
+        public ActionResult RemoveGiftCardCode(FormCollection form)
+        {
+            var model = new ShoppingCartModel();
+
+            //get gift card identifier
+            int giftCardId = 0;
+            foreach (var formValue in form.AllKeys)
+                if (formValue.StartsWith("removegiftcard-", StringComparison.InvariantCultureIgnoreCase))
+                    giftCardId = Convert.ToInt32(formValue.Substring("removegiftcard-".Length));
+            var gc = _giftCardService.GetGiftCardById(giftCardId);
+            if (gc != null)
+            {
+                _workContext.CurrentCustomer.RemoveGiftCardCouponCode(gc.GiftCardCouponCode);
+                _customerService.UpdateCustomer(_workContext.CurrentCustomer);
+            }
+
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            PrepareShoppingCartModel(model, cart);
+            return View(model);
+        }
+
+        [ChildActionOnly]
+        public ActionResult FlyoutShoppingCart()
+        {
+            if (!_shoppingCartSettings.MiniShoppingCartEnabled)
+                return Content("");
+
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
+                return Content("");
+
+            var model = PrepareMiniShoppingCartModel();
+            return PartialView(model);
+        }
+
+        #endregion
+
+        #region Wishlist
+
+        [NopHttpsRequirement(SslRequirement.Yes)]
+        public ActionResult Wishlist(Guid? customerGuid)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist))
+                return RedirectToRoute("HomePage");
+
+            Customer customer = customerGuid.HasValue ?
+                _customerService.GetCustomerByGuid(customerGuid.Value)
+                : _workContext.CurrentCustomer;
+            if (customer == null)
+                return RedirectToRoute("HomePage");
+            var cart = customer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = new WishlistModel();
+            PrepareWishlistModel(model, cart, !customerGuid.HasValue);
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Wishlist")]
+        [FormValueRequired("updatecart")]
+        public ActionResult UpdateWishlist(FormCollection form)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist))
+                return RedirectToRoute("HomePage");
+
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            var allIdsToRemove = form["removefromcart"] != null
+                ? form["removefromcart"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToList()
+                : new List<int>();
+
+            //current warnings <cart item identifier, warnings>
+            var innerWarnings = new Dictionary<int, IList<string>>();
+            foreach (var sci in cart)
+            {
+                bool remove = allIdsToRemove.Contains(sci.Id);
+                if (remove)
+                    _shoppingCartService.DeleteShoppingCartItem(sci);
+                else
+                {
+                    foreach (string formKey in form.AllKeys)
+                        if (formKey.Equals(string.Format("itemquantity{0}", sci.Id), StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            int newQuantity;
+                            if (int.TryParse(form[formKey], out newQuantity))
+                            {
+                                var currSciWarnings = _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
+                                    sci.Id, sci.AttributesXml, sci.CustomerEnteredPrice,
+                                    sci.RentalStartDateUtc, sci.RentalEndDateUtc,
+                                    newQuantity, true);
+                                innerWarnings.Add(sci.Id, currSciWarnings);
+                            }
+                            break;
+                        }
+                }
+            }
+
+            //updated wishlist
+            cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = new WishlistModel();
+            PrepareWishlistModel(model, cart);
+            //update current warnings
+            foreach (var kvp in innerWarnings)
+            {
+                //kvp = <cart item identifier, warnings>
+                var sciId = kvp.Key;
+                var warnings = kvp.Value;
+                //find model
+                var sciModel = model.Items.FirstOrDefault(x => x.Id == sciId);
+                if (sciModel != null)
+                    foreach (var w in warnings)
+                        if (!sciModel.Warnings.Contains(w))
+                            sciModel.Warnings.Add(w);
+            }
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [HttpPost, ActionName("Wishlist")]
+        [FormValueRequired("addtocartbutton")]
+        public ActionResult AddItemsToCartFromWishlist(Guid? customerGuid, FormCollection form)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
+                return RedirectToRoute("HomePage");
+
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist))
+                return RedirectToRoute("HomePage");
+
+            var pageCustomer = customerGuid.HasValue
+                ? _customerService.GetCustomerByGuid(customerGuid.Value)
+                : _workContext.CurrentCustomer;
+            if (pageCustomer == null)
+                return RedirectToRoute("HomePage");
+
+            var pageCart = pageCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            var allWarnings = new List<string>();
+            var numberOfAddedItems = 0;
+            var allIdsToAdd = form["addtocart"] != null
+                ? form["addtocart"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToList()
+                : new List<int>();
+            foreach (var sci in pageCart)
+            {
+                if (allIdsToAdd.Contains(sci.Id))
+                {
+                    var warnings = _shoppingCartService.AddToCart(_workContext.CurrentCustomer,
+                        sci.Product, ShoppingCartType.ShoppingCart,
+                        _storeContext.CurrentStore.Id,
+                        sci.AttributesXml, sci.CustomerEnteredPrice,
+                        sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, true);
+                    if (!warnings.Any())
+                        numberOfAddedItems++;
+                    if (_shoppingCartSettings.MoveItemsFromWishlistToCart && //settings enabled
+                        !customerGuid.HasValue && //own wishlist
+                        !warnings.Any()) //no warnings ( already in the cart)
+                    {
+                        //let's remove the item from wishlist
+                        _shoppingCartService.DeleteShoppingCartItem(sci);
+                    }
+                    allWarnings.AddRange(warnings);
+                }
+            }
+
+            if (numberOfAddedItems > 0)
+            {
+                //redirect to the shopping cart page
+
+                if (allWarnings.Any())
+                {
+                    ErrorNotification(_localizationService.GetResource("Wishlist.AddToCart.Error"), true);
+                }
+
+                return RedirectToRoute("ShoppingCart");
+            }
+            else
+            {
+                //no items added. redisplay the wishlist page
+
+                if (allWarnings.Any())
+                {
+                    ErrorNotification(_localizationService.GetResource("Wishlist.AddToCart.Error"), false);
+                }
+
+                var cart = pageCustomer.ShoppingCartItems
+                    .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                    .LimitPerStore(_storeContext.CurrentStore.Id)
+                    .ToList();
+                var model = new WishlistModel();
+                PrepareWishlistModel(model, cart, !customerGuid.HasValue);
+                return View(model);
+            }
+        }
+
+        [NopHttpsRequirement(SslRequirement.Yes)]
+        public ActionResult EmailWishlist()
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist) || !_shoppingCartSettings.EmailWishlistEnabled)
+                return RedirectToRoute("HomePage");
+
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+
+            if (!cart.Any())
+                return RedirectToRoute("HomePage");
+
+            var model = new WishlistEmailAFriendModel
+            {
+                YourEmailAddress = _workContext.CurrentCustomer.Email,
+                DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnEmailWishlistToFriendPage
+            };
+            return View(model);
+        }
+
+        [HttpPost, ActionName("EmailWishlist")]
+        [PublicAntiForgery]
+        [FormValueRequired("send-email")]
+        [CaptchaValidator]
+        public ActionResult EmailWishlistSend(WishlistEmailAFriendModel model, bool captchaValid)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist) || !_shoppingCartSettings.EmailWishlistEnabled)
+                return RedirectToRoute("HomePage");
+
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            if (!cart.Any())
+                return RedirectToRoute("HomePage");
+
+            //validate CAPTCHA
+            if (_captchaSettings.Enabled && _captchaSettings.ShowOnEmailWishlistToFriendPage && !captchaValid)
+            {
+                ModelState.AddModelError("", _captchaSettings.GetWrongCaptchaMessage(_localizationService));
+            }
+
+            //check whether the current customer is guest and ia allowed to email wishlist
+            if (_workContext.CurrentCustomer.IsGuest() && !_shoppingCartSettings.AllowAnonymousUsersToEmailWishlist)
+            {
+                ModelState.AddModelError("", _localizationService.GetResource("Wishlist.EmailAFriend.OnlyRegisteredUsers"));
+            }
+
+            if (ModelState.IsValid)
+            {
+                //email
+                _workflowMessageService.SendWishlistEmailAFriendMessage(_workContext.CurrentCustomer,
+                        _workContext.WorkingLanguage.Id, model.YourEmailAddress,
+                        model.FriendEmail, Core.Html.HtmlHelper.FormatText(model.PersonalMessage, false, true, false, false, false, false));
+
+                model.SuccessfullySent = true;
+                model.Result = _localizationService.GetResource("Wishlist.EmailAFriend.SuccessfullySent");
+
+                return View(model);
+            }
+
+            //If we got this far, something failed, redisplay form
+            model.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnEmailWishlistToFriendPage;
+            return View(model);
         }
 
         #endregion

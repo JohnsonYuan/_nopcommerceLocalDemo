@@ -13,6 +13,7 @@ namespace Nop.Web.Validators.Customer
 {
     public partial class RegisterValidator : BaseNopValidator<RegisterModel>
     {
+<<<<<<< HEAD
         public RegisterValidator(ILocalizationService localizationService,
                IStateProvinceService stateProvinceService,
                CustomerSettings customerSettings)
@@ -20,18 +21,35 @@ namespace Nop.Web.Validators.Customer
             RuleFor(x => x.Email).NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.Email.Required"));
             RuleFor(x => x.Email).EmailAddress().WithMessage(localizationService.GetResource("Common.WrongEmail"));
 
+=======
+        public RegisterValidator(ILocalizationService localizationService, 
+            IStateProvinceService stateProvinceService,
+            CustomerSettings customerSettings)
+        {
+            RuleFor(x => x.Email).NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.Email.Required"));
+            RuleFor(x => x.Email).EmailAddress().WithMessage(localizationService.GetResource("Common.WrongEmail"));
+            
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             if (customerSettings.EnteringEmailTwice)
             {
                 RuleFor(x => x.ConfirmEmail).NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.ConfirmEmail.Required"));
                 RuleFor(x => x.ConfirmEmail).EmailAddress().WithMessage(localizationService.GetResource("Common.WrongEmail"));
                 RuleFor(x => x.ConfirmEmail).Equal(x => x.Email).WithMessage(localizationService.GetResource("Account.Fields.Email.EnteredEmailsDoNotMatch"));
             }
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             if (customerSettings.UsernamesEnabled)
             {
                 RuleFor(x => x.Username).NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.Username.Required"));
             }
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             RuleFor(x => x.FirstName).NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.FirstName.Required"));
             RuleFor(x => x.LastName).NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.LastName.Required"));
 
@@ -55,8 +73,13 @@ namespace Nop.Web.Validators.Customer
                 Custom(x =>
                 {
                     //does selected country have states?
+<<<<<<< HEAD
                     var hasState = stateProvinceService.GetStateProvincesByCountryId(x.CountryId).Any();
                     if (hasState)
+=======
+                    var hasStates = stateProvinceService.GetStateProvincesByCountryId(x.CountryId).Any();
+                    if (hasStates)
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
                     {
                         //if yes, then ensure that a state is selected
                         if (x.StateProvinceId == 0)

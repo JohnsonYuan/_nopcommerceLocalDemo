@@ -30,7 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -170,8 +170,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminAreaRegistration.cs" />
+<<<<<<< HEAD
     <Compile Include="Controllers\BaseAdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+=======
+    <Compile Include="Areas\DemoArea\Controllers\DefaultController.cs" />
+    <Compile Include="Areas\DemoArea\DemoAreaAreaRegistration.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Infrastructure\DependencyRegistrar.cs" />
     <Compile Include="Infrastructure\Mapper\AutoMapperConfiguration.cs" />
@@ -392,8 +398,14 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
+<<<<<<< HEAD
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
+=======
+    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Areas\DemoArea\Views\web.config" />
+    <Content Include="Areas\DemoArea\Views\Default\Index.cshtml" />
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -403,12 +415,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+<<<<<<< HEAD
     <Folder Include="Content\bootstrap\" />
     <Folder Include="Content\kendo\" />
     <Folder Include="NewFolder1\" />
     <Folder Include="Scripts\adminLTE\" />
     <Folder Include="Scripts\bootstrap\" />
     <Folder Include="Scripts\kendo\" />
+=======
+    <Folder Include="Areas\DemoArea\Models\" />
+    <Folder Include="Areas\DemoArea\Views\Shared\" />
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">

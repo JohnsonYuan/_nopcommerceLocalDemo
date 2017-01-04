@@ -20,6 +20,10 @@ namespace Nop.Web.Models.Customer
         public string RouteName { get; set; }
         public string Title { get; set; }
         public CustomerNavigationEnum Tab { get; set; }
+<<<<<<< HEAD
+=======
+        public string ItemClass { get; set; }
+>>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
     }
 
     public enum CustomerNavigationEnum

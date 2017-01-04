@@ -57,7 +57,7 @@ namespace Nop.Web.Framework.Controllers
                                 }
                             }
                             break;
-                        case FormValueRequirement.StartWith:
+                        case FormValueRequirement.StartsWith:
                             {
                                 if (_validateNameOnly)
                                 {
@@ -93,6 +93,6 @@ namespace Nop.Web.Framework.Controllers
     public enum FormValueRequirement
     {
         Equal,
-        StartWith
+        StartsWith
     }
 }

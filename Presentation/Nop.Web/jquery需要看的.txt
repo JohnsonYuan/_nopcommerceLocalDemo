@@ -1,4 +1,8 @@
-﻿Catalog\SearchBox.cshtml, 
+﻿WebGrease: Web Grease is a suite of tools for optimizing javascript, css files and images.
+Install-Package WebGrease 
+
+
+Catalog\SearchBox.cshtml, 
 http://jqueryui.com/autocomplete/
 jquery autocomplete (捎带看看<text>)
         <text>
@@ -67,3 +71,10 @@ $(document).ready(function () {
     }
     return false;
 });
+
+Nop.Web\Views\Product\_ProductAttributes.cshtml
+有上传的js， 还有选择颜色框的js
+$('.attributes #color-squares-@(attribute.Id)').delegate('input', 'click', function(event) {
+                                    $('.attributes #color-squares-@(attribute.Id)').find('li').removeClass('selected-value');
+                                    $(this).closest('li').addClass('selected-value');
+                                });

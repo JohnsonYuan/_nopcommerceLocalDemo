@@ -9,7 +9,7 @@
     @Html.Action("AdminHeaderLinks", "Common")
     @Html.Partial("Header")
     <script type="text/javascript">
-        AjaxCart.init(true, '.head-links .cart-qty', '.header-links .wishlink-qty', '#flyout-cart');
+        AjaxCart.init(false, '.head-links .cart-qty', '.header-links .wishlink-qty', '#flyout-cart');
     </script>
     <div class="header-menu">
         @Html.Action("TopMenu", "Catalog")

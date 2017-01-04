@@ -1,8 +1,8 @@
-﻿using Nop.Core.Data;
+﻿using System.Web;
+using System.Web.Routing;
+using Nop.Core.Data;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Infrastructure;
-using System.Web;
-using System.Web.Routing;
 
 namespace Nop.Web.Framework.Localization
 {
@@ -13,28 +13,28 @@ namespace Nop.Web.Framework.Localization
     {
         #region Fields
 
-        private bool? _seoFriendlyUrlsForLanguageEnabled;
+        private bool? _seoFriendlyUrlsForLanguagesEnabled;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the System.Web.Routing.Route class, by using the specified URL pattern and handler class.
+        /// Initializes a new instance of the System.Web.Routing.Route class, using the specified URL pattern and handler class.
         /// </summary>
         /// <param name="url">The URL pattern for the route.</param>
-        /// <param name="routeHandler">>The object that processes requests for the route.</param>
+        /// <param name="routeHandler">The object that processes requests for the route.</param>
         public LocalizedRoute(string url, IRouteHandler routeHandler)
             : base(url, routeHandler)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the System.Web.Routing.Route class, by using the specified URL pattern, default parameter values, and handler class.
+        /// Initializes a new instance of the System.Web.Routing.Route class, using the specified URL pattern, handler class and default parameter values.
         /// </summary>
         /// <param name="url">The URL pattern for the route.</param>
         /// <param name="defaults">The values to use if the URL does not contain all the parameters.</param>
-        /// <param name="routeHandler">>The object that processes requests for the route.</param>
+        /// <param name="routeHandler">The object that processes requests for the route.</param>
         public LocalizedRoute(string url, RouteValueDictionary defaults, IRouteHandler routeHandler)
             : base(url, defaults, routeHandler)
         {
@@ -132,7 +132,7 @@ namespace Nop.Web.Framework.Localization
 
         public virtual void ClearSeoFriendlyUrlsCachedValue()
         {
-            _seoFriendlyUrlsForLanguageEnabled = null;
+            _seoFriendlyUrlsForLanguagesEnabled = null;
         }
 
         #endregion
@@ -143,9 +143,10 @@ namespace Nop.Web.Framework.Localization
         {
             get
             {
-                if (!_seoFriendlyUrlsForLanguageEnabled.HasValue)
-                    _seoFriendlyUrlsForLanguageEnabled = EngineContext.Current.Resolve<LocalizationSettings>().SeoFriendlyUrlsForLanguagesEnabled;
-                return _seoFriendlyUrlsForLanguageEnabled.Value;
+                if (!_seoFriendlyUrlsForLanguagesEnabled.HasValue)
+                    _seoFriendlyUrlsForLanguagesEnabled = EngineContext.Current.Resolve<LocalizationSettings>().SeoFriendlyUrlsForLanguagesEnabled;
+
+                return _seoFriendlyUrlsForLanguagesEnabled.Value;
             }
         }
 
