@@ -1018,7 +1018,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
-    <Folder Include="Content\ionicons\" />
     <Folder Include="Content\magnific-popup\" />
   </ItemGroup>
   <ItemGroup>
