@@ -68,6 +68,14 @@ jQuery.fn = jQuery.prototype ={
 　　　init: function(selector, context){//....　 
 　　　//...... 
 }; 
+--------------------------------------------------
+jQuery.fn.init.prototype = jQuery.fn = $.fn 
+this means the functionality added via jQuery.fn.whatever is immediately available on the objects returned by all jQuery calls.
+
+So for example, a simple jQuery plugin might be created and used like this:
+jQuery.fn.foo = function () { alert("foo!"); };
+jQuery(".some-selector").foo();
+--------------------------------------------------
 
 5 Different Ways to Declare Functions in jQuery
 https://www.sitepoint.com/5-ways-declare-functions-jquery/

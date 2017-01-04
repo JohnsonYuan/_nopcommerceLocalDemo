@@ -11,7 +11,7 @@ namespace Nop.Admin.Infrastructure.Mapper
         {
             AutoMapperConfiguration.Init();
         }
-
+        
         public int Order
         {
             get { return 0; }

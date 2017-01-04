@@ -24,7 +24,7 @@ namespace Nop.Web.Framework.Security
                 return;
             bool ok = false;
             var ipAddresses = EngineContext.Current.Resolve<SecuritySettings>().AdminAreaAllowedIpAddresses;
-            if (ipAddresses != null && !ipAddresses.Any())
+            if (ipAddresses != null && ipAddresses.Any())
             {
                 var webHelper = EngineContext.Current.Resolve<IWebHelper>();
                 foreach (string ip in ipAddresses)

@@ -934,11 +934,9 @@
     <Content Include="Views\Boards\TopicCreate.cshtml" />
     <Content Include="Views\Boards\TopicEdit.cshtml" />
     <Content Include="Views\Boards\TopicMove.cshtml" />
-<<<<<<< HEAD
     <Content Include="Views\Customer\Login.cshtml" />
     <Content Include="Views\Customer\_ExternalAuthentication.AssociateMessage.cshtml" />
     <Content Include="Views\Customer\_ExternalAuthentication.Errors.cshtml" />
-=======
     <Content Include="Views\Product\ProductTemplate.cshtml" />
     <Content Include="Views\Product\ProductTemplate.Grouped.cshtml" />
     <Content Include="Views\Product\_AddToCart.cshtml" />
@@ -1005,7 +1003,6 @@
     <Content Include="Views\Customer\_ExternalAuthentication.AssociateMessage.cshtml" />
     <Content Include="Views\Customer\_ExternalAuthentication.Errors.cshtml" />
     <Content Include="Views\ExternalAuthentication\ExternalMethods.cshtml" />
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1015,11 +1012,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Start\" />
-<<<<<<< HEAD
-    <Folder Include="Views\ExternalAuthentication\" />
-=======
     <Folder Include="Content\magnific-popup\" />
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">

@@ -9,23 +9,14 @@ namespace Nop.Web.Controllers
 {
     public partial class ExternalAuthenticationController : BasePublicController
     {
-<<<<<<< HEAD
-
-        #region Fields
-=======
 		#region Fields
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
 
         private readonly IOpenAuthenticationService _openAuthenticationService;
         private readonly IStoreContext _storeContext;
 
         #endregion
 
-<<<<<<< HEAD
-        #region Constructors
-=======
 		#region Constructors
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
 
         public ExternalAuthenticationController(IOpenAuthenticationService openAuthenticationService,
             IStoreContext storeContext)
@@ -53,10 +44,7 @@ namespace Nop.Web.Controllers
         {
             //model
             var model = new List<ExternalAuthenticationMethodModel>();
-<<<<<<< HEAD
-=======
 
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             foreach (var eam in _openAuthenticationService
                 .LoadActiveExternalAuthenticationMethods(_storeContext.CurrentStore.Id))
             {
@@ -78,8 +66,4 @@ namespace Nop.Web.Controllers
 
         #endregion
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec

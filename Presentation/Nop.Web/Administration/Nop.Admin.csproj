@@ -30,7 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
@@ -57,7 +61,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentValidation.Mvc, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FluentValidation.MVC5.6.2.1.0\lib\Net45\FluentValidation.Mvc.dll</HintPath>
+      <HintPath>..\..\..\packages\FluentValidation.MVC5.6.2.1.0\lib\Net45\FluentValidation.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -65,6 +69,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -81,6 +89,10 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web.Razor">
@@ -163,21 +175,38 @@
     <Content Include="Content\adminLTE\skins\skin-yellow.min.css" />
     <Content Include="Content\adminLTE\skins\_all-skins.css" />
     <Content Include="Content\adminLTE\skins\_all-skins.min.css" />
+    <Content Include="Content\styles.css" />
+    <Content Include="Content\styles.rtl.css" />
     <Content Include="Note.Html&amp;js.txt" />
     <Content Include="Notes.txt" />
+    <Content Include="Scripts\admin.common.js" />
+    <Content Include="Scripts\admin.navigation.js" />
+    <Content Include="Scripts\admin.search.js" />
+    <Content Include="Scripts\farbtastic.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-migrate-1.2.1.js" />
+    <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.custom.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.custom.min.js" />
+    <Content Include="Scripts\jquery.tmpl.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="TODOItems.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminAreaRegistration.cs" />
-<<<<<<< HEAD
     <Compile Include="Controllers\BaseAdminController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-=======
-    <Compile Include="Areas\DemoArea\Controllers\DefaultController.cs" />
-    <Compile Include="Areas\DemoArea\DemoAreaAreaRegistration.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
+    <Compile Include="Controllers\PreferencesController.cs" />
+    <Compile Include="Controllers\SecurityController.cs" />
+    <Compile Include="Controllers\WidgetController.cs" />
+    <Compile Include="Extensions\AttributeParserHelper.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Infrastructure\DependencyRegistrar.cs" />
     <Compile Include="Infrastructure\Mapper\AutoMapperConfiguration.cs" />
@@ -394,18 +423,23 @@
     <Compile Include="Validators\Topics\TopicValidator.cs" />
     <Compile Include="Validators\ValidatorUtilities.cs" />
     <Compile Include="Validators\Vendors\VendorValidator.cs" />
+    <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
-<<<<<<< HEAD
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
-=======
     <Content Include="Views\Default\Index.cshtml" />
-    <Content Include="Areas\DemoArea\Views\web.config" />
-    <Content Include="Areas\DemoArea\Views\Default\Index.cshtml" />
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Shared\_AdminPopupLayout.cshtml" />
+    <Content Include="Views\Common\LanguageSelector.cshtml" />
+    <Content Include="Views\Shared\Menu.cshtml" />
+    <Content Include="Views\Shared\Notifications.cshtml" />
+    <Content Include="sitemap.config" />
+    <Content Include="Views\Widget\ConfigureWidget.cshtml" />
+    <Content Include="Views\Widget\List.cshtml" />
+    <Content Include="Views\Widget\WidgetsByZone.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -415,17 +449,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-<<<<<<< HEAD
     <Folder Include="Content\bootstrap\" />
+    <Folder Include="Content\fontAwesome\" />
     <Folder Include="Content\kendo\" />
-    <Folder Include="NewFolder1\" />
+    <Folder Include="Content\typeahead\" />
     <Folder Include="Scripts\adminLTE\" />
     <Folder Include="Scripts\bootstrap\" />
     <Folder Include="Scripts\kendo\" />
-=======
-    <Folder Include="Areas\DemoArea\Models\" />
-    <Folder Include="Areas\DemoArea\Views\Shared\" />
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
+    <Folder Include="Scripts\typeahead\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">

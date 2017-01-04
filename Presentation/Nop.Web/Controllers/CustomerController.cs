@@ -31,10 +31,7 @@ using Nop.Services.Orders;
 using Nop.Services.Seo;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
-<<<<<<< HEAD
 using Nop.Services.Vendors;
-=======
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
 using Nop.Web.Extensions;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
@@ -43,18 +40,11 @@ using Nop.Web.Framework.Security.Captcha;
 using Nop.Web.Framework.Security.Honeypot;
 using Nop.Web.Models.Common;
 using Nop.Web.Models.Customer;
-<<<<<<< HEAD
-
-namespace Nop.Web.Controllers
-{
-    public class CustomerController : BasePublicController
-=======
 using WebGrease.Css.Extensions;
 
 namespace Nop.Web.Controllers
 {
     public partial class CustomerController : BasePublicController
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
     {
         #region Fields
         private readonly IAuthenticationService _authenticationService;
@@ -109,11 +99,7 @@ namespace Nop.Web.Controllers
 
         public CustomerController(IAuthenticationService authenticationService,
             IDateTimeHelper dateTimeHelper,
-<<<<<<< HEAD
-            DateTimeSettings dateTimeSettings,
-=======
             DateTimeSettings dateTimeSettings, 
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             TaxSettings taxSettings,
             ILocalizationService localizationService,
             IWorkContext workContext,
@@ -124,30 +110,17 @@ namespace Nop.Web.Controllers
             ICustomerAttributeService customerAttributeService,
             IGenericAttributeService genericAttributeService,
             ICustomerRegistrationService customerRegistrationService,
-<<<<<<< HEAD
-            ITaxService taxService,
-            RewardPointsSettings rewardPointsSettings,
-            CustomerSettings customerSettings,
-            AddressSettings addressSettings,
-            ForumSettings forumSettings,
-            OrderSettings orderSettings,
-=======
             ITaxService taxService, 
             RewardPointsSettings rewardPointsSettings,
             CustomerSettings customerSettings,
             AddressSettings addressSettings, 
             ForumSettings forumSettings,
             OrderSettings orderSettings, 
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             IAddressService addressService,
             ICountryService countryService,
             IStateProvinceService stateProvinceService,
             IOrderService orderService,
-<<<<<<< HEAD
-            IPictureService pictureService,
-=======
             IPictureService pictureService, 
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             INewsLetterSubscriptionService newsLetterSubscriptionService,
             IShoppingCartService shoppingCartService,
             IOpenAuthenticationService openAuthenticationService,
@@ -166,11 +139,7 @@ namespace Nop.Web.Controllers
             SecuritySettings securitySettings,
             ExternalAuthenticationSettings externalAuthenticationSettings,
             StoreInformationSettings storeInformationSettings,
-<<<<<<< HEAD
-            CatalogSettings catalogSettings,
-=======
             CatalogSettings catalogSettings, 
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
             VendorSettings vendorSettings)
         {
             this._authenticationService = authenticationService;
@@ -221,8 +190,6 @@ namespace Nop.Web.Controllers
 
         #endregion
 
-<<<<<<< HEAD
-=======
         #region Utilities
         
         [NonAction]
@@ -655,7 +622,6 @@ namespace Nop.Web.Controllers
 
         #endregion
 
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
         #region Login / logout
 
         [NopHttpsRequirement(SslRequirement.Yes)]
@@ -713,16 +679,9 @@ namespace Nop.Web.Controllers
 
                             if (String.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
                                 return RedirectToRoute("HomePage");
-<<<<<<< HEAD
-
-                            return Redirect(returnUrl);
-                        }
-                        break;
-=======
                             
                             return Redirect(returnUrl);
                         }
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec
                     case CustomerLoginResults.CustomerNotExist:
                         ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials.CustomerNotExist"));
                         break;
@@ -748,11 +707,6 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
-<<<<<<< HEAD
-        #endregion
-    }
-}
-=======
         //available even when a store is closed
         [StoreClosed(true)]
         //available even when navigation is not allowed
@@ -1291,24 +1245,21 @@ namespace Nop.Web.Controllers
             {
                 RouteName = "CustomerInfo",
                 Title = _localizationService.GetResource("Account.CustomerInfo"),
-                Tab = CustomerNavigationEnum.Info,
-                ItemClass = "customer-info"
+                Tab = CustomerNavigationEnum.Info
             });
 
             model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
             {
                 RouteName = "CustomerAddresses",
                 Title = _localizationService.GetResource("Account.CustomerAddresses"),
-                Tab = CustomerNavigationEnum.Addresses,
-                ItemClass = "customer-addresses"
+                Tab = CustomerNavigationEnum.Addresses
             });
 
             model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
             {
                 RouteName = "CustomerOrders",
                 Title = _localizationService.GetResource("Account.CustomerOrders"),
-                Tab = CustomerNavigationEnum.Orders,
-                ItemClass = "customer-orders"
+                Tab = CustomerNavigationEnum.Orders
             });
 
             if (_orderSettings.ReturnRequestsEnabled &&
@@ -1319,8 +1270,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerReturnRequests",
                     Title = _localizationService.GetResource("Account.CustomerReturnRequests"),
-                    Tab = CustomerNavigationEnum.ReturnRequests,
-                    ItemClass = "return-requests"
+                    Tab = CustomerNavigationEnum.ReturnRequests
                 });
             }
 
@@ -1330,8 +1280,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerDownloadableProducts",
                     Title = _localizationService.GetResource("Account.DownloadableProducts"),
-                    Tab = CustomerNavigationEnum.DownloadableProducts,
-                    ItemClass = "downloadable-products"
+                    Tab = CustomerNavigationEnum.DownloadableProducts
                 });
             }
 
@@ -1341,8 +1290,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerBackInStockSubscriptions",
                     Title = _localizationService.GetResource("Account.BackInStockSubscriptions"),
-                    Tab = CustomerNavigationEnum.BackInStockSubscriptions,
-                    ItemClass = "back-in-stock-subscriptions"
+                    Tab = CustomerNavigationEnum.BackInStockSubscriptions
                 });
             }
 
@@ -1352,8 +1300,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerRewardPoints",
                     Title = _localizationService.GetResource("Account.RewardPoints"),
-                    Tab = CustomerNavigationEnum.RewardPoints,
-                    ItemClass = "reward-points"
+                    Tab = CustomerNavigationEnum.RewardPoints
                 });
             }
 
@@ -1361,8 +1308,7 @@ namespace Nop.Web.Controllers
             {
                 RouteName = "CustomerChangePassword",
                 Title = _localizationService.GetResource("Account.ChangePassword"),
-                Tab = CustomerNavigationEnum.ChangePassword,
-                ItemClass = "change-password"
+                Tab = CustomerNavigationEnum.ChangePassword
             });
 
             if (_customerSettings.AllowCustomersToUploadAvatars)
@@ -1371,8 +1317,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerAvatar",
                     Title = _localizationService.GetResource("Account.Avatar"),
-                    Tab = CustomerNavigationEnum.Avatar,
-                    ItemClass = "customer-avatar"
+                    Tab = CustomerNavigationEnum.Avatar
                 });
             }
 
@@ -1382,8 +1327,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerForumSubscriptions",
                     Title = _localizationService.GetResource("Account.ForumSubscriptions"),
-                    Tab = CustomerNavigationEnum.ForumSubscriptions,
-                    ItemClass = "forum-subscriptions"
+                    Tab = CustomerNavigationEnum.ForumSubscriptions
                 });
             }
             if (_catalogSettings.ShowProductReviewsTabOnAccountPage)
@@ -1392,8 +1336,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerProductReviews",
                     Title = _localizationService.GetResource("Account.CustomerProductReviews"),
-                    Tab = CustomerNavigationEnum.ProductReviews,
-                    ItemClass = "customer-reviews"
+                    Tab = CustomerNavigationEnum.ProductReviews
                 });
             }
             if (_vendorSettings.AllowVendorsToEditInfo && _workContext.CurrentVendor != null)
@@ -1402,8 +1345,7 @@ namespace Nop.Web.Controllers
                 {
                     RouteName = "CustomerVendorInfo",
                     Title = _localizationService.GetResource("Account.VendorInfo"),
-                    Tab = CustomerNavigationEnum.VendorInfo,
-                    ItemClass = "customer-vendor-info"
+                    Tab = CustomerNavigationEnum.VendorInfo
                 });
             }
 
@@ -2008,4 +1950,3 @@ namespace Nop.Web.Controllers
         #endregion
     }
 }
->>>>>>> 26e00cc3416ded77fd8e0d6d90b8bd88c6d3fdec

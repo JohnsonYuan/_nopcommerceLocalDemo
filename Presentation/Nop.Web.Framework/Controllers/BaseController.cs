@@ -120,6 +120,18 @@ namespace Nop.Web.Framework.Controllers
         /// <param name="exception">Exception</param>
         /// <param name="persistForTheNextRequest">A value indicating whether a message should be persisted for the next request</param>
         /// <param name="logException">A value indicating whether exception should be logged</param>
+        protected virtual void ErrorNotification(Exception exception, bool persistForTheNextRequest = true, bool logException = true)
+        {
+            if (logException)
+                LogException(exception);
+            AddNotification(NotifyType.Error, exception.Message, persistForTheNextRequest);
+        }
+        /// <summary>
+        /// Display error notification
+        /// </summary>
+        /// <param name="exception">Exception</param>
+        /// <param name="persistForTheNextRequest">A value indicating whether a message should be persisted for the next request</param>
+        /// <param name="logException">A value indicating whether exception should be logged</param>
         protected virtual void AddNotification(NotifyType type, string message, bool persistForTheNextRequest)
         {
             string dataKey = string.Format("nop.notifications.{0}", type);
