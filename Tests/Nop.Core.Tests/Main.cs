@@ -67,8 +67,12 @@ namespace Nop.Core.Tests
             public decimal Total { get; set; }
             public List<int> TotalCounts { get; set; }
         }
+
         static void Main()
         {
+
+            return;
+
             var builderx = new ContainerBuilder();
             builderx.RegisterType<ConsoleOutput> ().As< IOutput> ().InstancePerLifetimeScope();
             var containerx = builderx.Build();

@@ -33,6 +33,159 @@ http://www.telerik.com/download/kendo-ui-core, 解压出来有 js, styles, src�
 ~/Administration/Content/kendeo/2014.1.318  => styles文件夹内容（删除了.map文件）
 ~/Administration/Scripts/kendeo/2014.1.318  => js文件夹内容
 
+
+============================================
+chartjs: http://www.chartjs.org/docs
+============================================
+以admin/index的Orders static 折线图(line)为例(~\Administration\Views\Order\OrderStatistics.cshtml ):
+1. 绘图需要在canvas中操作，然后取得context
+<canvas id="myChart" width="400" height="400"></canvas>
+
+<script src="Chart.js"></script>
+<script>
+    var ctx = document.getElementById("myChart").getContext("2d"); // document.getElementById("myChart"); 也可以
+    var myChart = new Chart(ctx, [config])
+</script>
+
+2. #Advanced usage 
+// Destroys a specific chart instance
+myLineChart.destroy();
+
+.update(duration, lazy)  // 更新
+// duration is the time for the animation of the redraw in milliseconds
+// lazy is a boolean. if true, the animation can be interrupted by other animations
+myLineChart.data.datasets[0].data[2] = 50; // Would update the first dataset's value of 'March' to be 50
+myLineChart.update(); // Calling update now animates the position of March from 90 to 50.
+
+
+
+
+3. config几个重要的属性
+* type： chart的类型
+* labels属性对应横坐标的值
+*  datasets每个元素代表一个线, 如下面的例子有2条线"My First dataset"， "My Second dataset"
+	datasets 中 label代表该元素名称， data表示数据，与data.labels对应
+* options主要配置显示的东西
+	legend.display 是否显示每隔dataset的label， 在最上方显示， OrderStatistics.cshtml设置为false
+	scales.xAxes, scales.yAxes 横坐标， 纵坐标 ticks 可以控制坐标的自定义坐标自定义
+	OrderStatistics.cshtml中来控制现实不显示
+	ticks: {
+        userCallback: function (dataLabel, index) {
+            if (window.orderStatistics && window.orderStatistics.config.data.labels.length > 12) {
+                return index % 5 === 0 ? dataLabel : '';
+            }
+            return dataLabel;
+        }
+    }
+
+
+var config = {
+            type: 'line',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [{
+                    label: "My First dataset",
+                    backgroundColor: window.chartColors.red,
+                    borderColor: window.chartColors.red,
+                    data: [75, 80, 14, 33, 44, 56, 90],
+                    fill: false,
+                }, {
+                    label: "My Second dataset",
+                    fill: false,
+                    backgroundColor: window.chartColors.blue,
+                    borderColor: window.chartColors.blue,
+                    data: [
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor()
+                    ],
+                }]
+            },
+            options: {
+                responsive: true,
+				legend: {
+                    display: true
+                },
+                title:{
+                    display:true,
+                    text:'Chart.js Line Chart'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Month'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        window.onload = function() {
+            var ctx = document.getElementById("canvas").getContext("2d");
+            window.myLine = new Chart(ctx, config);
+        };
+
+
+常用js操作
+#多个属性选择（包含type="hidden"和name="somename"属性）：
+	$('#SomeId input[type="hidden"][name="somename"]')
+# 所有有id属性， name属性以man结尾的input
+	$( "input[id][name$='man']" ).
+#在#order-box内button点击事件
+	$('#order-box').on('click', 'button[data-widget="collapse"]', function () {
+	});
+#.hasClass('collapsed-box')， addClass('bg-light-blue')， removeClass('bg-light-blue')
+#触发事件 .trigger('click')
+#增加，删除属性  .attr('disabled', 'disabled') .removeAttr('disabled')
+#多个按钮点击了某一个, 只给选中元素增加某个class
+	$('#@order-box button).on('click', function () { {
+		$('#order-box button').removeClass('bg-light-blue');  // 先全部remove了
+		$(this).addClass('bg-light-blue');
+	}
+
+
+js functions
+#Radom number
+	Math.random(); // [0, 1)   // e.g. 0.2884050472152568
+	Math.round(2.5); =》 3	// Round a number to the nearest integer 四舍五入
+	Math.ceil(1.4) =》 2		// rounded upwards to the nearest integer
+	Math.floor(1.4)=》 1		//rounded downwards to the nearest integer
+	例子1 Return a random number between 1 and 10 : Math.floor((Math.random() * 10) + 1);  
+	例子2 随机[-100, 100]
+	window.randomScalingFactor = function() {
+		return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+	}
+
+#Global variable //  http://stackoverflow.com/questions/4862193/difference-between-variable-declaration-syntaxes-in-javascript-including-global
+定义window.myGlobalVar或myGlobalVar，都可以通过window.myGlobalVar或myGlobalVar获取变量
+最好使用window.myGlobalVar这种方式myGlobalVar会造成误解，容易和local的变量分不清
+var iAmGlobal = "some val";  // Global variable declaration
+window.myGlobalVar = value;  // assign it as a property to the global object window
+myGlobalVar = 'Hello world'; // use it without defining it, 相当于window.myGlobalVar = 'Hello world'
+
+
+
 Prototypes - 给object 增加属性或方法（http://www.w3schools.com/js/js_object_prototypes.asp）
 JavaScript Object Prototypes: add new properties (or methods) to an existing object
 // define person class
