@@ -33,6 +33,136 @@ http://www.telerik.com/download/kendo-ui-core, 解压出来有 js, styles, src�
 ~/Administration/Content/kendeo/2014.1.318  => styles文件夹内容（删除了.map文件）
 ~/Administration/Scripts/kendeo/2014.1.318  => js文件夹内容
 
+kendogrid:
+http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema
+~\Administration\Views\Order\BestsellersBriefReportByQuantity.cshtml
+$("#bestsellers-byquantity-grid").kendoGrid({
+                    dataSource: {
+                        type: "json",
+                        transport: {
+                            read: {
+                                url: "@Html.Raw(Url.Action("BestsellersBriefReportByQuantityList", "Order"))",
+                                type: "POST",
+                                dataType: "json",
+                                data: addAntiForgeryToken
+                            }
+                        },
+                        schema: {
+                            data: "Data",
+                            total: "Total",
+                            errors: "Errors"
+                        },
+                        error: function(e) {
+                            display_kendoui_grid_error(e);
+                            // Cancel the changes
+                            this.cancelChanges();
+                        },
+                        pageSize: @(gridPageSize),
+                        serverPaging: true,
+                        serverFiltering: true,
+                        serverSorting: true
+                    },
+                    pageable: {
+                        refresh: true
+                    },
+                    editable: {
+                        confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                        mode: "inline"
+                    },
+                    scrollable: false,
+                    columns: [{
+                        field: "ProductName",
+                        title: "@T("Admin.SalesReport.Bestsellers.Fields.Name")"
+                    }, {
+                        field: "TotalQuantity",
+                        title: "@T("Admin.SalesReport.Bestsellers.Fields.TotalQuantity")"
+                    }]
+                });
+            });
+重要的属性dataSource, 类型为kendo.data.DataSource (api: http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema)
+    transport.read : loads data items from a remote service. 
+    transport.read参数会传到jQuery.ajax, 除了success, error这些callback functions, 其他ajax的参数都可以
+
+    transport.create: used when the data source saves newly created data items
+
+    error: Fired when a request to the remote service fails.
+
+    分页： serverPaging 为true(default: false), enable分页  如果为true, schema.total 必须赋值
+    切换页面时kendogrid会返回下面四个参数
+        page - the page of data item to return (1 means the first page).
+        pageSize - the number of items to return.
+        skip - how many data items to skip.  比如pagesize是5， 浏览第2页， skip = 5; 浏览第3页， skip = 10 （跳过前2页）
+        take - the number of data items to return (the same as pageSize).
+        
+        nopcommerce 函数的参数为DataSourceRequest， 只需要Page， PageSize即可
+        public class DataSourceRequest
+        {
+            public int Page { get; set; }
+            public int PageSize { get; set; }
+        }
+    schema 属性 The field from the server response
+        nopcommerce返回json数据为  DataSourceResult, 返回的数据在Data字段中, Total返回数据总数
+        public class DataSourceResult
+        {
+            public object ExtraData { get; set; }
+            public IEnumerable Data { get; set; }
+            public object Errors { get; set; }
+            public int Total { get; set; }
+        }
+        所以配置
+        schema: {
+                            data: "Data",
+                            total: "Total",
+                        },
+kendo grid pageable: 定义页码显示, 按钮什么的
+If set to true the grid will display a pager. By default paging is disabled.
+在pageable或者dataSource中定义pageSize
+pageable.refresh Boolean (default: false)
+If set to true the pager will display the refresh button. Clicking the refresh button will refresh the grid
+
+kendo grid columns 属性
+// SPECIFY GRID COLUMNS AS ARRAY OF STRINGS
+$("#grid").kendoGrid({
+  columns: ["name", "age"], // two columns bound to the "name" and "age" fields
+  dataSource: [ { name: "Jane", age: 31 }, { name: "John", age: 33 }]
+});
+
+// SPECIFY GRID COLUMNS AS ARRAY OF OBJECTS
+$("#grid").kendoGrid({
+  columns: [{
+    field: "name",// create a column bound to the "name" field
+    title: "Name" // set its title to "Name"
+  }, {
+    field: "age",// create a column bound to the "age" field
+    title: "Age" // set its title to "Age"
+    width: 100,
+    template: '<span class="grid-report-item ' +
+                            '# if(OrderStatusId == 10) {# yellow #} #' +
+                            '# if(OrderStatusId == 20) {# blue #} #' +
+                            '# if(OrderStatusId == 30) {# green #} #' +
+                            '# if(OrderStatusId == 40) {# red #} #' +
+        '">#=age#</span>'
+  }],
+  dataSource: [ { name: "Jane", age: 30 }, { name: "John", age: 33 }]
+});
+
+columns.template 使用模板:
+#: [Content] # -> html encode
+#= [FieldName] # -> Field Name
+
+使用模板: 第一中方法为直接在columns中写html
+第二种方法为定义一段script:
+<script id="name-template" type="text/x-kendo-template">
+  <strong>#: name #</strong>
+</script>
+<script>
+$("#grid").kendoGrid({
+  columns: [ {
+    field: "name",
+    template: kendo.template($("#name-template").html())
+  }],
+  dataSource: [ { name: "Jane Doe" }, { name: "John Doe" } ]
+});
 
 ============================================
 chartjs: http://www.chartjs.org/docs
