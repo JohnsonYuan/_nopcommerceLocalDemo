@@ -68,9 +68,10 @@ namespace Nop.Core.Tests
             public List<int> TotalCounts { get; set; }
         }
 
-        static void Main()
-        {
 
+
+        static void Main()
+        { 
             return;
 
             var builderx = new ContainerBuilder();

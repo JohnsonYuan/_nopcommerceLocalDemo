@@ -80,12 +80,17 @@ $("#bestsellers-byquantity-grid").kendoGrid({
                 });
             });
 重要的属性dataSource, 类型为kendo.data.DataSource (api: http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema)
-    transport.read : loads data items from a remote service. 
-    transport.read参数会传到jQuery.ajax, 除了success, error这些callback functions, 其他ajax的参数都可以
-
     transport.create: used when the data source saves newly created data items
 
     error: Fired when a request to the remote service fails.
+
+	
+	transport.read : loads data items from a remote service. 
+    transport.read参数会传到jQuery.ajax, 除了success, error这些callback functions, 其他ajax的参数都可以
+	transport.read.data: 额外穿的参数 比如换页的时候kendo会自动传page， pagesize 
+		Additional parameters which are sent to the remote service. 
+		The parameter names must not match reserved words
+		DataSource for sorting, filtering, paging, and grouping.（查看api看参数名称）
 
     分页： serverPaging 为true(default: false), enable分页  如果为true, schema.total 必须赋值
     切换页面时kendogrid会返回下面四个参数
@@ -109,14 +114,20 @@ $("#bestsellers-byquantity-grid").kendoGrid({
             public object Errors { get; set; }
             public int Total { get; set; }
         }
-        所以配置
+        所以配置t
         schema: {
                             data: "Data",
                             total: "Total",
                         },
-kendo grid pageable: 定义页码显示, 按钮什么的
+
+
+kendo grid pageable -Boolean |Object (default: false) : 定义页码显示, 按钮什么的
 If set to true the grid will display a pager. By default paging is disabled.
 在pageable或者dataSource中定义pageSize
+pageable: {
+    pageSize: 2,
+	refresh: true
+  }
 pageable.refresh Boolean (default: false)
 If set to true the pager will display the refresh button. Clicking the refresh button will refresh the grid
 
