@@ -207,6 +207,7 @@
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Extensions\AttributeParserHelper.cs" />
@@ -518,6 +519,7 @@
     <Folder Include="Scripts\kendo\" />
     <Folder Include="Scripts\tagEditor\" />
     <Folder Include="Scripts\typeahead\" />
+    <Folder Include="Views\ProductController\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">
