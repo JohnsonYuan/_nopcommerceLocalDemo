@@ -6,6 +6,23 @@ build.cmd =》 cmd格式可以学习
 
 [MethodImpl(MethodImplOptions.Synchronized)]属性加到方法 相当于lock(this)
 
+Dynamic Linq:
+Nop.Core\Dynamic.cs （）
+下载地址 https://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library
+文档 https://github.com/kahanu/System.Linq.Dynamic/wiki/Dynamic-Expressions#_Substitution_Values
+e.g.
+var query = db.Customers
+              .Where("City = @0 and Orders.Count >= @1", "London", 10)
+              .OrderBy("CompanyName")
+              .Select("new(CompanyName as Name, Phone)");
+
+nopCommerce Nop.Web.Framework\Kendoui\QueryableExtensions.cs 中 根据kendo ui生成对应筛选条件， 然后调用dynamic linq
+var values = filters.Select(f => f.Value).ToArray();
+// Create a predicate expression e.g. Field1 = @0 And Field2 > @1
+string predicate = filter.ToExprssion(filters);
+// Use the Where method of Dynamic Linq to fitler the dats
+queryable = queryable.Where(predicate, values);
+
 Autofac Registration : http://docs.autofac.org/en/latest/register/registration.html
 1. 如果注册相同的，后注册的生效
             builder.RegisterType<Class1>().As<IInterface>; //默认AsSelf()

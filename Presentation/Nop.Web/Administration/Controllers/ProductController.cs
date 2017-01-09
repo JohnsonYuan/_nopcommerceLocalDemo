@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
+using Nop.Admin.Extensions;
+using Nop.Admin.Helpers;
+using Nop.Admin.Infrastructure.Cache;
+using Nop.Admin.Models.Catalog;
 using Nop.Core;
 using Nop.Core.Caching;
+using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Directory;
+using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Vendors;
+using Nop.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
@@ -24,10 +32,8 @@ using Nop.Services.Shipping;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
-using Nop.Core.Domain.Catalog;
-using Nop.Admin.Models.Catalog;
-using Nop.Admin.Helpers;
-using Nop.Core.Domain.Discounts;
+using Nop.Web.Framework.Kendoui;
+using Nop.Web.Framework.Controllers;
 
 namespace Nop.Admin.Controllers
 {
@@ -287,7 +293,6 @@ namespace Nop.Admin.Controllers
             }
         }
 
-
         [NonAction]
         protected virtual void PrepareStoresMappingModel(ProductModel model, Product product, bool excludeProperties)
         {
@@ -308,7 +313,6 @@ namespace Nop.Admin.Controllers
                 });
             }
         }
-
 
         [NonAction]
         protected virtual void SaveStoreMappings(Product product, ProductModel model)
@@ -380,8 +384,6 @@ namespace Nop.Admin.Controllers
                 }
         }
 
-        #endregion
-
         [NonAction]
         protected virtual void PrepareManufacturerMappingModel(ProductModel model, Product product, bool excludeProperties)
         {
@@ -401,7 +403,6 @@ namespace Nop.Admin.Controllers
                 });
             }
         }
-
 
         [NonAction]
         protected virtual void SaveManufacturerMappings(Product product, ProductModel model)
@@ -605,8 +606,216 @@ namespace Nop.Admin.Controllers
 
             if (product != null)
             {
-                
+                var parentGroupedProduct = _productService.GetProductById(product.ParentGroupedProductId);
+                if (parentGroupedProduct != null)
+                {
+                    model.AssociatedToProductId = product.ParentGroupedProductId;
+                    model.AssociatedToProductName = parentGroupedProduct.Name;
+                }
             }
+
+            model.PrimaryStoreCurrencyCode = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode;
+            model.BaseWeightIn = _measureService.GetMeasureDimensionById(_measureSettings.BaseWeightId).Name;
+            model.BaseDimensionIn = _measureService.GetMeasureDimensionById(_measureSettings.BaseDimensionId).Name;
+            if (product != null)
+            {
+                model.CreatedOn = _dateTimeHelper.ConvertToUserTime(product.CreatedOnUtc, DateTimeKind.Utc);
+                model.UpdatedOn = _dateTimeHelper.ConvertToUserTime(product.UpdatedOnUtc, DateTimeKind.Utc);
+            }
+
+            //little performance hack here
+            //there's no need to load attributes when creating a new product
+            //anyway they're not used (you need to save a product before you map add them)
+            if (product != null)
+            {
+                //product attribute
+                foreach (var productAttribute in _productAttributeService.GetAllProductAttributes())
+                {
+                    model.AvailableProductAttributes.Add(new SelectListItem
+                    {
+                        Text = productAttribute.Name,
+                        Value = productAttribute.Id.ToString()
+                    });
+                }
+
+                //specification attributes
+                model.AddSpecificationAttributeModel.AvailableAttributes = _cacheManager
+                    .Get(ModelCacheEventConsumer.SPEC_ATTRIBUTES_MODEL_KEY, () =>
+                    {
+                        var availableSpecificationAttributes = new List<SelectListItem>();
+                        foreach (var sa in _specificationAttributeService.GetSpecificationAttributes())
+                        {
+                            availableSpecificationAttributes.Add(new SelectListItem
+                            {
+                                Text = sa.Name,
+                                Value = sa.Id.ToString()
+                            });
+                        }
+                        return availableSpecificationAttributes;
+                    });
+
+                //options of preselected specification attribute
+                if (model.AddSpecificationAttributeModel.AvailableAttributes.Any())
+                {
+                    var selectedAttributeId = int.Parse(model.AddSpecificationAttributeModel.AvailableAttributes.First().Value);
+                    foreach (var sao in _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttribute(selectedAttributeId))
+                        model.AddSpecificationAttributeModel.AvailableOptions.Add(new SelectListItem
+                        {
+                            Text = sao.Name,
+                            Value = sao.Id.ToString()
+                        });
+                }
+                //default specs values
+                model.AddSpecificationAttributeModel.ShowOnProductPage = true;
+            }
+
+            //copy product
+            if (product != null)
+            {
+                model.CopyProductModel.Id = product.Id;
+                model.CopyProductModel.Name = "Copy of " + product.Name;
+                model.CopyProductModel.Published = true;
+                model.CopyProductModel.CopyImages = true;
+            }
+
+            //templates
+            var templates = _productTemplateService.GetAllProductTemplates();
+            foreach (var template in templates)
+            {
+                model.AvailableProductTemplates.Add(new SelectListItem
+                {
+                    Text = template.Name,
+                    Value = template.Id.ToString()
+                });
+            }
+
+            //vendors
+            model.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+            model.AvailableVendors.Add(new SelectListItem
+            {
+                Text = _localizationService.GetResource("Admin.Catalog.Products.Fields.Vendor.None"),
+                Value = "0"
+            });
+            var vendors = _vendorService.GetAllVendors(showHidden: true);
+            foreach (var vendor in vendors)
+            {
+                model.AvailableVendors.Add(new SelectListItem
+                {
+                    Text = vendor.Name,
+                    Value = vendor.Id.ToString()
+                });
+            }
+
+            //delivery dates
+            model.AvailableDeliveryDates.Add(new SelectListItem
+            {
+                Text = _localizationService.GetResource("Admin.Catalog.Products.Fields.DeliveryDate.None"),
+                Value = "0"
+            });
+            var deliveryDates = _shippingService.GetAllDeliveryDates();
+            foreach (var deliveryDate in deliveryDates)
+            {
+                model.AvailableBasepriceBaseUnits.Add(new SelectListItem
+                {
+                    Text = deliveryDate.Name,
+                    Value = deliveryDate.Id.ToString()
+                });
+            }
+
+            //warehouses
+            var warehouses = _shippingService.GetAllWarehouses();
+            model.AvailableBasepriceBaseUnits.Add(new SelectListItem
+            {
+                Text = _localizationService.GetResource("Admin.Catalog.Products.Fields.Warehouse.None"),
+                Value = "0"
+            });
+            foreach (var warehouse in warehouses)
+            {
+                model.AvailableWarehouses.Add(new SelectListItem
+                {
+                    Text = warehouse.Name,
+                    Value = warehouse.Id.ToString()
+                });
+            }
+
+            //multiple warehouses
+            foreach (var warehouse in warehouses)
+            {
+                var pwiModel = new ProductModel.ProductWarehouseInventoryModel
+                {
+                    WarehouseId = warehouse.Id,
+                    WarehouseName = warehouse.Name
+                };
+                if (product != null)
+                {
+                    var pwi = product.ProductWarehouseInventory.FirstOrDefault(x => x.WarehouseId == warehouse.Id);
+                    if (pwi != null)
+                    {
+                        pwiModel.WarehouseUsed = true;
+                        pwiModel.StockQuantity = pwi.StockQuantity;
+                        pwiModel.ReservedQuantity = pwi.ReservedQuantity;
+                        pwiModel.PlannedQuantity = _shipmentService.GetQuantityInShipments(product, pwi.WarehouseId, true, true);
+                    }
+                }
+                model.ProductWarehouseInventoryModels.Add(pwiModel);
+            }
+
+            //product tags
+            if (product != null)
+            {
+                var result = new StringBuilder();
+                for (int i = 0; i < product.ProductTags.Count; i++)
+                {
+                    var pt = product.ProductTags.ToList()[i];
+                    result.Append(pt.Name);
+                    if (i != product.ProductTags.Count - 1)
+                        result.Append(", ");
+                }
+                model.ProductTags = result.ToString();
+            }
+
+            //tax categories
+            var taxCategories = _taxCategoryService.GetAllTaxCategories();
+            model.AvailableTaxCategories.Add(new SelectListItem { Text = "---", Value = "0" });
+            foreach (var tc in taxCategories)
+                model.AvailableTaxCategories.Add(new SelectListItem { Text = tc.Name, Value = tc.Id.ToString(), Selected = product != null && !setPredefinedValues && tc.Id == product.TaxCategoryId });
+
+            //baseprice units
+            var measureWeights = _measureService.GetAllMeasureWeights();
+            foreach (var mw in measureWeights)
+                model.AvailableBasepriceBaseUnits.Add(new SelectListItem { Text = mw.Name, Value = mw.Id.ToString() });
+            foreach (var mw in measureWeights)
+                model.AvailableBasepriceBaseUnits.Add(new SelectListItem { Text = mw.Name, Value = mw.Id.ToString(), Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceBaseUnitId });
+
+            //last stock quantity
+            if (product != null)
+            {
+                model.LastStockQuantity = product.StockQuantity;
+            }
+
+            //default values
+            if (setPredefinedValues)
+            {
+                model.MaximumCustomerEnteredPrice = 1000;
+                model.MaxNumberOfDownloads = 10;
+                model.RecurringCycleLength = 100;
+                model.RecurringTotalCycles = 10;
+                model.RentalPriceLength = 1;
+                model.StockQuantity = 10000;
+                model.NotifyAdminForQuantityBelow = 1;
+                model.OrderMinimumQuantity = 1;
+                model.OrderMaximumQuantity = 10000;
+
+                model.UnlimitedDownloads = true;
+                model.IsShipEnabled = true;
+                model.AllowCustomerReviews = true;
+                model.Published = true;
+                model.VisibleIndividually = true;
+            }
+
+            //editor settings
+            var productEditorSettings = _settingService.LoadSetting<ProductEditorSettings>();
+            model.ProductEditorSettingsModel = productEditorSettings.ToModel();
         }
 
         [NonAction]
@@ -701,16 +910,537 @@ namespace Nop.Admin.Controllers
             }
         }
 
-        #region Utilities
+        #endregion
 
+        #region Methods
 
+        #region Product list / create / edit / delete
+
+        //list products
+        public ActionResult Index()
+        {
+            return RedirectToAction("List");
+        }
+
+        public ActionResult List()
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var model = new ProductListModel();
+            //a vendor should have access only to his products
+            model.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+
+            //categories
+            model.AvailableCategories.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
+            foreach (var c in categories)
+                model.AvailableCategories.Add(c);
+
+            //manufacturers
+            model.AvailableManufacturers.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            foreach (var m in _manufacturerService.GetAllManufacturers(showHidden: true))
+                model.AvailableManufacturers.Add(new SelectListItem { Text = m.Name, Value = m.Id.ToString() });
+
+            //stores
+            model.AvailableStores.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            foreach (var s in _storeService.GetAllStores())
+                model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
+
+            //warehouses
+            model.AvailableWarehouses.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            foreach (var wh in _shippingService.GetAllWarehouses())
+                model.AvailableWarehouses.Add(new SelectListItem { Text = wh.Name, Value = wh.Id.ToString() });
+
+            //vendors
+            model.AvailableVendors.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            foreach (var v in _vendorService.GetAllVendors(showHidden: true))
+                model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id.ToString() });
+
+            //product types
+            model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
+            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+
+            //"published" property
+            //0 - all (according to "ShowHidden" parameter)
+            //1 - published only
+            //2 - unpublished only
+            model.AvailablePublishedOptions.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Catalog.Products.List.SearchPublished.All"), Value = "0" });
+            model.AvailablePublishedOptions.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Catalog.Products.List.SearchPublished.PublishedOnly"), Value = "1" });
+            model.AvailablePublishedOptions.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Catalog.Products.List.SearchPublished.UnpublishedOnly"), Value = "2" });
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ProductList(DataSourceRequest command, ProductListModel model)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentCustomer != null)
+            {
+                model.SearchVendorId = _workContext.CurrentVendor.Id;
+            }
+
+            var categoryIds = new List<int> { model.SearchCategoryId };
+            //include subcategories
+            if (model.SearchIncludeSubCategories && model.SearchCategoryId > 0)
+                categoryIds.AddRange(GetChildCategoryIds(model.SearchCategoryId));
+
+            //0 - all (according to "ShowHidden" parameter)
+            //1 - published only
+            //2 - unpublished only
+            bool? overridePublished = null;
+            if (model.SearchPublishedId == 1)
+                overridePublished = true;
+            else if (model.SearchPublishedId == 2)
+                overridePublished = false;
+            var products = _productService.SearchProducts(
+                categoryIds: categoryIds,
+                manufacturerId: model.SearchManufacturerId,
+                storeId: model.SearchStoreId,
+                vendorId: model.SearchVendorId,
+                warehouseId: model.SearchWarehouseId,
+                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
+                keywords: model.SearchProductName,
+                pageIndex: command.Page - 1,
+                pageSize: command.PageSize,
+                showHidden: true,
+                overridePublished: overridePublished
+            );
+            var gridModel = new DataSourceResult();
+            gridModel.Data = products.Select(x =>
+            {
+                var productModel = x.ToModel();
+                //little hack here:
+                //ensure that product full descriptions are not returned
+                //otherwise, we can get the following error if products have too long descriptions:
+                //"Error during serialization or deserialization using the JSON JavaScriptSerializer. The length of the string exceeds the value set on the maxJsonLength property. "
+                //also it improves performance
+                productModel.FullDescription = "";
+
+                //picture
+                var defaultProductPicture = _pictureService.GetPicturesByProductId(x.Id, 1).FirstOrDefault();
+                productModel.PictureThumbnailUrl = _pictureService.GetPictureUrl(defaultProductPicture, 75, true);
+                //product type
+                productModel.ProductTypeName = x.ProductType.GetLocalizedEnum(_localizationService, _workContext);
+                //friendly stock qantity
+                //if a simple product AND "manage inventory" is "Track inventory", then display
+                if (x.ProductType == ProductType.SimpleProduct && x.ManageInventoryMethod == ManageInventoryMethod.ManageStock)
+                    productModel.StockQuantityStr = x.GetTotalStockQuantity().ToString();
+
+                return productModel;
+            });
+            gridModel.Total = products.TotalCount;
+
+            return Json(gridModel);
+        }
+
+        [HttpPost, ActionName("List")]
+        [FormValueRequired("go-to-product-by-sku")]
+        public ActionResult GoToSku(ProductListModel model)
+        {
+            string sku = model.GoDirectlyToSku;
+
+            //try to load a product entity
+            var product = _productService.GetProductBySku(sku);
+
+            //if not found, then try to load a product attribute combination
+            if (product == null)
+            {
+                var combination = _productAttributeService.GetProductAttributeCombinationBySku(sku);
+                if (combination != null)
+                {
+                    product = combination.Product;
+                }
+            }
+
+            if (product != null)
+                return RedirectToAction("Edit", "Product", new { id = product.Id });
+
+            //not found
+            return List();
+        }
+
+        //create product
+        public ActionResult Create()
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            //validate maximum number of products per vendor
+            if (_vendorSettings.MaximumProductNumber > 0 &&
+                _workContext.CurrentVendor != null &&
+                _productService.GetNumberOfProductsByVendorId(_workContext.CurrentVendor.Id) > = _vendorSettings.MaximumProductNumber)
+            {
+                ErrorNotification(string.Format(_localizationService.GetResource("Admin.Catalog.Products.ExceededMaximumNumber"), _vendorSettings.MaximumProductNumber));
+                return RedirectToAction("List");
+            }
+
+            var model = new ProductModel();
+
+            PrepareProductModel(model, null, true, true);
+            AddLocales(_languageService, model.Locales);
+            PrepareAclModel(model, null, false);
+            PrepareStoresMappingModel(model, null, false);
+            PrepareCategoryMappingModel(model, null, false);
+            PrepareManufacturerMappingModel(model, null, false);
+            PrepareDiscountMappingModel(model, null, false);
+
+            return View(model);
+        }
+
+        [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        public ActionResult Create(ProductModel model, bool continueEditing)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            //validate maximum number of products per vendor
+            if (_vendorSettings.MaximumProductNumber > 0 &&
+                _workContext.CurrentVendor != null &&
+                _productService.GetNumberOfProductsByVendorId(_workContext.CurrentVendor.Id) >= _vendorSettings.MaximumProductNumber)
+            {
+                ErrorNotification(string.Format(_localizationService.GetResource("Admin.Catalog.Products.ExceededMaximumNumber"), _vendorSettings.MaximumProductNumber));
+                return RedirectToAction("List");
+            }
+
+            if (ModelState.IsValid)
+            {
+                //a vendor should have access only to his products
+                if (_workContext.CurrentVendor != null)
+                {
+                    model.VendorId = _workContext.CurrentVendor.Id;
+                }
+
+                //vendors cannot edit "Show on home page" property
+                if (_workContext.CurrentVendor != null && model.ShowOnHomePage)
+                {
+                    model.ShowOnHomePage = false;
+                }
+
+                //product
+                var product = model.ToEntity();
+                product.CreatedOnUtc = DateTime.UtcNow;
+                product.UpdatedOnUtc = DateTime.UtcNow;
+                _productService.InsertProduct(product);
+                //search engine name
+                model.SeName = product.ValidateSeName(model.SeName, product.Name, true);
+                _urlRecordService.SaveSlug(product, model.SeName, 0);
+                //locales
+                UpdateLocales(product, model);
+                //categories
+                SaveCategoryMappings(product, model);
+                //manufacturers
+                SaveManufacturerMappings(product, model);
+                //ACL (customer roles)
+                SaveProductAcl(product, model);
+                //stores
+                SaveStoreMappings(product, model);
+                //discounts
+                SaveDiscountMappings(product, model);
+                //tags
+                SaveProductTags(product, ParseProductTags(model.ProductTags));
+                //warehouses
+                SaveProductWarehouseInventory(product, model);
+
+                //activity log
+                _customerActivityService.InsertActivity("AddNewProduct", _localizationService.GetResource("ActivityLog.AddNewProduct"), product.Name);
+
+                SuccessNotification(_localizationService.GetResource("Admin.Catalog.Products.Added"));
+
+                if (continueEditing)
+                {
+                    //selected tab
+                    SaveSelectedTabName();
+
+                    return RedirectToAction("Edit", new { id = product.Id });
+                }
+                return RedirectToAction("List");
+            }
+
+            //If we got this far, something failed, redisplay form
+            PrepareProductModel(model, null, false, true);
+            PrepareAclModel(model, null, true);
+            PrepareStoresMappingModel(model, null, true);
+            PrepareCategoryMappingModel(model, null, true);
+            PrepareManufacturerMappingModel(model, null, true);
+            PrepareDiscountMappingModel(model, null, true);
+
+            return View(model);
+        }
+
+        //edit product
+        public ActionResult Edit(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var product = _productService.GetProductById(id);
+            if (product == null || product.Deleted)
+                //No product found with the specified id
+                return RedirectToAction("List");
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null && product.VendorId != _workContext.CurrentVendor.Id)
+                return RedirectToAction("List");
+
+            var model = product.ToModel();
+            PrepareProductModel(model, product, false, false);
+            AddLocales(_languageService, model.Locales, (locale, languageId) =>
+            {
+                locale.Name = product.GetLocalized(x => x.Name, languageId, false, false);
+                locale.ShortDescription = product.GetLocalized(x => x.ShortDescription, languageId, false, false);
+                locale.FullDescription = product.GetLocalized(x => x.FullDescription, languageId, false, false);
+                locale.MetaKeywords = product.GetLocalized(x => x.MetaKeywords, languageId, false, false);
+                locale.MetaDescription = product.GetLocalized(x => x.MetaDescription, languageId, false, false);
+                locale.MetaTitle = product.GetLocalized(x => x.MetaTitle, languageId, false, false);
+                locale.SeName = product.GetSeName(languageId, false, false);
+            });
+
+            PrepareAclModel(model, product, false);
+            PrepareStoresMappingModel(model, product, false);
+            PrepareCategoryMappingModel(model, product, false);
+            PrepareManufacturerMappingModel(model, product, false);
+            PrepareDiscountMappingModel(model, product, false);
+
+            return View(model);
+        }
+
+        [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        public ActionResult Edit(ProductModel model, bool continueEditing)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var product = _productService.GetProductById(model.Id);
+
+            if (product == null || product.Deleted)
+                //No product found with the specified id
+                return RedirectToAction("List");
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null && product.VendorId != _workContext.CurrentVendor.Id)
+                return RedirectToAction("List");
+
+            //check if the product quantity has been changed while we were editing the product
+            //and if it has been changed then we show error notification
+            //and redirect on the editing page without data saving
+            if (product.StockQuantity != model.LastStockQuantity)
+            {
+                ErrorNotification(_localizationService.GetResource("Admin.Catalog.Products.Fields.StockQuantity.ChangedWarning"));
+                return RedirectToAction("Edit", new { id = product.Id });
+            }
+
+            if (ModelState.IsValid)
+            {
+                //a vendor should have access only to his products
+                if (_workContext.CurrentVendor != null)
+                {
+                    model.VendorId = _workContext.CurrentVendor.Id;
+                }
+
+                //we do not validate maximum number of products per vendor when editing existing products (only during creation of new products)
+
+                //vendors cannot edit "Show on home page" property
+                if (_workContext.CurrentVendor != null && model.ShowOnHomePage != product.ShowOnHomePage)
+                {
+                    model.ShowOnHomePage = product.ShowOnHomePage;
+                }
+
+                //some previously used values
+                var prevStockQuantity = product.GetTotalStockQuantity();
+                int prevDownloadId = product.DownloadId;
+                int prevSampleDownloadId = product.SampleDownloadId;
+
+                //product
+                product = model.ToEntity(product);
+
+                product.UpdatedOnUtc = DateTime.UtcNow;
+                _productService.UpdateProduct(product);
+                //search engine name
+                model.SeName = product.ValidateSeName(model.SeName, product.Name, true);
+                _urlRecordService.SaveSlug(product, model.SeName, 0);
+                //locales
+                UpdateLocales(product, model);
+                //tags
+                SaveProductTags(product, ParseProductTags(model.ProductTags));
+                //warehouses
+                SaveProductWarehouseInventory(product, model);
+                //categories
+                SaveCategoryMappings(product, model);
+                //manufacturers
+                SaveManufacturerMappings(product, model);
+                //ACL (customer roles)
+                SaveProductAcl(product, model);
+                //stores
+                SaveStoreMappings(product, model);
+                //discounts
+                SaveDiscountMappings(product, model);
+                //picture seo names
+                UpdatePictureSeoNames(product);
+
+                //back in stock notifications
+                if (product.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                    product.BackorderMode == BackorderMode.NoBackorders &&
+                    product.AllowBackInStockSubscriptions &&
+                    product.GetTotalStockQuantity() > 0 &&
+                    prevStockQuantity <= 0 &&
+                    product.Published &&
+                    !product.Deleted)
+                {
+                    _backInStockSubscriptionService.SendNotificationsToSubscribers(product);
+                }
+                //delete an old "download" file (if deleted or updated)
+                if (prevDownloadId > 0 && prevDownloadId != product.DownloadId)
+                {
+                    var prevDownload = _downloadService.GetDownloadById(prevDownloadId);
+                    if (prevDownload != null)
+                        _downloadService.DeleteDownload(prevDownload);
+                }
+                //delete an old "sample download" file (if deleted or updated)
+                if (prevSampleDownloadId > 0 && prevSampleDownloadId != product.SampleDownloadId)
+                {
+                    var prevSampleDownload = _downloadService.GetDownloadById(prevSampleDownloadId);
+                    if (prevSampleDownload != null)
+                        _downloadService.DeleteDownload(prevSampleDownload);
+                }
+
+                //activity log
+                _customerActivityService.InsertActivity("EditProduct", _localizationService.GetResource("ActivityLog.EditProduct"), product.Name);
+
+                SuccessNotification(_localizationService.GetResource("Admin.Catalog.Products.Updated"));
+
+                if (continueEditing)
+                {
+                    //selected tab
+                    SaveSelectedTabName();
+
+                    return RedirectToAction("Edit", new { id = product.Id });
+                }
+                return RedirectToAction("List");
+            }
+
+            //If we got this far, something failed, redisplay form
+            PrepareProductModel(model, product, false, true);
+            PrepareAclModel(model, product, true);
+            PrepareStoresMappingModel(model, product, true);
+            PrepareCategoryMappingModel(model, product, true);
+            PrepareManufacturerMappingModel(model, product, true);
+            PrepareDiscountMappingModel(model, product, true);
+
+            return View(model);
+        }
+
+        //delete product
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var product = _productService.GetProductById(id);
+            if (product == null)
+                //No product found with the specified id
+                return RedirectToAction("List");
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null && product.VendorId != _workContext.CurrentVendor.Id)
+                return RedirectToAction("List");
+
+            _productService.DeleteProduct(product);
+
+            //activity log
+            _customerActivityService.InsertActivity("DeleteProduct", _localizationService.GetResource("ActivityLog.DeleteProduct"), product.Name);
+
+            SuccessNotification(_localizationService.GetResource("Admin.Catalog.Products.Deleted"));
+            return RedirectToAction("List");
+        }
+
+        [HttpPost]
+        public ActionResult DeleteSelected(ICollection<int> selectedIds)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            if (selectedIds != null)
+            {
+                _productService.DeleteProducts(_productService.GetProductsByIds(selectedIds.ToArray()));
+            }
+
+            return Json(new { Result = true });
+        }
+
+        [HttpPost]
+        public ActionResult CopyProduct(ProductModel model)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var copyModel = model.CopyProductModel;
+            try
+            {
+                var originalProduct = _productService.GetProductById(copyModel.Id);
+
+                //a vendor should have access only to his products
+                if (_workContext.CurrentVendor != null && originalProduct.VendorId != _workContext.CurrentVendor.Id)
+                    return RedirectToAction("List");
+
+                var newProduct = _copyProductService.CopyProduct(originalProduct,
+                    copyModel.Name, copyModel.Published, copyModel.CopyImages);
+                SuccessNotification("The product has been copied successfully");
+                return RedirectToAction("Edit", new { id = newProduct.Id });
+            }
+            catch (Exception exc)
+            {
+                ErrorNotification(exc.Message);
+                return RedirectToAction("Edit", new { id = copyModel.Id });
+            }
+        }
 
         #endregion
 
-        // GET: ProductController
-        public ActionResult Index()
+        #region Required products
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult LoadProductFriendlyNames(string productIds)
         {
-            return View();
+            var result = "";
+
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return Json(new { Text = result });
+
+            if (!String.IsNullOrWhiteSpace(productIds))
+            {
+                var ids = new List<int>();
+                var rangeArray = productIds
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .ToList();
+
+                foreach (string str1 in rangeArray)
+                {
+                    int tmp1;
+                    if (int.TryParse(str1, out tmp1))
+                        ids.Add(tmp1);
+                }
+
+                var products = _productService.GetProductsByIds(ids.ToArray());
+                for (int i = 0; i <= products.Count - 1; i++)
+                {
+                    result += products[i].Name;
+                    if (i != products.Count)
+                        result += ", ";
+                }
+            }
+            return Json(new { Text = result });
         }
+
+        #endregion
+
+        #endregion
     }
 }
