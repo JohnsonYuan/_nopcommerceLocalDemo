@@ -139,6 +139,7 @@
     <Content Include="Views\TempDataDdemo\Index.cshtml" />
     <Content Include="Views\Topic\Index.cshtml" />
     <Content Include="Views\Topic\Antifogery.cshtml" />
+    <Content Include="Views\Home\Index3.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -149,7 +150,12 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Plugins\" />
-    <Folder Include="Views\Home\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nop.Web.Framework\Nop.Web.Framework.csproj">
+      <Project>{c5cefe74-65a7-4783-a950-d780adbf94b1}</Project>
+      <Name>Nop.Web.Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

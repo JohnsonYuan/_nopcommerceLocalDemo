@@ -1,0 +1,52 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index3</title>
+</head>
+<body>
+    <div> 
+        <input type="button" value="index1" id="btn1" /><br />
+        <input type="button" value="index2" id="btn2" /><br />
+        <input type="button" value="index3" id="btn3" /><br />
+
+     </div>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(function () { 
+            $('#btn1').click(function () {
+                $.getJSON('/Home/Index')
+                .done(function (r) { alert('It worked. ' + r); })
+                .fail(function (x) { alert('Fail! ' + x.status); });
+            });
+            $('#btn2').click(function () {
+                $.getJSON('/Home/Index2')
+                .done(function (r) {
+                    alert('It worked. ' + r);
+                })
+                .fail(function (x) { alert('Fail! ' + x.status); });
+            });
+            $('#btn3').click(function () {
+                $.ajax({
+                    url: '/Home/Index2',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(r) {
+                        alert(r);
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
