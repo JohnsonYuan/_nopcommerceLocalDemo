@@ -1,5 +1,6 @@
 ﻿Anti-Forgery Tokens -- Nop.Web.Framwork\Security\PublicAntiForgeryAttribute,cs
 （好的介绍）https://www.asp.net/web-api/overview/security/preventing-cross-site-request-forgery-csrf-attacks
+http://blog.stevensanderson.com/2008/09/01/prevent-cross-site-request-forgery-csrf-using-aspnet-mvcs-antiforgerytoken-helper/
 （好的例子，1.  创建一个只在特定httpverb下验证的Anti-Forgery，nopcommerce的PublicAntiForgeryAttribute版本则是在post和配置是true验证，
 2. ajax 提交带有antiforgery 的form, nopcommerce 参考TopicDetails.cshtml）
 https://weblogs.asp.net/dixin/anti-forgery-request-recipes-for-asp-net-mvc-and-ajax

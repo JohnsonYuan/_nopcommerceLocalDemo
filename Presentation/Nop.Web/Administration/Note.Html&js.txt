@@ -288,6 +288,13 @@ var config = {
         };
 
 
+‘return false’ vs ‘e.preventDefault()’ : 
+https://css-tricks.com/return-false-and-prevent-default/
+https://subinsb.com/jquery-return-false-vs-preventdefault
+return false; - calls e.preventDefault(); and e.stopPropagation();
+e.preventDefault(); - e.preventDefault();
+
+
 常用js操作
 #多个属性选择（包含type="hidden"和name="somename"属性）：
 	$('#SomeId input[type="hidden"][name="somename"]')

@@ -13,6 +13,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web.Helpers.AntiXsrf;
 
 namespace Nop.Core.Tests
 {
@@ -71,8 +72,51 @@ namespace Nop.Core.Tests
 
 
         static void Main()
-        { 
+        {
+            var cookieToken = new AntiForgeryToken()
+            {
+                // SecurityToken will be populated automatically.
+                IsSessionToken = true
+            };
+           // Console.WriteLine(cookieToken.SecurityToken);
+
+            AntiForgeryToken formToken = new AntiForgeryToken()
+            {
+                SecurityToken = cookieToken.SecurityToken,
+                IsSessionToken = false
+            };
+            AntiForgeryTokenSerializer serializer = new AntiForgeryTokenSerializer(new MachineKey45CryptoSystem());
+            var formVal1 = serializer.Serialize(formToken);
+            Console.WriteLine(formVal1);
+            //Console.WriteLine(formToken.ClaimUid);
+            Console.WriteLine(serializer.Deserialize(formVal1).SecurityToken);
+            Console.WriteLine();
+            Console.WriteLine();
+            var formVal2 = serializer.Serialize(formToken);
+            Console.WriteLine(formVal2);
+           // Console.WriteLine(formToken.ClaimUid);
+            Console.WriteLine(serializer.Deserialize(formVal2).SecurityToken);
+            Console.WriteLine();
+            Console.WriteLine();
+            var cookieVal = serializer.Serialize(cookieToken);
+            Console.WriteLine(cookieVal);
+            Console.WriteLine(serializer.Deserialize(cookieVal).SecurityToken);
+
+            var cookieVal2 = serializer.Serialize(cookieToken);
+            Console.WriteLine(cookieVal2);
+            Console.WriteLine(serializer.Deserialize(cookieVal2).SecurityToken);
             return;
+ 
+            //string cookieValue = "emTIesw2uxjqSIp8y67CHsMc_cxMxEJMO-CVy3tQLnJQPD2Fjywsi8k1hppsm8XkM5T0ZU8q0WUP4dgk7IngZl3jzDZuBt97n0a5-PUENqk1";
+            //string fromValue1 = "";
+            //string fromValue2 = "";
+            ////var cookieToken = serializer.Deserialize(cookieValue);
+            ////var formToken2 = serializer.Deserialize("ZgFqPlKwjNHB1imWLFWOhfxo-MXpLk4hr2J1yhmPt12dPsEgyREn3VO1IMjqUcZ4gkHV6dORMDMkORxsGhaB_yGU_iJ8-ozRyGnNHtwRHLYEtpTi0");
+            //var formToken = serializer.Deserialize("UMTdP94vuMVKtLnzzxrGVLt7lVM_51-psWSI79cGa6gGn1KDRwCDJ8j9Z-O4am9i6pD06jQX5fALSxxqsQB-3L4DHwYudWoQoOApexREUz6P_nOECzbdgQlK5-kX9Xkd0");
+            //Console.WriteLine(formToken.SecurityToken);
+            ////Console.WriteLine(formToken2.SecurityToken);
+            ////Console.WriteLine(cookieToken.SecurityToken);
+            //return;
 
             var builderx = new ContainerBuilder();
             builderx.RegisterType<ConsoleOutput> ().As< IOutput> ().InstancePerLifetimeScope();
@@ -152,7 +196,7 @@ namespace Nop.Core.Tests
 
             builder.Register(c => new FakeHttpContext("~")).As<HttpContextBase>().InstancePerLifetimeScope();
 
-            builder.RegisterSource(new AutofacDemo.Features.AnyConcreteTypeNotAlreadyRegisteredSource());
+            //builder.RegisterSource(new AutofacDemo.Features.AnyConcreteTypeNotAlreadyRegisteredSource());
             builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_per_request").InstancePerLifetimeScope();
 
             builder.RegisterType<MemoryCacheManager>().As<ICacheManager>().Named<ICacheManager>("nop_cache_static").SingleInstance();

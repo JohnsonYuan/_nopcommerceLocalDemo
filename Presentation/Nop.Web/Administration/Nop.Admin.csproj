@@ -479,6 +479,7 @@
     <Content Include="Views\Customer\_CustomerAttributes.cshtml" />
     <Content Include="Views\Customer\_ReportBestCustomersByNumberOfOrders.cshtml" />
     <Content Include="Views\Customer\_ReportBestCustomersByOrderTotal.cshtml" />
+    <Content Include="Views\Product\List.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
