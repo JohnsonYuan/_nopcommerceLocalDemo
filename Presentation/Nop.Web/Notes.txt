@@ -1,4 +1,6 @@
-﻿PopularProductTagsModel.cshtml 怎么根据product的数量来计算字体大小 （调和平均数？）
+﻿
+
+PopularProductTagsModel.cshtml 怎么根据product的数量来计算字体大小 （调和平均数？）
 
 Global.asax.cs中需要学习的点:
 MvcHandler.DisableMvcResponseHeader = true;

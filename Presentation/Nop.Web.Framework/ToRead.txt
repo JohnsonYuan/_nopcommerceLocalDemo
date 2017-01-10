@@ -17,7 +17,40 @@ Yr6yR8d9bH6gFxN10w4IoVEzOHnDFBaSU0yBqHnkXT4v1NyIm6zZw3ELZQFG3xSGX0nBL8-Tw9IJfrR5
 @using (Html.BeginForm("Manage", "Account")) {
     @Html.AntiForgeryToken()
 }
-Controller方法加上ValidateAntiForgeryToken 属性
+Controller方法加上ValidateAntiForgeryToken 属性, 就可以验证了
+
+
+生成cookie token的时候
+var cookieToken = new AntiForgeryToken()
+            {
+                // SecurityToken will be populated automatically.
+                IsSessionToken = true
+            };
+生成form token生成和cookie token一样的SecurityToken
+var formToken = new AntiForgeryToken()
+{
+    SecurityToken = cookieToken.SecurityToken,
+    IsSessionToken = false
+};
+然后AntiForgeryTokenSerializer.Serialize 这两个token， 
+Serialize根据TokenVersion, SecurityToken, IsSessionToken等属性， 先生成byte[]， 然后调用return MachineKey45CryptoSystem.Protect(stream.ToArray());
+因为MachineKey.Protect每次的值不一样， 所以每次serialize的值都不一样，但Deserialize 之后 SecurityToken值都一样， 依据该属性来判断是否合法
+所以如果一个页面调用多个Html.AntiforgeryToken(), ajax post时随便一个input都可以满足验证  
+public string Protect(byte[] data)
+{
+    byte[] rawProtectedBytes = MachineKey.Protect(data, _purposes);
+    return HttpServerUtility.UrlTokenEncode(rawProtectedBytes);
+}
+
+验证的时候AntiForgeryTokenSerializer.Deserialize input和cookie的值， 比较二者的SecurityToken(BinaryBlob类型)是否相等: CryptoUtil.AreByteArraysEqual 比较byte[]数组是否每个都相等
+
+
+所以nopcommerce， ajax post时候 admin页面有多个input[name=__RequestVerificationToken]取一个就可以了（tokenInput.val()返回的是第一个匹配元素的值）
+var tokenInput = $('input[name=__RequestVerificationToken]');
+    if (tokenInput.length) {
+        data.__RequestVerificationToken = tokenInput.val();
+ }
+ 
 
 
 生成token

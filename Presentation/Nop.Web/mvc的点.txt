@@ -1,4 +1,38 @@
-﻿Action:
+﻿可以总结:
+DataAnnotationsModelMetadataProvider http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/DataAnnotationsModelMetadataProvider.cs
+作用是读取属性HiddenInput, UIHint, Editable, DataType, DisplayFormat, SetFromDataTypeAndDisplay, ScaffoldColumn, Display,DisplayName, Required属性, 赋值到 DataAnnotationsModelMetadata result
+如:
+DisplayNameAttribute displayNameAttribute = attributeList.OfType<DisplayNameAttribute>().FirstOrDefault();
+                if (displayNameAttribute != null)
+                {
+                    result.DisplayName = displayNameAttribute.DisplayName;
+                }
+
+
+ModelMetadataProviders.Current = new NopMetadataProvider();
+NopMetadataProvider继承DataAnnotationsModelMetadataProvider,会把属性中是类型IModelAttribute的属性找出来,
+metadata.AdditionalValues.Add(additionalValue.Name, additionalValue);
+例如:
+Nop.Web.Framework有属性:
+NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute, IModelAttribute
+
+某个model属性
+[NopResourceDisplayName("Admin.Catalog.Products.List.SearchProductName")]
+public string SearchProductName { get; set; }
+
+使用的时候调用:
+@Html.NopLabelFor(model => model.SearchProductName)
+可以取得属性(Nop.Web.Framework\HtmlExtensions.cs):
+metadata.AdditionalValues.TryGetValue("NopResourceDisplayName", out value)
+生成自定义的html
+<div class="label-wrapper">
+    <label class="control-label" for="SearchProductName" title="">Product name</label>
+    <!--如果resourcekey + ".Hint" 可以在localization 中找到则生成下面这行-->
+    <div class="ico-help" title="A product name."><i class="fa fa-question-circle"></i>
+    </div>
+</div>
+
+Action:
 NonAction
 ChildAcion
 

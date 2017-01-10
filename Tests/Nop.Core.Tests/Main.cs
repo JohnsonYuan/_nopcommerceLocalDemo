@@ -14,9 +14,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers.AntiXsrf;
+using System.IO;
+using System.Web.Security;
 
 namespace Nop.Core.Tests
 {
+    public static class ByteExtentions
+    {
+        public static void OutputByteArray(this byte[] a)
+        {
+            for (int i = 0; i < a.Length; i++)
+            {
+                Console.Write(a[i] + " ");
+                if (i == a.Length - 1)
+                    Console.WriteLine();
+            }
+        }
+    }
+
     class MainTest
     {
         class Pet
@@ -70,7 +85,6 @@ namespace Nop.Core.Tests
         }
 
 
-
         static void Main()
         {
             var cookieToken = new AntiForgeryToken()
@@ -78,8 +92,42 @@ namespace Nop.Core.Tests
                 // SecurityToken will be populated automatically.
                 IsSessionToken = true
             };
-           // Console.WriteLine(cookieToken.SecurityToken);
+            // Console.WriteLine(cookieToken.SecurityToken);
 
+            byte[] newByte = new byte[]
+            {
+                1      ,
+                36     ,
+                255    ,
+                6      ,
+                166    ,
+                145    ,
+                62     ,
+                221    ,
+                232    ,
+                38     ,
+                 102   ,
+                 166   ,
+                 8     ,
+                 143   ,
+                 125   ,
+                 165   ,
+                 243   ,
+                 0     ,
+                 0     ,
+                 0     ,
+                 0     ,
+            };
+
+            string[] _purposes = new string[] { "System.Web.Helpers.AntiXsrf.AntiForgeryToken.v1" };
+
+            
+            var x1 = HttpServerUtility.UrlTokenEncode(MachineKey.Protect(newByte, _purposes));
+            var x2 = HttpServerUtility.UrlTokenEncode(MachineKey.Protect(newByte, _purposes));
+
+            Console.WriteLine(x1);
+            Console.WriteLine(x2);
+            return;
             AntiForgeryToken formToken = new AntiForgeryToken()
             {
                 SecurityToken = cookieToken.SecurityToken,
@@ -89,22 +137,24 @@ namespace Nop.Core.Tests
             var formVal1 = serializer.Serialize(formToken);
             Console.WriteLine(formVal1);
             //Console.WriteLine(formToken.ClaimUid);
-            Console.WriteLine(serializer.Deserialize(formVal1).SecurityToken);
+            serializer.Deserialize(formVal1).SecurityToken.GetData().OutputByteArray();
             Console.WriteLine();
             Console.WriteLine();
             var formVal2 = serializer.Serialize(formToken);
             Console.WriteLine(formVal2);
            // Console.WriteLine(formToken.ClaimUid);
-            Console.WriteLine(serializer.Deserialize(formVal2).SecurityToken);
+            serializer.Deserialize(formVal2).SecurityToken.GetData().OutputByteArray();
             Console.WriteLine();
             Console.WriteLine();
             var cookieVal = serializer.Serialize(cookieToken);
             Console.WriteLine(cookieVal);
-            Console.WriteLine(serializer.Deserialize(cookieVal).SecurityToken);
+            serializer.Deserialize(cookieVal).SecurityToken.GetData().OutputByteArray();
 
             var cookieVal2 = serializer.Serialize(cookieToken);
             Console.WriteLine(cookieVal2);
-            Console.WriteLine(serializer.Deserialize(cookieVal2).SecurityToken);
+            serializer.Deserialize(cookieVal2).SecurityToken.GetData().OutputByteArray();
+            
+
             return;
  
             //string cookieValue = "emTIesw2uxjqSIp8y67CHsMc_cxMxEJMO-CVy3tQLnJQPD2Fjywsi8k1hppsm8XkM5T0ZU8q0WUP4dgk7IngZl3jzDZuBt97n0a5-PUENqk1";
