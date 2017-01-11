@@ -22,7 +22,7 @@ namespace Nop.Web.Framework.Menu
             if (systemName.Equals(node.SystemName, StringComparison.InvariantCultureIgnoreCase))
                 return true;
 
-            return node.ChildNodes.Any(cn => cn.SystemName.Equals(node.SystemName, StringComparison.InvariantCultureIgnoreCase));
+            return node.ChildNodes.Any(cn => ContainsSystemName(cn, systemName));
         }
     }
 }

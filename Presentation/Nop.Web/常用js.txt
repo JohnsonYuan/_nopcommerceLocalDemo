@@ -1,0 +1,63 @@
+﻿
+搜索框输入回车， 调用搜索方法
+    $("#@Html.FieldIdFor(model => model.SearchProductName)").keydown(function (event) {
+        if (event.keyCode == 13) {
+            $("#search-products").click();
+            return false;
+        }
+    });
+
+
+<div id="products-grid">
+    <input type="checkbox" id="mastercheckbox" />
+    <input type="checkbox" class="checkboxGroups" value="1" />
+    <input type="checkbox" class="checkboxGroups" value="2" />
+    <input type="checkbox" class="checkboxGroups" value="3" />
+</div>
+<input type="hidden" id="selectedIds" name="selectedIds" value="" />
+<input type="button" id="btnSubmit" value="Submit" />
+全选：
+   $('#mastercheckbox').click(function () {
+        $('.checkboxGroups').attr('checked', $(this).is(':checked')).change();
+    });
+跟新全选checkbox（如果当前页面的checkbox没有都被选中， 则全选checkbox不选择
+    function updateMasterCheckbox() {
+        var numChkBoxes = $('#products-grid input[type=checkbox][id!=mastercheckbox]').length;
+        var numChkBoxesChecked = $('#products-grid input[type=checkbox][id!=mastercheckbox]:checked').length;
+        $('#mastercheckbox').attr('checked', numChkBoxes == numChkBoxesChecked && numChkBoxes > 0);
+    }
+
+记录当前多个checkbox选中的值：
+nopcommerce 把kendogrid每一个选中的对象保存在selectedIds里， 当分页的时候， 选中的数据不会丢失，可以提交了!
+var selectedIds = [];
+$('#products-grid').on('change', 'input[type=checkbox]', function (e) {
+    var $check = $(this);
+    if ($check.is(':checked') == true) {
+        var checked = jQuery.inArray($check.val(), selectedIds);
+        if (checked == -1) {
+            //add id to selectedIds.
+            selectedIds.push($check.val());
+        }
+    }
+    else {
+        var checked = jQuery.inArray($check.val(), selectedIds);
+        if (checked > -1) {
+            //remove id from selectedIds. $.grep会从数组中找出满足条件的返回
+            selectedIds = $.grep(selectedIds, function (item, index) {
+                return item != $check.val();
+            });
+        }
+    }
+    updateMasterCheckbox();
+});
+
+提交checkbox选中的值
+ $(document).ready(function () {
+    $('#btnSubmit').click(function () {
+        e.preventDefault();
+        var ids = selectedIds.join(",");
+        $('#selectedIds').val(ids);
+        $('#form').submit();
+        return false;
+    });
+});        

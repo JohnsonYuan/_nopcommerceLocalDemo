@@ -78,3 +78,12 @@ $('.attributes #color-squares-@(attribute.Id)').delegate('input', 'click', funct
                                     $('.attributes #color-squares-@(attribute.Id)').find('li').removeClass('selected-value');
                                     $(this).closest('li').addClass('selected-value');
                                 });
+
+ 
+unobtrusive Validation 分析： 必须需要jquery.validate 和 jquery.validate.unobtrusive
+jquery.validat文档中直说给input加上class="required email"属性就可以验证， 但是发现mvc在生成的时候type属性就行了， 但是mvc在生成的属性确是data-val这些，如下
+<input data-val="true" data-val-required="The User name field is required." id="UserName" name="UserName" type="text" value="" class="valid">
+原因是因为jquery.validate.unobtrusive.js通过 扩展 jquery.validator 增加 jQuery.validator.unobtrusive.adapters属性. 来实现data-val这些属性的验证（验证规则为mvc model的验证属性）
+http://bradwilson.typepad.com/blog/2010/10/mvc3-unobtrusive-validation.html
+（很不错的分析jquery.validate.unobtrusive.js的实现）Asp.net MVC源码分析--Model Validation(Client端)实现(2)
+http://www.cnblogs.com/RobbinHan/archive/2011/12/20/2293391.html

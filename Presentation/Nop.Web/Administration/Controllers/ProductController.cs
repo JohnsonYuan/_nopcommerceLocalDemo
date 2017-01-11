@@ -980,7 +980,7 @@ namespace Nop.Admin.Controllers
                 return AccessDeniedView();
 
             //a vendor should have access only to his products
-            if (_workContext.CurrentCustomer != null)
+            if (_workContext.CurrentVendor != null)
             {
                 model.SearchVendorId = _workContext.CurrentVendor.Id;
             }

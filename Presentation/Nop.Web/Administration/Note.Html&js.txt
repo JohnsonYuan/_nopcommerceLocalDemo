@@ -65,6 +65,10 @@ $("#bestsellers-byquantity-grid").kendoGrid({
                     pageable: {
                         refresh: true
                     },
+                    dataBound: onDataBound,
+                    noRecords: {
+                        template: "No data available on current page. Current page is: #=this.dataSource.page()#"
+                    },
                     editable: {
                         confirmation: "@T("Admin.Common.DeleteConfirmation")",
                         mode: "inline"
@@ -79,7 +83,22 @@ $("#bestsellers-byquantity-grid").kendoGrid({
                     }]
                 });
             });
-重要的属性dataSource, 类型为kendo.data.DataSource (api: http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema)
+
+// selectedIds为选中的数据id的数组
+// 当数据绑定后可以把选中的数据checkbox check为true，这样换页码的时候checkbox会自动勾选
+function onDataBound(e) {
+    $('#products-grid input[type=checkbox][id!=mastercheckbox]').each(function () {
+        var currentId = $(this).val();
+        var checked = jQuery.inArray(currentId, selectedIds);
+        //set checked based on if current checkbox's value is in selectedIds.
+        $(this).attr('checked', checked > -1);
+    });
+
+    updateMasterCheckbox();
+}
+
+重要的属性
+Source, 类型为kendo.data.DataSource (api: http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema)
     transport.create: used when the data source saves newly created data items
 
     error: Fired when a request to the remote service fails.
@@ -121,12 +140,13 @@ $("#bestsellers-byquantity-grid").kendoGrid({
                         },
 
 
-kendo grid pageable -Boolean |Object (default: false) : 定义页码显示, 按钮什么的
+kendo grid pageable -Boolean |Object (default: false) : pagesize的下拉框
 If set to true the grid will display a pager. By default paging is disabled.
-在pageable或者dataSource中定义pageSize
+If a pageSize setting is provided for the data source then this value will be selected initially.
+pageable: ture 或
 pageable: {
-    pageSize: 2,
-	refresh: true
+    pageSizes: [2, 3, 4, "all"],
+    numeric: false
   }
 pageable.refresh Boolean (default: false)
 If set to true the pager will display the refresh button. Clicking the refresh button will refresh the grid
@@ -143,7 +163,16 @@ $("#grid").kendoGrid({
   columns: [{
     field: "name",// create a column bound to the "name" field
     title: "Name" // set its title to "Name"
-  }, {
+  },
+  {
+        field: "Id",
+        headerTemplate: "<input id='mastercheckbox' type='checkbox'/>",
+        headerAttributes: { style: "text-align:center" },
+        attributes: { style: "text-align:center" },
+        template: "<input type='checkbox' value='#=Id#' class='checkboxGroups'/>",
+        width: 50
+   },
+   {
     field: "age",// create a column bound to the "age" field
     title: "Age" // set its title to "Age"
     width: 100,
@@ -174,6 +203,23 @@ $("#grid").kendoGrid({
   }],
   dataSource: [ { name: "Jane Doe" }, { name: "John Doe" } ]
 });
+
+Existing Instances
+Refer to an existing Grid instance through the jQuery.data()
+use the Grid API to control its behavior once a reference has been established (http://docs.telerik.com/kendo-ui/api/javascript/ui/grid)
+var grid = $("#grid").data("kendoGrid");
+
+例如admin/product/list中， 点击搜索按钮
+$('#search-products').click(function () {
+    //search
+    var grid = $('#products-grid').data('kendoGrid');
+    grid.dataSource.page(1); //new search. Set page size to 1
+    //grid.dataSource.read(); we already loaded the grid above using "page" function
+    return false;
+});
+
+grid.dataSource.read(); // 刷新grid
+
 
 ============================================
 chartjs: http://www.chartjs.org/docs
