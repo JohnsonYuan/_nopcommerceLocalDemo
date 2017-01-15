@@ -357,6 +357,22 @@ namespace Nop.Web.Framework
 
         #region Form fields
 
+        /// <summary>
+        /// 我的注释 用在Html.NopLabelFor(model => model.Id)中
+        /// 生成
+        /// 
+        /// <div class="label-wrapper">
+        ///     <label class="control-label" for="Id" title="">ID</label>
+        ///     <div class="ico-help" title="The product identifier.">
+        ///         <i class="fa fa-question-circle"></i>
+        ///     </div>
+        /// </div>
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static MvcHtmlString Hint(this HtmlHelper helper, string value)
         {
             //create tag builder

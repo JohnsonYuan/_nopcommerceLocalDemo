@@ -1,7 +1,7 @@
 ﻿@model CategoryNavigationModel
 @using Nop.Web.Models.Catalog;
 
-@functions {
+@functions{
     public bool BreadCrumbContainsCurrentCategoryId(CategorySimpleModel category)
     {
         if (Model.CurrentCategoryId == 0)
@@ -21,109 +21,53 @@
         return false;
     }
 }
-
-@helper RenderSubCategoryLine(CategorySimpleModel category)
-{    
-                <li><a href="@Url.RouteUrl("Category", new { SeName = category.SeName })" >@category.Name 
-                    @if (category.NumberOfProducts.HasValue)
-                    {
-                        <span class="pull-right">@if(category.NumberOfProducts<=9)
-                                                {
-                                                    @:(0@(category.NumberOfProducts.Value))
-                                                }else
-                                                {
-                                                   @:(@(category.NumberOfProducts.Value))
-                                                }</span>
-                    }
-                    </a></li>
-            
-            
-        
-}
-
 @helper RenderCategoryLine(CategorySimpleModel category)
-{       
-    
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordian" href="#@category.Id">
-                @if (category.Id == Model.CurrentCategoryId ||
-                    category.SubCategories.Count(BreadCrumbContainsCurrentCategoryId) > 0)
-                    {
-                        if (category.SubCategories.Count > 0)
-                        {
-                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                        }
-                    }
-
-                
-                <a href="@Url.RouteUrl("Category", new { SeName = category.SeName })" >@category.Name
-                    @if (category.NumberOfProducts.HasValue)
-                    {
-                        <span class="pull-right">@if(category.NumberOfProducts<=9)
-                                       {
-                                           @:(0@(category.NumberOfProducts.Value))
-                                       }else
-                                       {
-                                           @:(@(category.NumberOfProducts.Value))
-                                       }</span>
-                    }
-                </a>
-            </a>
-        </h4>
-    </div>
-
-    if (category.Id == Model.CurrentCategoryId ||
-        category.SubCategories.Count(BreadCrumbContainsCurrentCategoryId) > 0)
+{
+    bool active = category.Id == Model.CurrentCategoryId || category.SubCategories.Count(BreadCrumbContainsCurrentCategoryId) > 0;
+    bool last = category.Id == Model.CurrentCategoryId;
+    string liClass = active ? "active" : "inactive";
+    if (last)
     {
-        if (category.SubCategories.Count > 0)
-        {
-            <div id="@category.Id" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <ul>
-                        @foreach (var subCategory in category.SubCategories)
-                        {
-                            @RenderSubCategoryLine(subCategory)
-                        }
-                                
-                                
-                    </ul>
-                </div>
-            </div>
-
-            
-            
-        }
+        liClass += " last";
     }
-        
+    <li class="@liClass">
+        <a href="@Url.RouteUrl("Category", new { SeName = category.SeName })">
+            @category.Name
+            @if (category.NumberOfProducts.HasValue)
+            {
+                <text> </text>@T("Categories.TotalProducts", category.NumberOfProducts.Value)
+            }
+            </a>
+            @{
+                if (category.Id == Model.CurrentCategoryId ||
+                    category.SubCategories.Count(BreadCrumbContainsCurrentCategoryId) > 0)
+                {
+                    if (category.SubCategories.Count > 0)
+                    {
+                        <ul class="sublist">
+                            @foreach (var subCategory in category.SubCategories)
+                            {
+                                @RenderCategoryLine(subCategory)
+                            }
+                        </ul>
+                    }
+                }
+            }
+    </li>
 }
 @if (Model.Categories.Count > 0)
 {
-  
-    
-    <h2>@T("Categories")</h2>
-    <div class="panel-group category-products category-navigation-div" id="accordian">
-        @foreach (var category in Model.Categories)
-        {
-            <div class="panel panel-default">
-                        
-                @RenderCategoryLine(category)
-                        
-            </div>
-        }
-        
+    <div class="block block-category-navigation">
+        <div class="title">
+            <strong>@T("Categories")</strong>
+        </div>
+        <div class="listbox">
+            <ul class="list">
+                @foreach (var category in Model.Categories)
+                {
+                    @RenderCategoryLine(category)
+                }
+            </ul>
+        </div>
     </div>
-<!--/category-products-->
-
-					
-        
-
-
-
-
-
-
-
-
-
 }

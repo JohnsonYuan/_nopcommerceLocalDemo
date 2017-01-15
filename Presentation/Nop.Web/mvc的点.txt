@@ -1,4 +1,158 @@
-﻿可以总结:
+﻿Display templates and editor templates
+目的是为了可以重复使用, 有点类似与user control
+http://www.telerik.com/blogs/diving-into-asp.net-mvc-templates (比较好)
+http://www.growingwiththeweb.com/2012/12/aspnet-mvc-display-and-editor-templates.html
+
+在调用Html.DisplayFor, Html.EditorFor的时候可以指定模板来生成, template 中 model 均为类型， 如 @model decimal, @model string, @model DateTime 
+Views/Shared/DisplayTemplates/<type or name>.cshtml
+Views/Shared/DisplayTemplates/<type or name>.cshtml
+
+@Html.DisplayFor(e => e.Username)
+可以自定义生成时调用的模板, 相当于partial view
+1. 根据类型, 不指定template， 默认会按类型找, 缺点是所有类型都会使用这个template
+1)  Model
+public class TestModel
+{
+    public decimal Money { get; set; }
+}
+
+2) Model为当前类型的template：  Views/Shared/DisplayTemplates/decimal.cshtml
+@model decimal
+@{
+    IFormatProvider formatProvider =
+        new System.Globalization.CultureInfo("en-US");
+    <span class="currency">@Model.ToString("C", formatProvider)</span>
+}
+
+3) View
+@model TestModel
+@Html.DisplayFor(e => e.Money)
+
+3) Output
+<span class="currency">$3.50</span>
+
+2. 申明使用哪个模板: UIHint attribute
+1) 修改为Currency， 这样就会找Views/Shared/DisplayTemplates/Currency.cshtml
+public class TestModel
+{
+    [UIHint("Currency")]
+    public decimal Money { get; set; }
+}
+
+2) 或者在调用的时候写出调用的模板： （nopcommerce: @Html.EditorFor(x => x.FullDescription, "RichEditor") )
+@model TestModel
+@Html.DisplayFor(e => e.Money, "Currecy")
+
+
+
+cshtml 可以调用自定义函数 @functions, @helper
+1) @helper 用来生成html， 可以调用@functions里定义的函数
+
+@functions {
+    public bool HasChild(CategorySimpleModel category)
+    {
+    }
+}
+
+@helper RenderSubCategoryLine(CategorySimpleModel category)
+{
+    @if(HasChild(category))
+    {
+        // ...
+    }
+    <li>category.Name<li>
+}
+
+2) @helper 的返回值类型为 HelperResult， nopcommerce/admin/product/edit使用这一方法：
+在RenderBootstrapTabContent 函数中 content.ToHtmlString() 可以获得 HelperResult 的值
+@helper TabInfo()
+{
+    @Html.Partial("_CreateOrUpdate.Info", Model)
+}
+@Html.RenderBootstrapTabContent("tab-info", @TabInfo(), true)
+Nop.Web.Framwork.Extensions 定义为:
+public static MvcHtmlString RenderBootstrapTabContent(this HtmlHelper helper, string currentTabName, HelperResult content) {}
+
+关于HtmlHelper的小技巧： 传递HelperResult为参数， 可使用special magic parameter "@item"
+参考文章 Templated Razor Delegates
+http://haacked.com/archive/2011/02/27/templated-razor-delegates.aspx/ (介绍)
+http://vibrantcode.com/blog/2010/8/2/inside-razor-part-3-templates.html (原理)
+
+比如定义函数: 
+@using System.Text;
+@functions {
+      public static IHtmlString Repeat(int times, Func<int, object> template) {
+           StringBuilder builder = new StringBuilder();
+          for(int i = 0; i < times; i++) {
+              builder.Append(template(i));
+          }
+          return new HtmlString(builder.ToString());
+      }
+}
+如果调用@Repeat(10, @<li>List Item</li>);
+动态编译生成的内容为:  (AppDomain.CurrentDomain.DynamicDirectory 注意item为asp.net自动生成的)
+this.Write(Repeat(10,item => new Microsoft.WebPages.Helpers.HelperResult(__writer => {
+     @__writer.Write(" ");
+     @__writer.Write("<li>List Item</li>");
+})));
+
+所以调用的时候可以这样：
+@Repeat(10, @<li>List Item #@item</li>)   // 此处的item对应Func<int, object> 的int
+
+==> 本质相当于 @Repeat(10, item => new HelperResult( // .. ));
+
+
+如果Func需要多个参数的时候好像就不能这样子了：
+@Repeat(10, (x, y) => Render(x, y) )
+
+@heleper Render(int x, int y) {
+    // ...
+}
+
+Product/Edit 生成多语言的Locales时\Administration\Views\Product\_CreateOrUpdate.Info.cshtml
+ @(Html.LocalizedEditor<ProductModel, ProductLocalizedModel>("product-info-localized", 
+
+ Nop.Web.Framework\HtmlExtensions定义LocalizedEditor<T, TLocalizedModelLocal>(this HtmlHelper<T> helper, 
+ string name,
+ Func<int, HelperResult> localizedTemplate,
+ Func<T, HelperResult> standardTemplate,
+ bool ignoreIfSeveralStores = false)
+ {
+    return new HelperResult(writer => {
+    
+    });
+ }
+ 
+ 在调用的时候第二个参数中 item 是asp.net dynamic compile 自动生成的， 此处代表int
+ 在调用的时候第3个参数中 item  代表函数定义中T
+ (""product-info-localized"", 
+ @<div>
+  @Html.NopLabelFor(model => model.Locales[item].FullDescription)
+ </div>, 
+ @<div>
+  @item
+ </div>
+ )
+
+
+
+ActionMethodSelectorAttribute 属性的作用： 当有多个actio相同的方法时，决定选择哪个action
+例如nopcommerce, FormValueRequiredAttribute继承ActionMethodSelectorAttribute 
+admin/product/list中 GoToSku 和到处xml action名称都是List，如果不加ActionMethodSelector， 就会报错：
+
+The current request for action 'List' on controller type 'ProductController' is ambiguous between the following action methods:
+System.Web.Mvc.ActionResult GoToSku(Nop.Admin.Models.Catalog.ProductListModel) on type Nop.Admin.Controllers.ProductController
+System.Web.Mvc.ActionResult ExportXmlAll(Nop.Admin.Models.Catalog.ProductListModel) on type Nop.Admin.Controllers.ProductController 
+
+
+[HttpPost, ActionName("List")]
+[FormValueRequired("go-to-product-by-sku")]
+public ActionResult GoToSku(ProductListModel model) {}
+
+
+
+
+可以总结:
 DataAnnotationsModelMetadataProvider http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/DataAnnotationsModelMetadataProvider.cs
 作用是读取属性HiddenInput, UIHint, Editable, DataType, DisplayFormat, SetFromDataTypeAndDisplay, ScaffoldColumn, Display,DisplayName, Required属性, 赋值到 DataAnnotationsModelMetadata result
 如:

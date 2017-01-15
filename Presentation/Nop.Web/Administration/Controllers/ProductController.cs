@@ -2089,6 +2089,16 @@ namespace Nop.Admin.Controllers
 
         #endregion
 
+        #region Export / Import
+
+        [HttpPost, ActionName("List")]
+        //[FormValueRequired("exportxml-all")]
+        public ActionResult ExportXmlAll(ProductListModel model)
+        {
+            return Content("");
+        }
+
+        #endregion
 
         #endregion
     }

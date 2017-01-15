@@ -26,6 +26,27 @@ if (typeof AdminLTEOptions !== "undefined") {
       AdminLTEOptions);
 }
 
+后台编辑产品显示高级设置的switch 按钮： https://proto.io/freebies/onoff/ （收费）
+nopcommerce 把css复制到了style.css中
+$("#advanced-settings-mode").is(':checked')
+
+
+标签编辑： https://goodies.pixabay.com/jquery/tag-editor/demo.html
+https://github.com/Pixabay/jQuery-tagEditor
+
+
+编辑器上传的文件管理器使用Roxy_Fileman, 配置参考 http://www.roxyfileman.com/demo, 
+编辑 conf.json to 来配置server  FILES_ROOT (根目录), DIRLIST, CREATEDIR
+需要引用System.IO.Compression.FileSystem.dll， 因为调用ZipFile.CreateFromDirectory
+代码 (nopcommerce为RoxyFilemanController来处理, 参考了\RoxyFileman-1.4.3-net\fileman\asp_net\main.ashx)
+
+
+编辑器 tinymce
+~\Administration\Views\Shared\EditorTemplates\RichEditor.cshtml
+上传配件的配置: 当toolbar 有 image , 启用上传图片功能, 需要配置file_browser_callback来上传
+file_browser_callback 文档
+https://www.tinymce.com/docs/configure/file-image-upload/#file_browser_callback
+
 
 Kendo UI收费，使用合法吗？
 nopcommerce使用开原版：（nopCommerce uses Kendo UI Web Open Source licensed under GPL v3 License. So it's legal to use it ）

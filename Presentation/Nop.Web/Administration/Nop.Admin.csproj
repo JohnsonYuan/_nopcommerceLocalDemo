@@ -73,6 +73,7 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -195,7 +196,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="TODOItems.txt" />
+    <Content Include="nop的定义.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -208,7 +209,9 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\RoxyFilemanController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
+    <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Extensions\AttributeParserHelper.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
@@ -480,6 +483,9 @@
     <Content Include="Views\Customer\_ReportBestCustomersByNumberOfOrders.cshtml" />
     <Content Include="Views\Customer\_ReportBestCustomersByOrderTotal.cshtml" />
     <Content Include="Views\Product\List.cshtml" />
+    <Content Include="Views\Product\Edit.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.Info.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -497,6 +503,14 @@
     <Content Include="Views\Widget\ConfigureWidget.cshtml" />
     <Content Include="Views\Widget\List.cshtml" />
     <Content Include="Views\Widget\WidgetsByZone.cshtml" />
+    <Content Include="Views\Setting\Mode.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RichEditor.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DecimalNullable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Int32Nullable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Int32.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTimeNullable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\MultiSelect.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -521,6 +535,7 @@
     <Folder Include="Scripts\tagEditor\" />
     <Folder Include="Scripts\typeahead\" />
     <Folder Include="Views\ProductController\" />
+    <Folder Include="Views\RoxyFileman\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">

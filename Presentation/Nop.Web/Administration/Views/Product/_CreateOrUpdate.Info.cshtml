@@ -1,0 +1,870 @@
+﻿@model ProductModel
+
+@using Nop.Core.Domain.Catalog;
+@using Nop.Services.Catalog;
+@using System.Text;
+@using Nop.Services
+@using Nop.Services.Customers
+@using Nop.Services.Stores
+
+@{
+    //resources for product tags input
+    Html.AppendCssFileParts("~/Administration/Content/tagEditor/jquery.tag-editor.css");
+    Html.AppendScriptParts("~/Administration/Scripts/tagEditor/jquery.tag-editor.min.js");
+    Html.AppendScriptParts("~/Administration/Scripts/tagEditor/jquery.caret.min.js");
+}
+
+<script type="text/javascript">
+</script>
+
+<div class="raw clearfix">
+    <div class="@(Model.ProductEditorSettingsModel.OneColumnProductPage ? "col-md-12" : "col-md-7")">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.CommonInfo")
+                </div>
+                <div class="panel-body">
+                    @if (Model.Id > 0)
+                    {
+                        <div class="form-group @(Model.ProductEditorSettingsModel.Id ? null : "advanced-setting")">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.Id)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopDisplayFor(model => model.Id)
+                                @Html.ValidationMessageFor(model => model.Id)
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group @(Model.ProductEditorSettingsModel.ProductType ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.ProductTypeId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(model => model.ProductTypeId, ((ProductType)Model.ProductTypeId).ToSelectList(useLocalization: false))
+                            @Html.ValidationMessageFor(model => model.ProductTypeId)
+                        </div>
+                    </div>
+                    @if (Model.Id > 0 && Model.AssociatedToProductId > 0)
+                    {
+                        <div class="form-group @(Model.ProductEditorSettingsModel.ProductType ? null : "advanced-setting")">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => Model.AssociatedToProductId)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.ActionLink(Model.AssociatedToProductName, "Edit", "Product", new { id = Model.AssociatedToProductId }, new { })
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group @(Model.ProductEditorSettingsModel.ProductTemplate ? null : "advanced-setting")" @(Model.AvailableProductTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.ProductTemplateId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.ProductTemplateId, Model.AvailableProductTemplates)
+                            @Html.ValidationMessageFor(model => model.ProductTemplateId)
+                        </div>
+                    </div>
+
+                    <div class="form-group @(Model.ProductEditorSettingsModel.VisibleIndividually ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.VisibleIndividually)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.VisibleIndividually)
+                            @Html.ValidationMessageFor(model => model.VisibleIndividually)
+                        </div>
+                    </div>
+
+                    @(Html.LocalizedEditor<ProductModel, ProductLocalizedModel>("product-info-localized",
+                    @<div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.Locales[item].Name)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopEditorFor(model => model.Locales[item].Name)
+                                @Html.ValidationMessageFor(model => model.Locales[item].Name)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.Locales[item].ShortDescription)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopTextAreaFor(model => model.Locales[item].ShortDescription)
+                                @Html.ValidationMessageFor(model => model.Locales[item].ShortDescription)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.Locales[item].FullDescription)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.Locales[item].FullDescription, "RichEditor")
+                                @Html.ValidationMessageFor(model => model.Locales[item].FullDescription)
+                            </div>
+                        </div>
+                    </div>,
+                    @<div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.Name)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopEditorFor(model => model.Name)
+                                @Html.ValidationMessageFor(model => model.Name)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.ShortDescription)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopTextAreaFor(x => x.ShortDescription)
+                                @Html.ValidationMessageFor(model => model.ShortDescription)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.FullDescription)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(x => x.FullDescription, "RichEditor")
+                                @Html.ValidationMessageFor(model => model.FullDescription)
+                            </div>
+                        </div>
+                    </div>))
+
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.Sku)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.Sku)
+                            @Html.ValidationMessageFor(model => model.Sku)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.Published ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.Published)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.Published)
+                            @Html.ValidationMessageFor(model => model.Published)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.ProductTags ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.ProductTags)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.ProductTags)
+                            @Html.ValidationMessageFor(model => model.ProductTags)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.GTIN ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.Gtin)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.Gtin)
+                            @Html.ValidationMessageFor(model => model.Gtin)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.ShowOnHomePage ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.ShowOnHomePage)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.ShowOnHomePage)
+                            @Html.ValidationMessageFor(model => model.ShowOnHomePage)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.DisplayOrder ? null : "advanced-setting")" id="pnlDisplayOrder" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.DisplayOrder)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.DisplayOrder)
+                            @Html.ValidationMessageFor(model => model.DisplayOrder)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.AllowCustomerReviews)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.AllowCustomerReviews)
+                            @Html.ValidationMessageFor(model => model.AllowCustomerReviews)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AvailableStartDate ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.AvailableStartDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.AvailableStartDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.AvailableStartDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AvailableEndDate ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.AvailableEndDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.AvailableEndDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.AvailableEndDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.MarkAsNew ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.MarkAsNew)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.MarkAsNew)
+                            @Html.ValidationMessageFor(model => model.MarkAsNew)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.MarkAsNewStartDate ? null : "advanced-setting")" id="pnlMarkAsNewStartDateTimeUtc">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.MarkAsNewStartDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.MarkAsNewStartDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.MarkAsNewStartDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.MarkAsNewEndDate ? null : "advanced-setting")" id="pnlMarkAsNewEndDateTimeUtc">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.MarkAsNewEndDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.MarkAsNewEndDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.MarkAsNewEndDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AdminComment ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.AdminComment)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopTextAreaFor(model => model.AdminComment)
+                            @Html.ValidationMessageFor(model => model.AdminComment)
+                        </div>
+                    </div>
+                    @if (Model.CreatedOn.HasValue)
+                    {
+                        <div class="form-group @(Model.ProductEditorSettingsModel.CreatedOn ? null : "advanced-setting")">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.CreatedOn)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopDisplay(Model.CreatedOn.Value.ToString("F"))
+                            </div>
+                        </div>
+                    }
+                    @if (Model.UpdatedOn.HasValue)
+                    {
+                        <div class="form-group @(Model.ProductEditorSettingsModel.UpdatedOn ? null : "advanced-setting")">
+                            <div class="col-md-3">
+                                @Html.NopLabelFor(model => model.UpdatedOn)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.NopDisplay(Model.UpdatedOn.Value.ToString("F"))
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.IsGiftCard ? null : "advanced-setting")" id="group-giftcard">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.GiftCard")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.IsGiftCard)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.IsGiftCard)
+                            @Html.ValidationMessageFor(model => model.IsGiftCard)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlGiftCardType">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.GiftCardTypeId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.GiftCardTypeId, ((GiftCardType)Model.GiftCardTypeId).ToSelectList())
+                            @Html.ValidationMessageFor(model => model.GiftCardTypeId)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlOverriddenGiftCardAmount">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.OverriddenGiftCardAmount)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.OverriddenGiftCardAmount)
+                            @Html.ValidationMessageFor(model => model.OverriddenGiftCardAmount)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.DownloadableProduct ? null : "advanced-settings")" id="group-downloads">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.DownloadableProduct")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.IsDownload)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.IsDownload)
+                            @Html.ValidationMessageFor(model => model.IsDownload)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlUnlimitedDownloads">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.UnlimitedDownloads)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.UnlimitedDownloads)
+                            @Html.ValidationMessageFor(model => model.UnlimitedDownloads)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlMaxNumberOfDownloads">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.MaxNumberOfDownloads)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.MaxNumberOfDownloads)
+                            @Html.ValidationMessageFor(model => model.MaxNumberOfDownloads)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlDownloadExpirationDays">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.DownloadExpirationDays)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.DownloadExpirationDays)
+                            @Html.ValidationMessageFor(model => model.DownloadExpirationDays)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlDownloadActivationType">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.DownloadActivationTypeId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.DownloadActivationTypeId, ((DownloadActivationType)Model.DownloadActivationTypeId).ToSelectList())
+                            @Html.ValidationMessageFor(model => model.DownloadActivationTypeId)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlHasUserAgreement">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.HasUserAgreement)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.HasUserAgreement)
+                            @Html.ValidationMessageFor(model => model.HasUserAgreement)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlUserAgreementText">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.UserAgreementText)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopTextAreaFor(model => model.UserAgreementText)
+                            @Html.ValidationMessageFor(model => model.UserAgreementText)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlHasSampleDownload">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.HasSampleDownload)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.HasSampleDownload)
+                            @Html.ValidationMessageFor(model => model.HasSampleDownload)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlSampleDownloadFile">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.SampleDownloadId)
+                        </div>
+                        <div class="col-md-5">
+                            @Html.NopEditorFor(model => model.SampleDownloadId)
+                            @Html.ValidationMessageFor(model => model.SampleDownloadId)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.RecurringProduct ? null : "advanced-setting")" id="group-recurring">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.RecurringProduct")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.IsRecurring)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.IsRecurring)
+                            @Html.ValidationMessageFor(model => model.IsRecurring)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlCycleLength">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.RecurringCycleLength)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.RecurringCycleLength)
+                            @Html.ValidationMessageFor(model => model.RecurringCycleLength)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlCyclePeriod">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.RecurringCyclePeriodId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.RecurringCyclePeriodId, ((RecurringProductCyclePeriod)Model.RecurringCyclePeriodId).ToSelectList())
+                            @Html.ValidationMessageFor(model => model.RecurringCyclePeriodId)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlTotalCycles">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.RecurringTotalCycles)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.RecurringTotalCycles)
+                            @Html.ValidationMessageFor(model => model.RecurringTotalCycles)
+                        </div>    
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.IsRental ? null : "advanced-setting")" id="group-rental">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.Rental")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.IsRental)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.IsRental)
+                            @Html.ValidationMessageFor(model => model.IsRental)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlRentalPriceLength">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.RentalPriceLength)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.RentalPriceLength)
+                            @Html.ValidationMessageFor(model => model.RentalPriceLength)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlRentalPricePeriod">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.RentalPricePeriodId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.RentalPricePeriodId, ((RentalPricePeriod)Model.RentalPricePeriodId).ToSelectList())
+                            @Html.ValidationMessageFor(model => model.RentalPricePeriodId)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" id="group-prices">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.Prices")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.Price)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.Price) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.Price)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.OldPrice ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.OldPrice)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.OldPrice) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.OldPrice)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.ProductCost ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.ProductCost)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.ProductCost) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.ProductCost)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.SpecialPrice ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.SpecialPrice)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.SpecialPrice) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.SpecialPrice)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.SpecialPriceStartDate ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.SpecialPriceStartDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.SpecialPriceStartDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.SpecialPriceStartDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.SpecialPriceEndDate ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.SpecialPriceEndDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.SpecialPriceEndDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.SpecialPriceEndDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.DisableBuyButton ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.DisableBuyButton)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.DisableBuyButton)
+                            @Html.ValidationMessageFor(model => model.DisableBuyButton)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.DisableWishlistButton ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.DisableWishlistButton)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.DisableWishlistButton)
+                            @Html.ValidationMessageFor(model => model.DisableWishlistButton)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AvailableForPreOrder ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.AvailableForPreOrder)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.AvailableForPreOrder)
+                            @Html.ValidationMessageFor(model => model.AvailableForPreOrder)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AvailableForPreOrder ? null : "advanced-setting")" id="pnlPreOrderAvailabilityStartDateTimeUtc">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.PreOrderAvailabilityStartDateTimeUtc)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.PreOrderAvailabilityStartDateTimeUtc)
+                            @Html.ValidationMessageFor(model => model.PreOrderAvailabilityStartDateTimeUtc)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.CallForPrice ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.CallForPrice)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.CallForPrice)
+                            @Html.ValidationMessageFor(model => model.CallForPrice)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.CustomerEntersPrice ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.CustomerEntersPrice)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.CustomerEntersPrice)
+                            @Html.ValidationMessageFor(model => model.CustomerEntersPrice)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.CustomerEntersPrice ? null : "advanced-setting")" id="pnlMinimumCustomerEnteredPrice">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.MinimumCustomerEnteredPrice)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.MinimumCustomerEnteredPrice) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.MinimumCustomerEnteredPrice)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.CustomerEntersPrice ? null : "advanced-setting")" id="pnlMaximumCustomerEnteredPrice">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.MaximumCustomerEnteredPrice)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.MaximumCustomerEnteredPrice) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.MaximumCustomerEnteredPrice)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.PAngV ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.BasepriceEnabled)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.BasepriceEnabled)
+                            @Html.ValidationMessageFor(model => model.BasepriceEnabled)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.PAngV ? null : "advanced-setting")" id="pnlBasepriceAmount">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.BasepriceAmount)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.BasepriceAmount)
+                            @Html.ValidationMessageFor(model => model.BasepriceAmount)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.PAngV ? null : "advanced-setting")" id="pnlBasepriceUnit">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.BasepriceUnitId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.BasepriceUnitId, Model.AvailableBasepriceUnits)
+                            @Html.ValidationMessageFor(model => model.BasepriceUnitId)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.PAngV ? null : "advanced-setting")" id="pnlBasepriceBaseAmount">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.BasepriceBaseAmount)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.BasepriceBaseAmount)
+                            @Html.ValidationMessageFor(model => model.BasepriceBaseAmount)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.PAngV ? null : "advanced-setting")" id="pnlBasepriceBaseUnit">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.BasepriceBaseUnitId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.BasepriceBaseUnitId, Model.AvailableBasepriceBaseUnits)
+                            @Html.ValidationMessageFor(model => model.BasepriceBaseUnitId)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.Discounts ? null : "advanced-setting")">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.SelectedDiscountIds)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.SelectedDiscountIds, new { SelectList = Model.AvailableDiscounts })
+                            <script>
+                                $(document).ready(function() {
+                                    var discountsIdsInput = $("#@Html.FieldIdFor(model => model.SelectedDiscountIds)").data("kendoMultiSelect");
+                                    discountsIdsInput.setOptions({
+                                        autoClass: false
+                                    });
+
+                                    @if (Model.AvailableDiscounts.Count == 0)
+                                {
+                                    <text>
+                                    discountsIdsInput.setOptions({
+                                        enable: false,
+                                        placeHolder: '@T("Admin.Catalog.Products.Fields.Discounts.NoDiscounts")'
+                                    });
+                                    discountsIdsInput._placeholder();
+                                    discountsIdsInput._enable();
+                                    </text>
+                                }
+                                })
+                            </script>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.IsTaxExempt)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.IsTaxExempt)
+                            @Html.ValidationMessageFor(model => model.IsTaxExempt)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlTaxCategory">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.TaxCategoryId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopDropDownListFor(model => model.TaxCategoryId, Model.AvailableTaxCategories)
+                            @Html.ValidationMessageFor(model => model.TaxCategoryId)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.TelecommunicationsBroadcastingElectronicServices ? null : "advanced-setting")" id="pnlIsTelecommunicationsOrBroadcastingOrElectronicServices">
+                        <div class="col-md-3">
+                            @Html.NopLabelFor(model => model.IsTelecommunicationsOrBroadcastingOrElectronicServices)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.NopEditorFor(model => model.IsTelecommunicationsOrBroadcastingOrElectronicServices)
+                            @Html.ValidationMessageFor(model => model.IsTelecommunicationsOrBroadcastingOrElectronicServices)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.TierPrices ? null : "advanced-setting")" id="tier-prices">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.TierPrices")
+                </div>
+                <div class="panel-body">
+                    <p>
+                        @T("Admin.Catalog.Products.TierPrices.Hint")
+                    </p>
+                    @if (Model.Id > 0)
+                    {
+                        <div id="tierprices-grid"></div>
+
+                        <script>
+                            $(document).ready(function () {
+                                $("#tierprices-grid").kendoGrid({
+                                    dataSource: {
+                                        type: "json",
+                                        transport: {
+                                            read: {
+                                                url: "@Html.Raw(Url.Action("TierPriceList", "Product", new { productId = Model.Id }))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            },
+                                            create: {
+                                                url: "@Html.Raw(Url.Action("TierPriceInsert", "Product", new { productId = Model.Id }))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            },
+                                            update: {
+                                                url: "@Html.Raw(Url.Action("TierPriceUpdate", "Product"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            },
+                                            destroy: {
+                                                url: "@Html.Raw(Url.Action("TierPriceDelete", "Product"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            }
+                                        },
+                                        schema: {
+                                            data: "Data",
+                                            total: "Total",
+                                            errors: "Errors",
+                                            model: {
+                                                id: "Id",
+                                                fields: {
+                                                    Store: { editable: true, type: "string" },
+                                                    StoreId: { editable: true, type: "string" },
+                                                    CustomerRole: { editable: true, type: "string" },
+                                                    CustomerRoleId: { editable: true, type: "number" },
+                                                    //ProductId: { editable: false, type: "number" },
+                                                    Quantity: { editable: true, type: "number" },
+                                                    Price: { editable: true, type: "number" },
+                                                    Id: { editable: false, type: "number" }
+                                                }
+                                            }
+                                        },
+                                        requestEnd: function (e) {
+                                            if (e.type == "create" || e.type == "update") {
+                                                this.read();
+                                            }
+                                        },
+                                        error: function (e) {
+                                            display_kendoui_grid_error(e);
+                                            // Cancel the changes
+                                            this.cancelChanges();
+                                        },
+                                        serverPaging: true,
+                                        serverFiltering: true,
+                                        serverSorting: true
+                                    },
+                                    pageable: {
+                                        refresh: true,
+                                        numeric: false,
+                                        previousNext: false,
+                                        info: false
+                                    },
+                                    toolbar: [{ name: "create", text: "@T("Admin.Common.AddNewRecord")" }],
+                                    editable: {
+                                        confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                                        mode: "inline"
+                                    },
+                                    scrollable: false,
+                                    columns: [
+                                        {
+                                            field: "StoreId",
+                                            title: "@T("Admin.Catalog.Products.TierPrices.Fields.Store")",
+                                            width: 250,
+                                            editor: storeDropDownEditor,
+                                            template: "#:Store#"
+                                        },
+                                        {
+                                            field: "CustomerRoleId",
+                                            title: "@T("Admin.Catalog.Products.TierPrices.Fields.CustomerRole")",
+                                            width: 250,
+                                            editor: customerRoleDropDownEditor,
+                                            template: "#:CustomerRole#"
+                                        },
+                                        {
+                                            field: "Quantity",
+                                            title: "@T("Admin.Catalog.Products.TierPrices.Fields.Quantity")",
+                                            width: 150,
+                                            //integer format
+                                            format: "{0:0}"
+                                        }, 
+                                        {
+                                            field: "Price",
+                                            title: "@T("Admin.Catalog.Products.TierPrices.Fields.Price")",
+                                            width: 150,
+                                            editor: function (container, options) {
+                                                $('<input name="' + options.field + '"/>')
+                                                    .appendTo(container)
+                                                    .kendoNumericTextBox({
+                                                        format: "{0:n4}",
+                                                        decimals: 4
+                                                    });
+                                            }
+                                        },
+                                        {
+                                            command: [
+                                                {
+                                                    name: "edit",
+                                                    text: {
+                                                        edit: "@T("Admin.Common.Edit")",
+                                                        update: "@T("Admin.Common.Update")",
+                                                        cancel: "@T("Admin.Common.Cancel")"
+                                                    }
+                                                },  {
+                                                    name: "destroy",
+                                                    text: "@T("Admin.Common.Delete")"
+                                                }
+                                            ],
+                                            width: 200
+                                        }
+                                    ],
+                                });
+                            });
+
+                            function storeDropDownEditor(container, options) {
+                                $('<input required data-text-field="Name" data-value-field="Id" data-bind="value:StoreId"/>')
+                                    .appendTo(container)
+                                    .kendoDropDownList({
+                                        autoBind: false,
+                                        dataSource: allStores
+                                    });
+                            }
+                        </script>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
