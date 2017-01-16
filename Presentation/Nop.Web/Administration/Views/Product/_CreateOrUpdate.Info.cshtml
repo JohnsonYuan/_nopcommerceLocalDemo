@@ -771,6 +771,10 @@
                                                 }
                                             }
                                         },
+                                        // 我的注释 requestEnd: Fired when a remote service request is finished.
+                                        // e.type 可能有 4种值"create" "read" "update" "destroy"
+
+                                        // http://docs.telerik.com/kendo-ui/api/javascript/data/datasource
                                         requestEnd: function (e) {
                                             if (e.type == "create" || e.type == "update") {
                                                 this.read();
@@ -791,6 +795,10 @@
                                         previousNext: false,
                                         info: false
                                     },
+                                    // 我的注释
+                                    // 工具栏可以有: cancel create save excel(导出为pdf) pdf 几个command
+                                    // name: command的名称 上面5个命令中一个 text 属性为显示的内容, optional
+                                    // http://docs.telerik.com/kendo-ui/api/javascript/ui/grid#configuration-toolbar
                                     toolbar: [{ name: "create", text: "@T("Admin.Common.AddNewRecord")" }],
                                     editable: {
                                         confirmation: "@T("Admin.Common.DeleteConfirmation")",
@@ -818,7 +826,7 @@
                                             width: 150,
                                             //integer format
                                             format: "{0:0}"
-                                        }, 
+                                        },
                                         {
                                             field: "Price",
                                             title: "@T("Admin.Catalog.Products.TierPrices.Fields.Price")",
@@ -852,6 +860,49 @@
                                 });
                             });
 
+                            //local datasource
+                            var allStores = [
+                                {
+                                    Id: 0,
+                                    Name: "@T("Admin.Configuration.Settings.AllSettings.Fields.StoreName.AllStores")"
+                                }
+                                @{
+                                    var storeService = EngineContext.Current.Resolve<IStoreService>();
+                                    var allStores = storeService.GetAllStores();
+                            }
+                                @foreach (var store in allStores)
+                            {
+                                <text>
+                                        , {
+                                            Id: @store.Id,
+                                            Name: "@(Html.Raw(HttpUtility.JavaScriptStringEncode(store.Name)))"
+                                        }
+                                        </text>
+                            }
+                            ];
+
+                            var allCustomerRoles = [
+                                {
+                                    Id: 0,
+                                    Name: "@T("Admin.Catalog.Products.TierPrices.Fields.CustomerRole.All")"
+                                }
+                                @{ 
+                                    var customerService = EngineContext.Current.Resolve<ICustomerService>();
+                                    var allCustomerRoles = customerService.GetAllCustomerRoles(true);
+                            }
+                                @foreach (var customerRole in allCustomerRoles)
+                            {
+                                <text>
+                                        , {
+                                            Id: @(customerRole.Id),
+                                            Name: "@(Html.Raw(HttpUtility.JavaScriptStringEncode(customerRole.Name)))"
+                                        }
+                                </text>
+                            }
+                            ];
+
+                            // 我的注释data-text-field 这种格式为 Text Binding
+                            // http://docs.telerik.com/kendo-ui/framework/mvvm/bindings/text
                             function storeDropDownEditor(container, options) {
                                 $('<input required data-text-field="Name" data-value-field="Id" data-bind="value:StoreId"/>')
                                     .appendTo(container)
@@ -860,11 +911,321 @@
                                         dataSource: allStores
                                     });
                             }
+
+                            function customerRoleDropDownEditor(container, options) {
+                                $('<input required data-text-field="Name" data-value-field="Id" data-bind="value:CustomerRoleId"/>')
+                                    .appendTo(container)
+                                    .kendoDropDownList({
+                                        autoBind: false,
+                                        dataSource: allCustomerRoles
+                                    });
+                            }
                         </script>
+                    }
+                    else
+                    {
+                        @T("Admin.Catalog.Products.TierPrices.SaveBeforeEdit")
                     }
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="@(Model.ProductEditorSettingsModel.OneColumnProductPage ? "col-md-12" : "col-md-5")">
+        <div class="panel-group">
+            @{
+                var leftColumnClass = Model.ProductEditorSettingsModel.OneColumnProductPage ? "col-md-3" : "col-md-4";
+                var rightColumnClass = Model.ProductEditorSettingsModel.OneColumnProductPage ? "col-md-9" : "col-md-8";
+            }
 
+            <div class="panel panel-default margin-bottom" id="group-associated-products">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.AssociatedProducts")
+                </div>
+                @if (Model.Id > 0)
+                {
+                    <div class="panel-body">
+                        <ul class="common-list">
+                            <li>
+                                @T("Admin.Catalog.Products.AssociatedProducts.Note1")
+                            </li>
+                            <li>
+                                @T("Admin.Catalog.Products.AssociatedProducts.Note2")
+                            </li>
+                        </ul>
+
+                        <div id="associatedproducts-grid"></div>
+
+                        <script>
+                            //TODO
+                        </script>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="submit" id="btnAddNewAssociatedProduct" onclick="javascript:OpenWindow('@(Url.Action("AssociatedProductAddPopup", "Product", new {productId = Model.Id, btnId = "btnRefreshAssociatedProducts", formId = "product-form"}))', 800, 800, true); return false;" class="btn btn-primary">
+                            @T("Admin.Catalog.Products.AssociatedProducts.AddNew")
+                        </button>
+                        <input type="submit" id="btnRefreshAssociatedProducts" style="display: none" />
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                $('#btnRefreshAssociatedProducts').click(function() {
+                                    //refresh grid
+                                    var grid = $("#associatedproducts-grid").data('kendoGrid');
+                                    grid.dataSource.read();
+                                    
+                                    //return false to don't reload a page
+                                    return false;
+                                });
+                            });
+                        </script>
+                    </div>
+                }
+                else
+                {
+                    <div class="panel-body">
+                        @T("Admin.Catalog.Products.AssociatedProducts.SaveBeforeEdit")
+                    </div>
+                }
+            </div>
+            <div class="panel panel-default no-margin" id="group-inventory">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.Inventory")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.ManageInventoryMethodId)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopDropDownListFor(model => model.ManageInventoryMethodId, ((ManageInventoryMethod)Model.ManageInventoryMethodId).ToSelectList())
+                            @Html.ValidationMessageFor(model => model.ManageInventoryMethodId)
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlStockQuantity">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.StockQuantity)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.StockQuantity)
+                            @Html.HiddenFor(model => model.LastStockQuantity)
+                            @Html.ValidationMessageFor(model => model.StockQuantity)
+                        </div>
+                    </div>
+                </div>
+                <div class="from-group @(Model.ProductEditorSettingsModel.Warehouse ? null : "advanced-setting")" id="pnlWarehouse">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.WarehouseId)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopDropDownListFor(model => model.WarehouseId, Model.AvailableWarehouses)
+                        @Html.ValidationMessageFor(model => model.WarehouseId)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.UseMultipleWarehouses ? null : "advanced-setting")" id="pnlUseMultipleWarehouses">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.UseMultipleWarehouses)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.UseMultipleWarehouses)
+                        @Html.ValidationMessageFor(model => model.UseMultipleWarehouses)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.UseMultipleWarehouses ? null : "advanced-setting")" id="pnlMultipleWarehouses">
+                    <div class="col-md-12" style="overflow-x: auto;">
+                        @if (Model.ProductWarehouseInventoryModels.Count > 0)
+                    {
+                        <table class="table table-hover table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.Warehouse")
+                                    </th>
+                                    <th>
+                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.WarehouseUsed")
+                                    </th>
+                                    <th>
+                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.StockQuantity")
+                                    </th>
+                                    <th>
+                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.ReservedQuantity")
+                                    </th>
+                                    <th>
+                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.PlannedQuantity")
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ProductWarehouseInventoryModels)
+                                {
+                                    <tr>
+                                        <td style="width: 36%;">
+                                            <div style="padding-left: 10px; padding-right: 10px;">
+                                                @item.WarehouseName
+                                            </div>
+                                        </td>
+                                        <td style="width: 10%;">
+                                            <input type="checkbox" id="warehouse_used_@(item.WarehouseId)" name="warehouse_used_@(item.WarehouseId)" value="@item.WarehouseId" checked="@item.WarehouseUsed" />
+                                            <script type="text/javascript">
+                                                $(document).ready(function() {
+                                                    $("#warehouse_used_@(item.WarehouseId)").change(toggleWarehouseUsed_@(item.WarehouseId));
+                                                    toggleWarehouseUsed_@(item.WarehouseId)();
+                                                });
+
+                                                function toggleWarehouseUsed_@(item.WarehouseId)() {
+                                                    if ($('#warehouse_used_@(item.WarehouseId)').is(':checked')) {
+                                                        $('#warehouse_qty_@(item.WarehouseId)').prop('disabled', false);
+                                                        $('#warehouse_reserved_@(item.WarehouseId)').prop('disabled', false);
+                                                    } else {
+                                                        $('#warehouse_qty_@(item.WarehouseId)').prop('disabled', true);
+                                                        $('#warehouse_reserved_@(item.WarehouseId)').prop('disabled', true);
+                                                    }
+                                                }
+                                            </script>
+                                        </td>
+                                        <td style="width: 18%;">
+                                            <input id="warehouse_qty_@(item.WarehouseId)" name="warehouse_qty_@(item.WarehouseId)" type="text" value="@item.StockQuantity" class="form-control" />
+                                        </td>
+                                        <td style="width: 18%;">
+                                            <input id="warehouse_reserved_@(item.WarehouseId)" name="warehouse_reserved_@(item.WarehouseId)" type="text" value="@item.ReservedQuantity" class="form-control" />
+                                        </td>
+                                        <td style="width: 18%;">
+                                            <input id="warehouse_reserved_@(item.WarehouseId)" name="warehouse_reserved_@(item.WarehouseId)" type="text" value="@item.ReservedQuantity" class="form-control" />
+                                        </td>
+                                        <td style="width: 18%;">
+                                            @item.PlannedQuantity
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <p>
+                            <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description1")</em>
+                        </p>
+                        <p>
+                            <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description2")</em>
+                        </p>
+                        <p>
+                            <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description3")</em>
+                        </p>
+                    }
+                    else
+                    {
+                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.Warehouse.NotDefined")
+                    }
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.DisplayStockAvailability ? null : "advanced-setting")" id="pnlDisplayStockAvailability">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.DisplayStockAvailability)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.DisplayStockAvailability)
+                        @Html.ValidationMessageFor(model => model.DisplayStockAvailability)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.DisplayStockQuantity ? null : "advanced-setting")" id="pnlDisplayStockQuantity">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.DisplayStockQuantity)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.DisplayStockQuantity)
+                        @Html.ValidationMessageFor(model => model.DisplayStockQuantity)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.MinimumStockQuantity ? null : "advanced-setting")" id="pnlMinStockQuantity">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.MinStockQuantity)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.MinStockQuantity)
+                        @Html.ValidationMessageFor(model => model.MinStockQuantity)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.LowStockActivity ? null : "advanced-setting")" id="pnlLowStockActivity">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.LowStockActivityId)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopDropDownListFor(model => model.LowStockActivityId, ((LowStockActivity)Model.LowStockActivityId).ToSelectList())
+                        @Html.ValidationMessageFor(model => model.LowStockActivityId)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.NotifyAdminForQuantityBelow ? null : "advanced-setting")" id="pnlNotifyForQuantityBelow">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.NotifyAdminForQuantityBelow)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.NotifyAdminForQuantityBelow)
+                        @Html.ValidationMessageFor(model => model.NotifyAdminForQuantityBelow)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.Backorders ? null : "advanced-setting")" id="pnlBackorders">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.BackorderModeId)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopDropDownListFor(model => model.BackorderModeId, ((BackorderMode)Model.BackorderModeId).ToSelectList())
+                        @Html.ValidationMessageFor(model => model.BackorderModeId)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.AllowBackInStockSubscriptions ? null : "advanced-setting")" id="pnlAllowBackInStockSubscriptions">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.AllowBackInStockSubscriptions)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.AllowBackInStockSubscriptions)
+                        @Html.ValidationMessageFor(model => model.AllowBackInStockSubscriptions)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.MinimumCartQuantity ? null : "advanced-setting")">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.OrderMinimumQuantity)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.OrderMinimumQuantity)
+                        @Html.ValidationMessageFor(model => model.OrderMinimumQuantity)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.MaximumCartQuantity ? null : "advanced-setting")">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.OrderMaximumQuantity)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.OrderMaximumQuantity)
+                        @Html.ValidationMessageFor(model => model.OrderMaximumQuantity)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.AllowedQuantities ? null : "advanced-setting")">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.AllowedQuantities)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.AllowedQuantities)
+                        @Html.ValidationMessageFor(model => model.AllowedQuantities)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.AllowAddingOnlyExistingAttributeCombinations ? null : "advanced-setting")" id="pnlAllowAddingOnlyExistingAttributeCombinations">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.AllowAddingOnlyExistingAttributeCombinations)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.AllowAddingOnlyExistingAttributeCombinations)
+                        @Html.ValidationMessageFor(model => model.AllowAddingOnlyExistingAttributeCombinations)
+                    </div>
+                </div>
+                <div class="form-group @(Model.ProductEditorSettingsModel.NotReturnable ? null : "advanced-setting")">
+                    <div class="@leftColumnClass">
+                        @Html.NopLabelFor(model => model.NotReturnable)
+                    </div>
+                    <div class="@rightColumnClass">
+                        @Html.NopEditorFor(model => model.NotReturnable)
+                        @Html.ValidationMessageFor(model => model.NotReturnable)
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" id="group-shipping">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.Shipping")
+                </div>
+            </div>
         </div>
     </div>
 </div>

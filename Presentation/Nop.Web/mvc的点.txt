@@ -2,10 +2,13 @@
 目的是为了可以重复使用, 有点类似与user control
 http://www.telerik.com/blogs/diving-into-asp.net-mvc-templates (比较好)
 http://www.growingwiththeweb.com/2012/12/aspnet-mvc-display-and-editor-templates.html
+http://bradwilson.typepad.com/blog/2009/10/aspnet-mvc-2-templates-part-3-default-templates.html
 
 在调用Html.DisplayFor, Html.EditorFor的时候可以指定模板来生成, template 中 model 均为类型， 如 @model decimal, @model string, @model DateTime 
-Views/Shared/DisplayTemplates/<type or name>.cshtml
-Views/Shared/DisplayTemplates/<type or name>.cshtml
+~/Areas/AreaName/Views/ControllerName/DisplayTemplates/TemplateName.aspx & .ascx
+~/Areas/AreaName/Views/Shared/DisplayTemplates/TemplateName.aspx & .ascx
+~/Views/ControllerName/DisplayTemplates/TemplateName.aspx & .ascx
+~/Views/Shared/DisplayTemplates/TemplateName.aspx & .ascx
 
 @Html.DisplayFor(e => e.Username)
 可以自定义生成时调用的模板, 相当于partial view

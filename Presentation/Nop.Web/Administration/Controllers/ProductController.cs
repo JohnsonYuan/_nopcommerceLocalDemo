@@ -2089,6 +2089,62 @@ namespace Nop.Admin.Controllers
 
         #endregion
 
+        #region Tier prices
+
+        [HttpPost]
+        public ActionResult TierPriceList(DataSourceRequest command, int productId)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var product = _productService.GetProductById(productId);
+            if (product == null)
+                throw new ArgumentException("No product found with the specified id");
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null && product.VendorId != _workContext.CurrentVendor.Id)
+                return Content("This is not your product");
+
+            var tierPricesModel = product.TierPrices
+                .OrderBy(x => x.StoreId)
+                .ThenBy(x => x.Quantity)
+                .ThenBy(x => x.CustomerRoleId)
+                .Select(x =>
+                {
+                    string storeName;
+                    if (x.StoreId > 0)
+                    {
+                        var store = _storeService.GetStoreById(x.StoreId);
+                        storeName = store != null ? store.Name : "Deleted";
+                    }
+                    else
+                    {
+                        storeName = _localizationService.GetResource("Admin.Catalog.Products.TierPrices.Fields.Store.All");
+                    }
+                    return new ProductModel.TierPriceModel
+                    {
+                        Id = x.Id,
+                        StoreId = x.StoreId,
+                        Store = storeName,
+                        CustomerRole = x.CustomerRoleId.HasValue ? _customerService.GetCustomerRoleById(x.CustomerRoleId.Value).Name : _localizationService.GetResource("Admin.Catalog.Products.TierPrices.Fields.CustomerRole.All"),
+                        ProductId = x.ProductId,
+                        CustomerRoleId = x.CustomerRoleId.HasValue ? x.CustomerRoleId.Value : 0,
+                        Quantity = x.Quantity,
+                        Price = x.Price
+                    };
+                })
+                .ToList();
+
+            var gridModel = new DataSourceResult
+            {
+                Data = tierPricesModel,
+                Total = tierPricesModel.Count
+            };
+            return Json(gridModel);
+        }
+
+        #endregion
+
         #region Export / Import
 
         [HttpPost, ActionName("List")]
