@@ -26,6 +26,7 @@ var cookieToken = new AntiForgeryToken()
                 // SecurityToken will be populated automatically.
                 IsSessionToken = true
             };
+SecurityToken get 会自动赋值， 由随机算法RNGCryptoServiceProvider生成128bit的长度为16的byte[] 
 生成form token生成和cookie token一样的SecurityToken
 var formToken = new AntiForgeryToken()
 {
@@ -34,7 +35,9 @@ var formToken = new AntiForgeryToken()
 };
 然后AntiForgeryTokenSerializer.Serialize 这两个token， 
 Serialize根据TokenVersion, SecurityToken, IsSessionToken等属性， 先生成byte[]， 然后调用return MachineKey45CryptoSystem.Protect(stream.ToArray());
-因为MachineKey.Protect每次的值不一样， 所以每次serialize的值都不一样，但Deserialize 之后 SecurityToken值都一样， 依据该属性来判断是否合法
+MachineKey45CryptoSystem调用MachineKey.Protect， 每次MachineKey.Protect生成值每次的值不一样， 
+所以调用@Html.Antiforgery() 每次的值都不一样， 但MachineKey.UnProtect 值一样， 所有每次serialize的值都不一样
+
 所以如果一个页面调用多个Html.AntiforgeryToken(), ajax post时随便一个input都可以满足验证  
 public string Protect(byte[] data)
 {

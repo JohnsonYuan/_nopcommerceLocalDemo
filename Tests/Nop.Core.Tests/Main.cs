@@ -84,6 +84,22 @@ namespace Nop.Core.Tests
             public List<int> TotalCounts { get; set; }
         }
 
+        public static bool AreByteArraysEqual(byte[] a, byte[] b)
+        {
+            if (a == null || b == null || a.Length != b.Length)
+            {
+                return false;
+            }
+
+            bool areEqual = true;
+            for (int i = 0; i < a.Length; i++)
+            {
+                areEqual &= (a[i] == b[i]);
+            }
+            return areEqual;
+        }
+
+
 
         static void Main()
         {
@@ -121,12 +137,26 @@ namespace Nop.Core.Tests
 
             string[] _purposes = new string[] { "System.Web.Helpers.AntiXsrf.AntiForgeryToken.v1" };
 
-            
+            var test1 = MachineKey.Protect(newByte, _purposes);
+            var test2 = MachineKey.Protect(newByte, _purposes);
+
+
+            Console.WriteLine(AreByteArraysEqual(test1, test2)); ;
+
             var x1 = HttpServerUtility.UrlTokenEncode(MachineKey.Protect(newByte, _purposes));
             var x2 = HttpServerUtility.UrlTokenEncode(MachineKey.Protect(newByte, _purposes));
 
             Console.WriteLine(x1);
             Console.WriteLine(x2);
+            var x3 = MachineKey.Unprotect(HttpServerUtility.UrlTokenDecode(x1), _purposes);
+            var x4 =MachineKey.Unprotect(HttpServerUtility.UrlTokenDecode(x2), _purposes);
+
+            Console.WriteLine(x3);
+            Console.WriteLine(x4);
+
+            Console.WriteLine(AreByteArraysEqual(x3, x4)); ;
+
+
             return;
             AntiForgeryToken formToken = new AntiForgeryToken()
             {

@@ -15,6 +15,385 @@
 }
 
 <script type="text/javascript">
+    $(document).ready(function() {
+        @if (!Model.IsLoggedInAsVendor)
+        {
+            <text>$("#@Html.FieldIdFor(model => model.ShowOnHomePage)").click(toggleShowOnHomePage);</text>
+        }
+        $("#@Html.FieldIdFor(model => model.ProductTypeId)").change(toggleProductType);
+        $("#@Html.FieldIdFor(model => model.RequireOtherProducts)").click(toggleRequireOtherProducts);
+        $("#@Html.FieldIdFor(model => model.AvailableForPreOrder)").click(togglePreOrder);
+        $("#@Html.FieldIdFor(model => model.IsGiftCard)").click(toggleGiftCard);
+        $("#@Html.FieldIdFor(model => model.CustomerEntersPrice)").click(toggleCustomerEntersPrice);
+        $("#@Html.FieldIdFor(model => model.BasepriceEnabled)").click(toggleBasepriceEnabled);
+        $("#@Html.FieldIdFor(model => model.IsDownload)").click(toggleDownloadableProduct);
+        $("#@Html.FieldIdFor(model => model.UnlimitedDownloads)").click(toggleDownloadableProduct);
+        $("#@Html.FieldIdFor(model => model.HasSampleDownload)").click(toggleDownloadableProduct);
+        $("#@Html.FieldIdFor(model => model.HasUserAgreement)").click(toggleDownloadableProduct);
+        $("#@Html.FieldIdFor(model => model.IsRecurring)").click(toggleRecurring);
+        $("#@Html.FieldIdFor(model => model.IsRental)").click(toggleRental);
+        $("#@Html.FieldIdFor(model => model.IsShipEnabled)").click(toggleShipping);
+        $("#@Html.FieldIdFor(model => model.IsTaxExempt)").click(toggleTax);
+        $("#@Html.FieldIdFor(model => model.ManageInventoryMethodId)").change(toggleManageStock);
+        $("#@Html.FieldIdFor(model => model.UseMultipleWarehouses)").click(toggleManageStock);
+        $("#@Html.FieldIdFor(model => model.BackorderModeId)").change(toggleManageStock);
+        $("#@Html.FieldIdFor(model => model.DisplayStockAvailability)").click(toggleManageStock);
+        $("#@Html.FieldIdFor(model => model.MarkAsNew)").click(toggleMarkAsNew);
+
+        @if (!Model.IsLoggedInAsVendor)
+        {
+            <text>toggleShowOnHomePage();</text>
+        }
+
+        toggleProductType();
+        togglePreOrder();
+        toggleRequireOtherProducts();
+        toggleGiftCard();
+        toggleCustomerEntersPrice();
+        toggleBasepriceEnabled();
+        toggleDownloadableProduct();
+        toggleRecurring();
+        toggleRental();
+        toggleShipping();
+        toggleTax();
+        toggleManageStock();
+        toggleMarkAsNew();
+    });
+
+
+    function toggleShowOnHomePage() {
+        if ($('#@Html.FieldIdFor(model => model.ShowOnHomePage)').is(':checked')) {
+            $('#pnlDisplayOrder').show();
+        } else {
+            $('#pnlDisplayOrder').hide();
+        }
+    }
+
+    function toggleProductType() {
+        var selectedProductTypeId = $("#@Html.FieldIdFor(model => model.ProductTypeId)").val();
+        if (!selectedProductTypeId || selectedProductTypeId == @(((int) ProductType.SimpleProduct).ToString())) {
+            $('#group-prices').show();
+        $('#tier-prices').show();
+        $('#group-required-other-products').show();
+        $('#group-giftcard').show();
+        $('#group-downloads').show();
+        $('#group-recurring').show();
+        $('#group-rental').show();
+        $('#group-shipping').show();
+        $('#group-inventory').show();
+        $('#group-associated-products').hide();
+    } else if (selectedProductTypeId == @(((int) ProductType.GroupedProduct).ToString())) {
+        $('#group-prices').hide();
+        $('#tier-prices').hide();
+        $('#group-required-other-products').hide();
+        $('#group-giftcard').hide();
+        $('#group-downloads').hide();
+        $('#group-recurring').hide();
+        $('#group-rental').hide();
+        $('#group-shipping').hide();
+        $('#group-inventory').hide();
+        $('#group-associated-products').show();
+    }
+    }
+
+    function togglePreOrder() {
+        if ($('#@Html.FieldIdFor(model => model.AvailableForPreOrder)').is(':checked')) {
+            $('#pnlPreOrderAvailabilityStartDateTimeUtc').show();
+        } else {
+            $('#pnlPreOrderAvailabilityStartDateTimeUtc').hide();
+        }
+    }
+
+    function toggleRequireOtherProducts() {
+        if ($('#@Html.FieldIdFor(model => model.RequireOtherProducts)').is(':checked')) {
+            $('#pnlRequiredProductIds').show();
+            $('#pnlAutomaticallyAddRequiredProducts').show();
+        } else {
+            $('#pnlRequiredProductIds').hide();
+            $('#pnlAutomaticallyAddRequiredProducts').hide();
+        }
+    }
+
+    function toggleGiftCard() {
+        if ($('#@Html.FieldIdFor(model => model.IsGiftCard)').is(':checked')) {
+            $('#pnlGiftCardType').show();
+            $('#pnlOverriddenGiftCardAmount').show();
+        } else {
+            $('#pnlGiftCardType').hide();
+            $('#pnlOverriddenGiftCardAmount').hide();
+        }
+    }
+
+    function toggleCustomerEntersPrice() {
+        if ($('#@Html.FieldIdFor(model => model.CustomerEntersPrice)').is(':checked')) {
+            $('#pnlMinimumCustomerEnteredPrice').show();
+            $('#pnlMaximumCustomerEnteredPrice').show();
+        } else {
+            $('#pnlMinimumCustomerEnteredPrice').hide();
+            $('#pnlMaximumCustomerEnteredPrice').hide();
+        }
+    }
+
+    function toggleBasepriceEnabled() {
+        if ($('#@Html.FieldIdFor(model => model.BasepriceEnabled)').is(':checked')) {
+            $('#pnlBasepriceAmount').show();
+            $('#pnlBasepriceUnit').show();
+            $('#pnlBasepriceBaseAmount').show();
+            $('#pnlBasepriceBaseUnit').show();
+        } else {
+            $('#pnlBasepriceAmount').hide();
+            $('#pnlBasepriceUnit').hide();
+            $('#pnlBasepriceBaseAmount').hide();
+            $('#pnlBasepriceBaseUnit').hide();
+        }
+    }
+
+    function toggleDownloadableProduct() {
+        if ($('#@Html.FieldIdFor(model => model.IsDownload)').is(':checked')) {
+            $('#pnlDownloadFile').show();
+            $('#pnlUnlimitedDownloads').show();
+            if ($('#@Html.FieldIdFor(model => model.UnlimitedDownloads)').is(':checked')) {
+                $('#pnlMaxNumberOfDownloads').hide();
+            } else {
+                $('#pnlMaxNumberOfDownloads').show();
+            }
+            $('#pnlDownloadExpirationDays').show();
+            $('#pnlDownloadActivationType').show();
+
+            $('#pnlHasUserAgreement').show();
+            if ($('#@Html.FieldIdFor(model => model.HasUserAgreement)').is(':checked')) {
+                $('#pnlUserAgreementText').show();
+            } else {
+                $('#pnlUserAgreementText').hide();
+            }
+
+            $('#pnlHasSampleDownload').show();
+
+            if ($('#@Html.FieldIdFor(model => model.HasSampleDownload)').is(':checked')) {
+                $('#pnlSampleDownloadFile').show();
+            } else {
+                $('#pnlSampleDownloadFile').hide();
+            }
+        } else {
+            $('#pnlDownloadFile').hide();
+            $('#pnlUnlimitedDownloads').hide();
+            $('#pnlMaxNumberOfDownloads').hide();
+            $('#pnlDownloadExpirationDays').hide();
+            $('#pnlDownloadActivationType').hide();
+            $('#pnlHasUserAgreement').hide();
+            $('#pnlUserAgreementText').hide();
+            $('#pnlHasSampleDownload').hide();
+            $('#pnlSampleDownloadFile').hide();
+        }
+    }
+
+    function toggleShipping() {
+        if ($('#@Html.FieldIdFor(model => model.IsShipEnabled)').is(':checked')) {
+            $('#pnlFreeShipping').show();
+            $('#pnlShipSeparately').show();
+            $('#pnlAdditionalShippingCharge').show();
+            $('#pnlWeight').show();
+            $('#pnlLength').show();
+            $('#pnlWidth').show();
+            $('#pnlHeight').show();
+            $('#pnlDeliveryDate').show();
+        } else {
+            $('#pnlFreeShipping').hide();
+            $('#pnlShipSeparately').hide();
+            $('#pnlAdditionalShippingCharge').hide();
+            $('#pnlWeight').hide();
+            $('#pnlLength').hide();
+            $('#pnlWidth').hide();
+            $('#pnlHeight').hide();
+            $('#pnlDeliveryDate').hide();
+        }
+    }
+
+    function toggleRecurring() {
+        if ($('#@Html.FieldIdFor(model => model.IsRecurring)').is(':checked')) {
+            $('#pnlCycleLength').show();
+            $('#pnlCyclePeriod').show();
+            $('#pnlTotalCycles').show();
+        } else {
+            $('#pnlCycleLength').hide();
+            $('#pnlCyclePeriod').hide();
+            $('#pnlTotalCycles').hide();
+        }
+    }
+
+    function toggleRental() {
+        if ($('#@Html.FieldIdFor(model => model.IsRental)').is(':checked')) {
+            $('#pnlRentalPriceLength').show();
+            $('#pnlRentalPricePeriod').show();
+        } else {
+            $('#pnlRentalPriceLength').hide();
+            $('#pnlRentalPricePeriod').hide();
+        }
+    }
+
+    function toggleTax() {
+        if ($('#@Html.FieldIdFor(model => model.IsTaxExempt)').is(':checked')) {
+            $('#pnlTaxCategory').hide();
+        } else {
+            $('#pnlTaxCategory').show();
+        }
+    }
+
+    function toggleManageStock() {
+        var selectedManageInventoryMethodId = $("#@Html.FieldIdFor(model => model.ManageInventoryMethodId)").val();
+        if (selectedManageInventoryMethodId == @(((int) ManageInventoryMethod.DontManageStock).ToString())) {
+            $('#pnlUseMultipleWarehouses').hide();
+        $('#pnlWarehouse').show();
+        $('#pnlMultipleWarehouses').hide();
+        $('#pnlStockQuantity').hide();
+        $('#pnlDisplayStockAvailability').hide();
+        $('#pnlDisplayStockQuantity').hide();
+        $('#pnlMinStockQuantity').hide();
+        $('#pnlLowStockActivity').hide();
+        $('#pnlNotifyForQuantityBelow').hide();
+        $('#pnlAllowBackInStockSubscriptions').hide();
+        $('#pnlBackorders').hide();
+        $('#pnlAllowAddingOnlyExistingAttributeCombinations').hide();
+    } else if (selectedManageInventoryMethodId == @(((int) ManageInventoryMethod.ManageStock).ToString())) {
+        $('#pnlUseMultipleWarehouses').show();
+
+        if ($('#@Html.FieldIdFor(model => model.UseMultipleWarehouses)').is(':checked')) {
+            $('#pnlWarehouse').hide();
+            $('#pnlMultipleWarehouses').show();
+            $('#pnlStockQuantity').hide();
+        } else {
+            $('#pnlWarehouse').show();
+            $('#pnlMultipleWarehouses').hide();
+            $('#pnlStockQuantity').show();
+        }
+
+        $('#pnlDisplayStockAvailability').show();
+        if ($('#@Html.FieldIdFor(model => model.DisplayStockAvailability)').is(':checked')) {
+            $('#pnlDisplayStockQuantity').show();
+        } else {
+            $('#pnlDisplayStockQuantity').hide();
+        }
+
+        $('#pnlMinStockQuantity').show();
+        $('#pnlLowStockActivity').show();
+        $('#pnlNotifyForQuantityBelow').show();
+        $('#pnlBackorders').show();
+        var selectedBackorderModeId = $("#@Html.FieldIdFor(model => model.BackorderModeId)").val();
+        if (selectedBackorderModeId == @(((int) BackorderMode.NoBackorders).ToString())) {
+            //no backorders
+            $('#pnlAllowBackInStockSubscriptions').show();
+    } else {
+    //backorders are enabled
+                $('#pnlAllowBackInStockSubscriptions').hide();
+    }
+    $('#pnlAllowAddingOnlyExistingAttributeCombinations').hide();
+    } else {
+        $('#pnlUseMultipleWarehouses').hide();
+        $('#pnlWarehouse').show();
+        $('#pnlMultipleWarehouses').hide();
+        $('#pnlStockQuantity').hide();
+        $('#pnlDisplayStockAvailability').show();
+        if ($('#@Html.FieldIdFor(model => model.DisplayStockAvailability)').is(':checked')) {
+            $('#pnlDisplayStockQuantity').show();
+        } else {
+            $('#pnlDisplayStockQuantity').hide();
+        }
+        $('#pnlMinStockQuantity').hide();
+        $('#pnlLowStockActivity').hide();
+        $('#pnlNotifyForQuantityBelow').hide();
+        $('#pnlAllowBackInStockSubscriptions').hide();
+        $('#pnlBackorders').hide();
+        $('#pnlAllowAddingOnlyExistingAttributeCombinations').show();
+    }
+    }
+
+    function toggleMarkAsNew() {
+        if ($('#@Html.FieldIdFor(model => model.MarkAsNew)').is(':checked')) {
+            $('#pnlMarkAsNewStartDateTimeUtc').show();
+            $('#pnlMarkAsNewEndDateTimeUtc').show();
+        } else {
+            $('#pnlMarkAsNewStartDateTimeUtc').hide();
+            $('#pnlMarkAsNewEndDateTimeUtc').hide();
+        }
+    }
+
+    @{
+        //TODO move to Model
+        var productTags = EngineContext.Current.Resolve<IProductTagService>().GetAllProductTags();
+        var productTagsSb = new StringBuilder();
+        productTagsSb.Append("var initialProductTags = [");
+        for (int i = 0; i < productTags.Count; i++)
+        {
+            var tag = productTags[i];
+            productTagsSb.Append("'");
+            productTagsSb.Append(HttpUtility.JavaScriptStringEncode(tag.Name));
+            productTagsSb.Append("'");
+            if (i != productTags.Count - 1)
+        {
+                productTagsSb.Append(",");
+        }
+    }
+    productTagsSb.Append("]");
+    }
+
+    //tags
+    $(document).ready(function() {
+        @Html.Raw(productTagsSb.ToString())
+        $("#@Html.FieldIdFor(model => model.ProductTags)").tagEditor({
+            autocomplete: {
+                delay: 0,
+                position: { collision: 'flip' },
+                source: initialProductTags
+            },
+            delimiter: ',',
+            placeholder: 'Enter tags ...'
+        });
+    });
+
+    //required product friendly names
+    $(document).ready(function() {
+        loadRequiredProductFriendlyNames();
+    });
+
+    $(document).ready(function() {
+        $('#@Html.FieldIdFor(model => model.RequiredProductIds)')
+            .data('timeout', null)
+            .keyup(function() {
+                clearTimeout($(this).data('timeout'));
+                //one second timeout
+                $(this).data('timeout', setTimeout(loadRequiredProductFriendlyNames, 1000));
+            });
+    });
+
+    function loadRequiredProductFriendlyNames() {
+        var inputValue = $('#@Html.FieldIdFor(model => model.RequiredProductIds)').val();
+        if (inputValue) {
+            //load friendly names
+            $('#required-products-check-progress').show();
+
+            var postData = {
+                productIds: inputValue
+            };
+            addAntiForgeryToken(postData);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("LoadProuctFriendlyNames", "Product")',
+                data: postData,
+                dataType: 'json',
+                success: function(data) {
+                    $('#required-products-check-progress').hide();
+                    $('#required-product-names').text(data.Text);
+                },
+                failure: function() {
+                    $('#required-products-check-progress').hide();
+                    $('#required-product-names').text('');
+                }
+            });
+        } else {
+            $('#required-product-names').text('');
+        }
+    }
 </script>
 
 <div class="raw clearfix">
@@ -26,7 +405,7 @@
                 </div>
                 <div class="panel-body">
                     @if (Model.Id > 0)
-                    {
+                {
                         <div class="form-group @(Model.ProductEditorSettingsModel.Id ? null : "advanced-setting")">
                             <div class="col-md-3">
                                 @Html.NopLabelFor(model => model.Id)
@@ -47,7 +426,7 @@
                         </div>
                     </div>
                     @if (Model.Id > 0 && Model.AssociatedToProductId > 0)
-                    {
+            {
                         <div class="form-group @(Model.ProductEditorSettingsModel.ProductType ? null : "advanced-setting")">
                             <div class="col-md-3">
                                 @Html.NopLabelFor(model => Model.AssociatedToProductId)
@@ -439,7 +818,7 @@
                         <div class="col-md-9">
                             @Html.NopEditorFor(model => model.RecurringTotalCycles)
                             @Html.ValidationMessageFor(model => model.RecurringTotalCycles)
-                        </div>    
+                        </div>
                     </div>
                 </div>
             </div>
@@ -886,7 +1265,7 @@
                                     Id: 0,
                                     Name: "@T("Admin.Catalog.Products.TierPrices.Fields.CustomerRole.All")"
                                 }
-                                @{ 
+                                @{
                                     var customerService = EngineContext.Current.Resolve<ICustomerService>();
                                     var allCustomerRoles = customerService.GetAllCustomerRoles(true);
                             }
@@ -921,11 +1300,11 @@
                                     });
                             }
                         </script>
-                    }
-                    else
-                    {
-                        @T("Admin.Catalog.Products.TierPrices.SaveBeforeEdit")
-                    }
+    }
+    else
+    {
+        @T("Admin.Catalog.Products.TierPrices.SaveBeforeEdit")
+    }
                 </div>
             </div>
         </div>
@@ -970,7 +1349,7 @@
                                     //refresh grid
                                     var grid = $("#associatedproducts-grid").data('kendoGrid');
                                     grid.dataSource.read();
-                                    
+
                                     //return false to don't reload a page
                                     return false;
                                 });
@@ -1031,85 +1410,85 @@
                 <div class="form-group @(Model.ProductEditorSettingsModel.UseMultipleWarehouses ? null : "advanced-setting")" id="pnlMultipleWarehouses">
                     <div class="col-md-12" style="overflow-x: auto;">
                         @if (Model.ProductWarehouseInventoryModels.Count > 0)
-                    {
-                        <table class="table table-hover table-bordered text-center">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.Warehouse")
-                                    </th>
-                                    <th>
-                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.WarehouseUsed")
-                                    </th>
-                                    <th>
-                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.StockQuantity")
-                                    </th>
-                                    <th>
-                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.ReservedQuantity")
-                                    </th>
-                                    <th>
-                                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.PlannedQuantity")
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.ProductWarehouseInventoryModels)
-                                {
+                        {
+                            <table class="table table-hover table-bordered text-center">
+                                <thead>
                                     <tr>
-                                        <td style="width: 36%;">
-                                            <div style="padding-left: 10px; padding-right: 10px;">
-                                                @item.WarehouseName
-                                            </div>
-                                        </td>
-                                        <td style="width: 10%;">
-                                            <input type="checkbox" id="warehouse_used_@(item.WarehouseId)" name="warehouse_used_@(item.WarehouseId)" value="@item.WarehouseId" checked="@item.WarehouseUsed" />
-                                            <script type="text/javascript">
-                                                $(document).ready(function() {
-                                                    $("#warehouse_used_@(item.WarehouseId)").change(toggleWarehouseUsed_@(item.WarehouseId));
-                                                    toggleWarehouseUsed_@(item.WarehouseId)();
-                                                });
-
-                                                function toggleWarehouseUsed_@(item.WarehouseId)() {
-                                                    if ($('#warehouse_used_@(item.WarehouseId)').is(':checked')) {
-                                                        $('#warehouse_qty_@(item.WarehouseId)').prop('disabled', false);
-                                                        $('#warehouse_reserved_@(item.WarehouseId)').prop('disabled', false);
-                                                    } else {
-                                                        $('#warehouse_qty_@(item.WarehouseId)').prop('disabled', true);
-                                                        $('#warehouse_reserved_@(item.WarehouseId)').prop('disabled', true);
-                                                    }
-                                                }
-                                            </script>
-                                        </td>
-                                        <td style="width: 18%;">
-                                            <input id="warehouse_qty_@(item.WarehouseId)" name="warehouse_qty_@(item.WarehouseId)" type="text" value="@item.StockQuantity" class="form-control" />
-                                        </td>
-                                        <td style="width: 18%;">
-                                            <input id="warehouse_reserved_@(item.WarehouseId)" name="warehouse_reserved_@(item.WarehouseId)" type="text" value="@item.ReservedQuantity" class="form-control" />
-                                        </td>
-                                        <td style="width: 18%;">
-                                            <input id="warehouse_reserved_@(item.WarehouseId)" name="warehouse_reserved_@(item.WarehouseId)" type="text" value="@item.ReservedQuantity" class="form-control" />
-                                        </td>
-                                        <td style="width: 18%;">
-                                            @item.PlannedQuantity
-                                        </td>
+                                        <th>
+                                            @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.Warehouse")
+                                        </th>
+                                        <th>
+                                            @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.WarehouseUsed")
+                                        </th>
+                                        <th>
+                                            @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.StockQuantity")
+                                        </th>
+                                        <th>
+                                            @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.ReservedQuantity")
+                                        </th>
+                                        <th>
+                                            @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.PlannedQuantity")
+                                        </th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                        <p>
-                            <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description1")</em>
-                        </p>
-                        <p>
-                            <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description2")</em>
-                        </p>
-                        <p>
-                            <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description3")</em>
-                        </p>
-                    }
-                    else
-                    {
-                        @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.Warehouse.NotDefined")
-                    }
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ProductWarehouseInventoryModels)
+                                    {
+                                        <tr>
+                                            <td style="width: 36%;">
+                                                <div style="padding-left: 10px; padding-right: 10px;">
+                                                    @item.WarehouseName
+                                                </div>
+                                            </td>
+                                            <td style="width: 10%;">
+                                                <input type="checkbox" id="warehouse_used_@(item.WarehouseId)" name="warehouse_used_@(item.WarehouseId)" value="@item.WarehouseId" checked="@item.WarehouseUsed" />
+                                                <script type="text/javascript">
+                                                    $(document).ready(function() {
+                                                        $("#warehouse_used_@(item.WarehouseId)").change(toggleWarehouseUsed_@(item.WarehouseId));
+                                                        toggleWarehouseUsed_@(item.WarehouseId)();
+                                                    });
+
+                                                    function toggleWarehouseUsed_@(item.WarehouseId)() {
+                                                        if ($('#warehouse_used_@(item.WarehouseId)').is(':checked')) {
+                                                            $('#warehouse_qty_@(item.WarehouseId)').prop('disabled', false);
+                                                            $('#warehouse_reserved_@(item.WarehouseId)').prop('disabled', false);
+                                                        } else {
+                                                            $('#warehouse_qty_@(item.WarehouseId)').prop('disabled', true);
+                                                            $('#warehouse_reserved_@(item.WarehouseId)').prop('disabled', true);
+                                                        }
+                                                    }
+                                                </script>
+                                            </td>
+                                            <td style="width: 18%;">
+                                                <input id="warehouse_qty_@(item.WarehouseId)" name="warehouse_qty_@(item.WarehouseId)" type="text" value="@item.StockQuantity" class="form-control" />
+                                            </td>
+                                            <td style="width: 18%;">
+                                                <input id="warehouse_reserved_@(item.WarehouseId)" name="warehouse_reserved_@(item.WarehouseId)" type="text" value="@item.ReservedQuantity" class="form-control" />
+                                            </td>
+                                            <td style="width: 18%;">
+                                                <input id="warehouse_reserved_@(item.WarehouseId)" name="warehouse_reserved_@(item.WarehouseId)" type="text" value="@item.ReservedQuantity" class="form-control" />
+                                            </td>
+                                            <td style="width: 18%;">
+                                                @item.PlannedQuantity
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <p>
+                                <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description1")</em>
+                            </p>
+                            <p>
+                                <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description2")</em>
+                            </p>
+                            <p>
+                                <em>@T("Admin.Catalog.Products.ProductWarehouseInventory.Description3")</em>
+                            </p>
+                        }
+                        else
+                        {
+                            @T("Admin.Catalog.Products.ProductWarehouseInventory.Fields.Warehouse.NotDefined")
+                        }
                     </div>
                 </div>
                 <div class="form-group @(Model.ProductEditorSettingsModel.DisplayStockAvailability ? null : "advanced-setting")" id="pnlDisplayStockAvailability">
@@ -1225,6 +1604,523 @@
                 <div class="panel-heading">
                     @T("Admin.Catalog.Products.Shipping")
                 </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.IsShipEnabled)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.IsShipEnabled)
+                            @Html.ValidationMessageFor(model => model.IsShipEnabled)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.Weight ? null : "advanced-setting")" id="pnlWeight">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.Weight)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.Weight) [@Model.BaseWeightIn]
+                            @Html.ValidationMessageFor(model => model.Weight)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.Dimensions ? null : "advanced-setting")" id="pnlLength">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.Length)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.Length) [@Model.BaseDimensionIn]
+                            @Html.ValidationMessageFor(model => model.Length)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.Dimensions ? null : "advanced-setting")" id="pnlWidth">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.Width)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.Width) [@Model.BaseDimensionIn]
+                            @Html.ValidationMessageFor(model => model.Width)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.Dimensions ? null : "advanced-setting")" id="pnlHeight">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.Height)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.Height) [@Model.BaseDimensionIn]
+                            @Html.ValidationMessageFor(model => model.Height)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.FreeShipping ? null : "advanced-setting")" id="pnlFreeShipping">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.IsFreeShipping)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.IsFreeShipping)
+                            @Html.ValidationMessageFor(model => model.IsFreeShipping)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.ShipSeparately ? null : "advanced-setting")" id="pnlShipSeparately">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.ShipSeparately)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.ShipSeparately)
+                            @Html.ValidationMessageFor(model => model.ShipSeparately)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.AdditionalShippingCharge ? null : "advanced-setting")" id="pnlAdditionalShippingCharge">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.AdditionalShippingCharge)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.AdditionalShippingCharge) [@Model.PrimaryStoreCurrencyCode]
+                            @Html.ValidationMessageFor(model => model.AdditionalShippingCharge)
+                        </div>
+                    </div>
+                    <div class="form-group @(Model.ProductEditorSettingsModel.DeliveryDate ? null : "advanced-setting")" id="pnlDeliveryDate">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.DeliveryDateId)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopDropDownListFor(model => model.DeliveryDateId, Model.AvailableDeliveryDates)
+                            @Html.ValidationMessageFor(model => model.DeliveryDateId)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.Mappings")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.SelectedCategoryIds)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.EditorFor(model => model.SelectedCategoryIds, new { SelectList = Model.AvailableCategories })
+                            <script>
+                                $(document).ready(function() {
+                                    var categoryIdsInput = $('#@Html.FieldIdFor(model => model.SelectedCategoryIds)').data("kendoMultiSelect");
+                                    categoryIdsInput.setOptions({
+                                        autoClose: false
+                                    });
+
+                                    @if (Model.AvailableCategories.Count == 0)
+                            {
+                                <text>
+                                    categoryIdsInput.setOptions({
+                                        enable: false,
+                                        placeholder: '@T("Admin.Catalog.Products.Fields.Categories.NoCategoriesAvailable")'
+                                    });
+                                    categoryIdsInput._placeholder();
+                                    categoryIdsInput._enable();
+                                    </text>
+                            }
+                                });
+                            </script>
+                        </div>
+                        <div class="form-group @(Model.ProductEditorSettingsModel.Manufacturers ? null : "advanced-setting")">
+                            <div class="@leftColumnClass">
+                                @Html.NopLabelFor(model => model.SelectedManufacturerIds)
+                            </div>
+                            <div class="@rightColumnClass">
+                                @Html.EditorFor(model => model.SelectedManufacturerIds, new { SelectList = Model.AvailableManufacturers })
+                                <script>
+                                    $(document).ready(function() {
+                                        var manufacturersIdsInput = $('#@Html.FieldIdFor(model => model.SelectedManufacturerIds)').data("kendoMultiSelect");
+                                        manufacturersIdsInput.setOptions({
+                                            autoClose: false
+                                        });
+
+                                        @if (Model.AvailableManufacturers.Count == 0)
+                            {
+                                <text>
+                                        manufacturersIdsInput.setOptions({
+                                            enable: false,
+                                            placeholder: '@T("Admin.Catalog.Products.Fields.Manufacturers.NoManufacturersAvailable")'
+                                        });
+                                        manufacturersIdsInput._placeholder();
+                                        manufacturersIdsInput._enable();
+                                        </text>
+                            }
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group @(Model.ProductEditorSettingsModel.Stores ? null : "advanced-setting")">
+                            <div class="@leftColumnClass">
+                                @Html.NopLabelFor(model => model.SelectedStoreIds)
+                            </div>
+                            <div class="@rightColumnClass">
+                                @Html.EditorFor(model => model.SelectedStoreIds, new { SelectList = Model.AvailableStores })
+                                <script>
+                                    $(document).ready(function() {
+                                        var storesIdsInput = $('#@Html.FieldIdFor(model => model.SelectedStoreIds)').data("kendoMultiSelect");
+                                        storesIdsInput.setOptions({
+                                            autoClose: false
+                                        });
+
+                                        @if (Model.AvailableStores.Count == 0)
+                            {
+                                <text>
+                                        storesIdsInput.setOptions({
+                                            enable: false,
+                                            placeholder: 'No stores available'
+                                        });
+                                        storesIdsInput._placeholder();
+                                        storesIdsInput._enable();
+                                        </text>
+                            }
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group @(Model.ProductEditorSettingsModel.Vendor ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+                            <div class="@leftColumnClass">
+                                @Html.NopLabelFor(model => model.VendorId)
+                            </div>
+                            <div class="@rightColumnClass">
+                                @Html.NopDropDownListFor(model => model.VendorId, Model.AvailableVendors)
+                                @Html.ValidationMessageFor(model => model.VendorId)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.ACL ? null : "advanced-setting")">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.Security")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.SelectedCustomerRoleIds)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.EditorFor(model => model.SelectedCustomerRoleIds, new { SelectList = Model.AvailableCustomerRoles })
+                            <script>
+                                $(document).ready(function() {
+                                    var rolesIdsInput = $('#@Html.FieldIdFor(model => model.SelectedCustomerRoleIds)').data("kendoMultiSelect");
+                                    rolesIdsInput.setOptions({
+                                        autoClose: false
+                                    });
+
+                                    @if (Model.AvailableCustomerRoles.Count == 0)
+                            {
+                                <text>
+                                    rolesIdsInput.setOptions({
+                                        enable: false,
+                                        placeholder: 'No customer roles available'
+                                    });
+                                    rolesIdsInput._placeholder();
+                                    rolesIdsInput._enable();
+                                    </text>
+                            }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.RequireOtherProductsAddedToTheCart ? null : "advanced-setting")" id="group-required-other-products">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.RequireOtherProducts")
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.RequireOtherProducts)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.RequireOtherProducts)
+                            @Html.ValidationMessageFor(model => model.RequireOtherProducts)
+                        </div>
+                    </div>
+                    <div id="pnlRequiredProductIds">
+                        <div class="form-group">
+                            <div class="@leftColumnClass">
+                                @Html.NopLabelFor(model => model.RequiredProductIds)
+                            </div>
+                            <div class="@rightColumnClass">
+                                <div class="input-group">
+                                    @Html.NopEditorFor(model => model.RequiredProductIds)
+                                    <span class="input-group-btn">
+                                        <input type="submit" id="btnRefreshRequiredProducts" style="display: none" />
+                                        <script type="text/javascript">
+                                            $(document).ready(function() {
+                                                $('#btnRefreshRequiredProducts').click(function() {
+                                                    //refresh product list
+                                                    loadRequiredProductFriendlyNames();
+
+                                                    //return false to don't reload a page
+                                                    return false;
+                                                });
+                                            });
+                                        </script>
+                                        <button type="submit" id="btnAddNewRequiredProduct" onclick="javascript:OpenWindow('@(Url.Action("RequiredProductAddPopup", "Product", new {btnId = "btnRefreshRequiredProducts", productIdsInput = "RequiredProductIds"}))', 800, 850, true); return false;" class="btn btn-info">
+                                            @T("Admin.Catalog.Products.Fields.RequiredProductIds.AddNew")
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="@leftColumnClass">
+                                <span id="required-products-check-progress" style="display: none; float: right" class="please-wait">@T("Common.Wait...")</span>
+                            </div>
+                            <div class="@rightColumnClass">
+                                <span id="required-product-names"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="pnlAutomaticallyAddRequiredProducts">
+                        <div class="@leftColumnClass">
+                            @Html.NopLabelFor(model => model.AutomaticallyAddRequiredProducts)
+                        </div>
+                        <div class="@rightColumnClass">
+                            @Html.NopEditorFor(model => model.AutomaticallyAddRequiredProducts)
+                            @Html.ValidationMessageFor(model => model.AutomaticallyAddRequiredProducts)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.RelatedProducts ? null : "advanced-setting")">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.RelatedProducts")
+                </div>
+                @if (Model.Id > 0)
+                {
+                    <div class="panel-body">
+                        <p>
+                            @T("Admin.Catalog.Products.RelatedProducts.Hint")
+                        </p>
+                        <div id="relatedproducts-grid"></div>
+                        <script>
+                            $(document).ready(function() {
+                                $("#relatedproducts-grid").kendoGrid({
+                                    dataSource: {
+                                        type: "json",
+                                        transport: {
+                                            read: {
+                                                url: "@Html.Raw(Url.Action("RelatedProductList", "Product", new {productId = Model.Id}))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            },
+                                            update: {
+                                                url: "@Html.Raw(Url.Action("RelatedProductUpdate", "Product"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            },
+                                            destroy: {
+                                                url: "@Html.Raw(Url.Action("RelatedProductDelete", "Product"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            }
+                                        },
+                                        schema: {
+                                            data: "Data",
+                                            total: "Total",
+                                            errors: "Errors",
+                                            model: {
+                                                id: "Id",
+                                                fields: {
+                                                    Product2Name: { editable: false, type: "string" },
+                                                    DisplayOrder: { editable: true, type: "number" },
+                                                    ProductId2: { editable: false, type: "number" }
+                                                }
+                                            }
+                                        },
+                                        requestEnd: function(e) {
+                                            if (e.type == "update") {
+                                                this.read();
+                                            }
+                                        },
+                                        error: function(e) {
+                                            display_kendoui_grid_error(e);
+                                            // Cancel the changes
+                                            this.cancelChanges();
+                                        },
+                                        serverPaging: true,
+                                        serverFiltering: true,
+                                        serverSorting: true
+                                    },
+                                    pageable: {
+                                        refresh: true,
+                                        numeric: false,
+                                        previousNext: false,
+                                        info: false
+                                    },
+                                    editable: {
+                                        confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                                        mode: "inline"
+                                    },
+                                    scrollable: false,
+                                    columns: [
+                                        {
+                                            field: "Product2Name",
+                                            title: "@T("Admin.Catalog.Products.RelatedProducts.Fields.Product")",
+                                            width: 250,
+                                            template: '<a href="@Url.Content("~/Admin/Product/Edit/")#=ProductId2#">#=Product2Name#</a>'
+                                        }, {
+                                            field: "DisplayOrder",
+                                            title: "@T("Admin.Catalog.Products.RelatedProducts.Fields.DisplayOrder")",
+                                            //integer format
+                                            format: "{0:0}",
+                                            width: 120
+                                        }, {
+                                            command: [
+                                                {
+                                                    name: "edit",
+                                                    text: {
+                                                        edit: "@T("Admin.Common.Edit")",
+                                                        update: "@T("Admin.Common.Update")",
+                                                        cancel: "@T("Admin.Common.Cancel")"
+                                                    }
+                                                }, {
+                                                    name: "destroy",
+                                                    text: "@T("Admin.Common.Delete")"
+                                                }
+                                            ],
+                                            width: 220
+                                        }
+                                    ]
+                                });
+                            });
+                        </script>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="submit" id="btnAddNewRelatedProduct" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("RelatedProductAddPopup", "Product", new {productId = Model.Id, btnId = "btnRefreshRelatedProducts", formId = "product-form"}))', 800, 800, true); return false;">
+                            @T("Admin.Catalog.Products.RelatedProducts.AddNew")
+                        </button>
+                        <input type="submit" id="btnRefreshRelatedProducts" style="display: none" />
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                $('#btnRefreshRelatedProducts').click(function() {
+                                    //refresh grid
+                                    var grid = $("#relatedproducts-grid").data('kendoGrid');
+                                    grid.dataSource.read();
+
+                                    //return false to don't reload a page
+                                    return false;
+                                });
+                            });
+                        </script>
+                    </div>
+                }
+                else
+                {
+                    <div class="panel-body">
+                        @T("Admin.Catalog.Products.RelatedProducts.SaveBeforeEdit")
+                    </div>
+                }
+            </div>
+            <div class="panel panel-default @(Model.ProductEditorSettingsModel.RelatedProducts ? null : "advanced-setting")">
+                <div class="panel-heading">
+                    @T("Admin.Catalog.Products.CrossSells")
+                </div>
+                @if (Model.Id > 0)
+                {
+                    <div class="panel-body">
+                        <p>
+                            @T("Admin.Catalog.Products.CrossSells.Hint")
+                        </p>
+                        <div id="crosssellproducts-grid"></div>
+
+                        <script>
+                            $(document).ready(function() {
+                                $('#crosssellproducts').kendoGrid({
+                                    dataSource: {
+                                        type: "json",
+                                        transport: {
+                                            read: {
+                                                url: "@Html.Raw(Url.Action("CrossSellProductList", "Product", new {productId = Model.Id}))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            },
+                                            destroy: {
+                                                url: "@Html.Raw(Url.Action("CrossSellProductDelete", "Product"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            }
+                                        },
+                                        schema: {
+                                            data: "Data",
+                                            total: "Total",
+                                            errors: "Errors",
+                                            model: {
+                                                id: "Id",
+                                                fields: {
+                                                    Product2Name: { editable: false, type: "string" },
+                                                    ProductId2: { editable: false, type: "number" }
+                                                }
+                                            }
+                                        },
+                                        error: function(e) {
+                                            display_kendoui_grid_error(e);
+                                            // Cancel the changes
+                                            this.cancelChanges();
+                                        },
+                                        serverPaging: true,
+                                        serverFiltering: true,
+                                        serverSorting: true
+                                    },
+                                    pageable: {
+                                        refresh: true,
+                                        numeric: false,
+                                        previousNext: false,
+                                        info: false
+                                    },
+                                    editable: {
+                                        confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                                        mode: "inline"
+                                    },
+                                    scrollable: false,
+                                    columns: [
+                                        {
+                                            field: "Product2Name",
+                                            title: "@T("Admin.Catalog.Products.CrossSells.Fields.Product")",
+                                            template: '<a href="@Url.Content("~/Admin/Product/Edit/")#=ProductId2#">#=Product2Name#"</a>'
+                                        }, {
+                                            command: { name: "destroy", text: "@T("Admin.Common.Delete")" },
+                                            title: "@T("Admin.Common.Delete")",
+                                            width: 200
+                                        }
+                                    ]
+                                });
+                            });
+                        </script>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="submit" id="btnAddNewCrossSellProduct" onclick="javascript:OpenWindow('@(Url.Action("CrossSellProductAddPopup", "Product", new {productId = Model.Id, btnId = "btnRefreshCrossSellProducts", formId = "product-form"}))', 800, 800, true); return false;" class="btn btn-primary">
+                            @T("Admin.Catalog.Products.CrossSells.AddNew")
+                        </button>
+                        <input type="submit" id="btnRefreshCrossSellProducts" style="display: none" />
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                $('#btnRefreshCrossSellProducts').click(function() {
+                                    //refresh grid
+                                    var grid = $("#crosssellproducts-grid").data('kendoGrid');
+                                    grid.dataSource.read();
+
+                                    //return false to don't reload a page
+                                    return false;
+                                });
+                            });
+                        </script>
+                    </div>
+                }
+                else
+                {
+                    <div class="panel-body">
+                        @T("Admin.Catalog.Products.CrossSells.SaveBeforeEdit")
+                    </div>
+                }
             </div>
         </div>
     </div>

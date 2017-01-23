@@ -1,4 +1,18 @@
-﻿Display templates and editor templates
+﻿得到生成时的id (EditorFor第二个参数为viewdata)
+@Html.EditorFor(model => model.SelectedCategoryIds, new { SelectList = Model.AvailableCategories })
+得到上面生成html的id
+@Html.FieldIdFor(model => model.SelectedCategoryIds)  ======> "SelectedCategoryIds"
+如果SelectedCategoryIds有属性UIHint， 在模板中：
+@Html.ListBoxFor(model => model, (IEnumerable<SelectListItem>)ViewData["SelectList"])
+
+@ViewData.TemplateInfo.GetFullHtmlFieldId(string.Empty) 可以得到id  ======> "SelectedCategoryIds"
+
+如果在模板中,下面代码生成　id为"SelectedCategoryIds_tetstest"
+@Html.ListBox("tetstest", (IEnumerable<SelectListItem>)ViewData["SelectList"])
+@ViewData.TemplateInfo.GetFullHtmlFieldId("tetstest")   ====> "SelectedCategoryIds_tetstest"
+
+
+Display templates and editor templates
 目的是为了可以重复使用, 有点类似与user control
 http://www.telerik.com/blogs/diving-into-asp.net-mvc-templates (比较好)
 http://www.growingwiththeweb.com/2012/12/aspnet-mvc-display-and-editor-templates.html
