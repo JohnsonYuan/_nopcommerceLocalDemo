@@ -36,6 +36,9 @@
                         <div role="tabpanel" class="tab-pane active" id="home">...</div>
                         <div role="tabpanel" class="tab-pane" id="Profile">...</div>
                     </div>
+
+                    RenderBootstrapTabHeader ： 生成<li><a href="#home" data-toggle="tab"></a></li>
+                    RenderBootstrapTabContent   生成<div class="tab-pane" id="home"></div>
                 *@
 
                 @Html.RenderBootstrapTabHeader("tab-info", @T("Admin.Catalog.Products.Info"), true)

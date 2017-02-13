@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using Nop.Admin.Extensions;
 using Nop.Admin.Helpers;
 using Nop.Admin.Infrastructure.Cache;
 using Nop.Admin.Models.Catalog;
+using Nop.Admin.Models.Orders;
 using Nop.Core;
-using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Discounts;
-using Nop.Core.Domain.Vendors;
-using Nop.Services;
+using Nop.Core.Domain.Media;
+using Nop.Core.Domain.Orders;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
-using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Discounts;
@@ -32,13 +33,17 @@ using Nop.Services.Shipping;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
-using Nop.Web.Framework.Kendoui;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
+using Nop.Core.Caching;
+using Nop.Core.Domain.Vendors;
+using Nop.Services.Configuration;
 
 namespace Nop.Admin.Controllers
 {
-    public class ProductController : BaseAdminController
+    public partial class ProductController : BaseAdminController
     {
         #region Fields
 
@@ -616,7 +621,7 @@ namespace Nop.Admin.Controllers
             }
 
             model.PrimaryStoreCurrencyCode = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode;
-            model.BaseWeightIn = _measureService.GetMeasureDimensionById(_measureSettings.BaseWeightId).Name;
+            model.BaseWeightIn = _measureService.GetMeasureWeightById(_measureSettings.BaseWeightId).Name;
             model.BaseDimensionIn = _measureService.GetMeasureDimensionById(_measureSettings.BaseDimensionId).Name;
             if (product != null)
             {
@@ -716,7 +721,7 @@ namespace Nop.Admin.Controllers
             var deliveryDates = _shippingService.GetAllDeliveryDates();
             foreach (var deliveryDate in deliveryDates)
             {
-                model.AvailableBasepriceBaseUnits.Add(new SelectListItem
+                model.AvailableDeliveryDates.Add(new SelectListItem
                 {
                     Text = deliveryDate.Name,
                     Value = deliveryDate.Id.ToString()
@@ -725,7 +730,7 @@ namespace Nop.Admin.Controllers
 
             //warehouses
             var warehouses = _shippingService.GetAllWarehouses();
-            model.AvailableBasepriceBaseUnits.Add(new SelectListItem
+            model.AvailableWarehouses.Add(new SelectListItem
             {
                 Text = _localizationService.GetResource("Admin.Catalog.Products.Fields.Warehouse.None"),
                 Value = "0"
@@ -784,7 +789,7 @@ namespace Nop.Admin.Controllers
             //baseprice units
             var measureWeights = _measureService.GetAllMeasureWeights();
             foreach (var mw in measureWeights)
-                model.AvailableBasepriceBaseUnits.Add(new SelectListItem { Text = mw.Name, Value = mw.Id.ToString() });
+                model.AvailableBasepriceUnits.Add(new SelectListItem { Text = mw.Name, Value = mw.Id.ToString(), Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceUnitId });
             foreach (var mw in measureWeights)
                 model.AvailableBasepriceBaseUnits.Add(new SelectListItem { Text = mw.Name, Value = mw.Id.ToString(), Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceBaseUnitId });
 
@@ -1368,7 +1373,7 @@ namespace Nop.Admin.Controllers
 
             if (selectedIds != null)
             {
-                _productService.DeleteProducts(_productService.GetProductsByIds(selectedIds.ToArray()));
+                _productService.DeleteProducts(_productService.GetProductsByIds(selectedIds.ToArray()).Where(p => _workContext.CurrentVendor == null || p.VendorId == _workContext.CurrentVendor.Id).ToList());
             }
 
             return Json(new { Result = true });
@@ -1433,7 +1438,7 @@ namespace Nop.Admin.Controllers
                 for (int i = 0; i <= products.Count - 1; i++)
                 {
                     result += products[i].Name;
-                    if (i != products.Count)
+                    if (i != products.Count - 1)
                         result += ", ";
                 }
             }

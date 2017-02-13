@@ -271,7 +271,6 @@
     <Compile Include="ExportImport\IExportManager.cs" />
     <Compile Include="ExportImport\IImportManager.cs" />
     <Compile Include="ExportImport\ImportManager.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Forums\ForumExtensions.cs" />
     <Compile Include="Forums\ForumService.cs" />
     <Compile Include="Forums\IForumService.cs" />
