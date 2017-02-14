@@ -54,6 +54,14 @@ http://www.telerik.com/download/kendo-ui-core, 解压出来有 js, styles, src�
 ~/Administration/Content/kendeo/2014.1.318  => styles文件夹内容（删除了.map文件）
 ~/Administration/Scripts/kendeo/2014.1.318  => js文件夹内容
 
+kendoui template:
+http://docs.telerik.com/kendo-ui/framework/templates/overview
+three ways to use the hash syntax:
+    Render values as HTML: #= #.
+    Use HTML encoding to display values: #: #.
+    Execute arbitrary JavaScript code: # if (true) { # ... non-script content here ... # } #.
+
+
 kendogrid:
 http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema
 ~\Administration\Views\Order\BestsellersBriefReportByQuantity.cshtml

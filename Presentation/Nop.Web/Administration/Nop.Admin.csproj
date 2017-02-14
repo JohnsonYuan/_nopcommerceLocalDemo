@@ -204,6 +204,7 @@
     <Compile Include="Controllers\BaseAdminController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
@@ -486,6 +487,15 @@
     <Content Include="Views\Product\Edit.cshtml" />
     <Content Include="Views\Product\_CreateOrUpdate.cshtml" />
     <Content Include="Views\Product\_CreateOrUpdate.Info.cshtml" />
+    <Content Include="Views\Product\CrossSellProductAddPopup.cshtml" />
+    <Content Include="Views\Product\RelatedProductAddPopup.cshtml" />
+    <Content Include="Views\Product\RequiredProductAddPopup.cshtml" />
+    <Content Include="Views\Product\AssociatedProductAddPopup.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.SEO.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.Pictures.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.ProductAttributes.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.SpecificationAttributes.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.PurchasedWithOrders.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +521,9 @@
     <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTimeNullable.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\MultiSelect.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Download.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Decimal.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Picture.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

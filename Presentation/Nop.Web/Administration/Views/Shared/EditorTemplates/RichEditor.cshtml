@@ -32,6 +32,14 @@
 
 <script>
     $(document).ready(function () {
+        @*我的注释
+            配置步骤： http://www.roxyfileman.com/install
+            js代码: http://www.roxyfileman.com/TinyMCE-file-browser
+
+            配置文件在：conf.json
+            handler在 \RoxyFileman-1.4.3-net\fileman\asp_net\main.ashx
+            nopcommerce把handler放到了Nop.Admin.Controllers\RoxyFilemanController
+            *@
         @* wooncherk contribution *@
         function RoxyFileBrowser@(random)(field_name, url, type, win) {
             var roxyFileman = '@Url.Content("~/Administration/Content/Roxy_Fileman/index.html")';
@@ -73,14 +81,14 @@
             {
                 <text>
             valid_elements: "*[*]",
-                </text>
+            </text>
             }
             @if (allowRoxyFileman)
             {
                 <text>
             //picture manager
             file_browser_callback: RoxyFileBrowser@(random),
-                </text>
+            </text>
             }
             //we should set "convert_urls" set to "false" (because of "relative_urls" requirement)
             //otherwise, it'll break existing links when editing message template

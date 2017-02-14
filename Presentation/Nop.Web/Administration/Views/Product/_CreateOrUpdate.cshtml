@@ -36,6 +36,9 @@
                         <div role="tabpanel" class="tab-pane active" id="home">...</div>
                         <div role="tabpanel" class="tab-pane" id="Profile">...</div>
                     </div>
+
+                    RenderBootstrapTabHeader ： 生成<li><a href="#home" data-toggle="tab"></a></li>
+                    RenderBootstrapTabContent   生成<div class="tab-pane" id="home"></div>
                 *@
 
                 @Html.RenderBootstrapTabHeader("tab-info", @T("Admin.Catalog.Products.Info"), true)
@@ -50,6 +53,14 @@
             </ul>
             <div class="tab-content">
                 @Html.RenderBootstrapTabContent("tab-info", @TabInfo(), true)
+                @Html.RenderBootstrapTabContent("tab-seo", @TabSeo())
+                @Html.RenderBootstrapTabContent("tab-pictures", @TabPictures())
+                @Html.RenderBootstrapTabContent("tab-product-attributes", @TabProductAttributes())            
+                @Html.RenderBootstrapTabContent("tab-specification-attributes", @TabSpecificationAttributes())
+                @if (Model.Id > 0)
+                {
+                    @Html.RenderBootstrapTabContent("tab-purchased-with-orders", @TabPurchasedWithOrders())
+                }
             </div>
         </div>
     </div>
@@ -71,4 +82,29 @@
 @helper TabInfo()
 {
     @Html.Partial("_CreateOrUpdate.Info", Model)
+}
+
+@helper TabSeo()
+{
+    @Html.Partial("_CreateOrUpdate.SEO", Model)
+}
+
+@helper TabPictures()
+{
+    @Html.Partial("_CreateOrUpdate.Pictures", Model)
+}
+
+@helper TabProductAttributes()
+{
+    @Html.Partial("_CreateOrUpdate.ProductAttributes", Model)
+}
+
+@helper TabSpecificationAttributes()
+{
+    @Html.Partial("_CreateOrUpdate.SpecificationAttributes", Model)
+}
+
+@helper TabPurchasedWithOrders()
+{
+    @Html.Partial("_CreateOrUpdate.PurchasedWithOrders", Model)
 }

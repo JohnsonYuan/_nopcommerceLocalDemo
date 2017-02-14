@@ -24,6 +24,7 @@ http://www.cnblogs.com/stoneniqiu/p/5631694.html
 
 
 Display templates and editor templates
+可以有DisplayTemplates, EditorTemplates
 目的是为了可以重复使用, 有点类似与user control
 http://www.telerik.com/blogs/diving-into-asp.net-mvc-templates (比较好)
 http://www.growingwiththeweb.com/2012/12/aspnet-mvc-display-and-editor-templates.html
@@ -37,39 +38,44 @@ http://bradwilson.typepad.com/blog/2009/10/aspnet-mvc-2-templates-part-3-default
 
 @Html.DisplayFor(e => e.Username)
 可以自定义生成时调用的模板, 相当于partial view
-1. 根据类型, 不指定template， 默认会按类型找, 缺点是所有类型都会使用这个template
-1)  Model
-public class TestModel
-{
-    public decimal Money { get; set; }
-}
 
-2) Model为当前类型的template：  Views/Shared/DisplayTemplates/decimal.cshtml
-@model decimal
-@{
-    IFormatProvider formatProvider =
-        new System.Globalization.CultureInfo("en-US");
-    <span class="currency">@Model.ToString("C", formatProvider)</span>
-}
+1. 根据类型(文件名为类型名), 不指定template， 默认会按类型找, 缺点是所有类型都会使用这个template
+	1)  Model
+	public class TestModel
+	{
+		public decimal Money { get; set; }
+	}
 
-3) View
-@model TestModel
-@Html.DisplayFor(e => e.Money)
+	2) Model为当前类型的template：  Views/Shared/DisplayTemplates/decimal.cshtml
+	@model decimal
+	@{
+		IFormatProvider formatProvider =
+			new System.Globalization.CultureInfo("en-US");
+		<span class="currency">@Model.ToString("C", formatProvider)</span>
+	}
 
-3) Output
-<span class="currency">$3.50</span>
+	3) View
+	@model TestModel
+	@Html.DisplayFor(e => e.Money)
+
+	3) Output
+	<span class="currency">$3.50</span>
 
 2. 申明使用哪个模板: UIHint attribute
-1) 修改为Currency， 这样就会找Views/Shared/DisplayTemplates/Currency.cshtml
-public class TestModel
-{
-    [UIHint("Currency")]
-    public decimal Money { get; set; }
-}
+	1) 修改为Currency， 这样就会找Views/Shared/DisplayTemplates/Currency.cshtml
+	public class TestModel
+	{
+		[UIHint("Currency")]
+		public decimal Money { get; set; }
+	}
 
-2) 或者在调用的时候写出调用的模板： （nopcommerce: @Html.EditorFor(x => x.FullDescription, "RichEditor") )
-@model TestModel
-@Html.DisplayFor(e => e.Money, "Currecy")
+	2) 或者在调用的时候写出调用的模板： （nopcommerce: @Html.EditorFor(x => x.FullDescription, "RichEditor") )
+	@model TestModel
+	@Html.DisplayFor(e => e.Money, "Currecy")
+
+3. 调用EditorFor, DisplayFor时写出模板，如
+   @Html.EditorFor(x => x.FullDescription, "RichEditor")
+   会找到Views/Shared/EditorTemplates/RichEditor.cshtml模板
 
 
 

@@ -44,7 +44,6 @@
         {
             <text>toggleShowOnHomePage();</text>
         }
-
         toggleProductType();
         togglePreOrder();
         toggleRequireOtherProducts();
@@ -59,7 +58,6 @@
         toggleManageStock();
         toggleMarkAsNew();
     });
-
 
     function toggleShowOnHomePage() {
         if ($('#@Html.FieldIdFor(model => model.ShowOnHomePage)').is(':checked')) {
@@ -329,11 +327,11 @@
             productTagsSb.Append(HttpUtility.JavaScriptStringEncode(tag.Name));
             productTagsSb.Append("'");
             if (i != productTags.Count - 1)
-        {
+            {
                 productTagsSb.Append(",");
+            }
         }
-    }
-    productTagsSb.Append("]");
+        productTagsSb.Append("]");
     }
 
     //tags
@@ -377,8 +375,9 @@
             addAntiForgeryToken(postData);
 
             $.ajax({
+                cache: false,
                 type: 'POST',
-                url: '@Url.Action("LoadProuctFriendlyNames", "Product")',
+                url: '@Url.Action("LoadProductFriendlyNames", "Product")',
                 data: postData,
                 dataType: 'json',
                 success: function(data) {
@@ -421,7 +420,7 @@
                             @Html.NopLabelFor(model => model.ProductTypeId)
                         </div>
                         <div class="col-md-9">
-                            @Html.DropDownListFor(model => model.ProductTypeId, ((ProductType)Model.ProductTypeId).ToSelectList(useLocalization: false))
+                            @Html.DropDownListFor(model => model.ProductTypeId, ((ProductType)Model.ProductTypeId).ToSelectList())
                             @Html.ValidationMessageFor(model => model.ProductTypeId)
                         </div>
                     </div>
@@ -1042,7 +1041,7 @@
                                 $(document).ready(function() {
                                     var discountsIdsInput = $("#@Html.FieldIdFor(model => model.SelectedDiscountIds)").data("kendoMultiSelect");
                                     discountsIdsInput.setOptions({
-                                        autoClass: false
+                                        autoClose: false
                                     });
 
                                     @if (Model.AvailableDiscounts.Count == 0)
