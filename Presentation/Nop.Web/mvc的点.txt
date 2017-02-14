@@ -1,4 +1,15 @@
-﻿得到生成时的id (EditorFor第二个参数为viewdata)
+﻿@Html.LabelFor(n=>Model.Img,new{width = "100px"} ) , 属性new{width = "100px"}是如何传递的？
+
+Nop.Web.Framework\HtmlExtensions.cs:
+NopDropDownListFor 扩展方法
+中使用var attrs = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
+HtmlHelper.AnonymousObjectToHtmlAttributes介绍 ()
+http://www.cnblogs.com/stoneniqiu/p/5631694.html
+=> 把object转换为RouteValueDictionary类型（TypeDescripto.GetProperties读取object属性)
+
+
+
+得到生成时的id (EditorFor第二个参数为viewdata)
 @Html.EditorFor(model => model.SelectedCategoryIds, new { SelectList = Model.AvailableCategories })
 得到上面生成html的id
 @Html.FieldIdFor(model => model.SelectedCategoryIds)  ======> "SelectedCategoryIds"
