@@ -202,6 +202,7 @@
   <ItemGroup>
     <Compile Include="AdminAreaRegistration.cs" />
     <Compile Include="Controllers\BaseAdminController.cs" />
+    <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
@@ -496,6 +497,11 @@
     <Content Include="Views\Product\_CreateOrUpdate.ProductAttributes.cshtml" />
     <Content Include="Views\Product\_CreateOrUpdate.SpecificationAttributes.cshtml" />
     <Content Include="Views\Product\_CreateOrUpdate.PurchasedWithOrders.cshtml" />
+    <Content Include="Views\Category\List.cshtml" />
+    <Content Include="Views\Category\ProductAddPopup.cshtml" />
+    <Content Include="Views\Category\Create.cshtml" />
+    <Content Include="Views\Category\Edit.cshtml" />
+    <Content Include="Views\Category\_CreateOrUpdate.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
