@@ -208,10 +208,7 @@
     <Compile Include="Validators\ValidatorExtensions.cs" />
     <Compile Include="ViewEngines\Razor\WebViewPage.cs" />
     <Compile Include="WebStoreContext.cs" />
-<<<<<<< HEAD
     <Compile Include="WebWorkContext.cs" />
-=======
->>>>>>> webFramework
   </ItemGroup>
   <ItemGroup>
     <Content Include="MVC相关的总结.txt" />

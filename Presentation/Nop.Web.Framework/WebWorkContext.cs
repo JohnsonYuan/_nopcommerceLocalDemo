@@ -1,27 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
-<<<<<<< HEAD
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Fakes;
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3ab93250c050304c29f3cdc02d2aa51d21c13657
-using System.Web;
-using Nop.Services.Customers;
-using Nop.Services.Vendors;
-=======
-using Nop.Core.Domain.Vendors;
-using Nop.Core.Fakes;
->>>>>>> webframe
->>>>>>> master
 using Nop.Services.Authentication;
 using Nop.Services.Common;
 using Nop.Services.Customers;
@@ -80,7 +66,7 @@ namespace Nop.Web.Framework
             ILanguageService languageService,
             ICurrencyService currencyService,
             IGenericAttributeService genericAttributeService,
-            TaxSettings taxSettings,
+            TaxSettings taxSettings, 
             CurrencySettings currencySettings,
             LocalizationSettings localizationSettings,
             IUserAgentHelper userAgentHelper,
@@ -126,13 +112,12 @@ namespace Nop.Web.Framework
                 }
                 else
                 {
-                    int cookieExpires = 24 * 365; //TODO make configurable
+                    int cookieExpires = 24*365; //TODO make configurable
                     cookie.Expires = DateTime.Now.AddHours(cookieExpires);
                 }
 
                 _httpContext.Response.Cookies.Remove(CustomerCookieName);
                 _httpContext.Response.Cookies.Add(cookie);
-                _httpContext.Response.Cookies.Set(cookie);
             }
         }
 
@@ -190,10 +175,6 @@ namespace Nop.Web.Framework
         /// <summary>
         /// Gets or sets the current customer
         /// </summary>
-        /// <remarks>
-        /// 我的注释 判断用户登录
-        /// 
-        /// </remarks>
         public virtual Customer CurrentCustomer
         {
             get
@@ -223,6 +204,7 @@ namespace Nop.Web.Framework
                 {
                     customer = _authenticationService.GetAuthenticatedCustomer();
                 }
+
                 //impersonate user if required (currently used for 'phone order' support)
                 if (customer != null && !customer.Deleted && customer.Active)
                 {
@@ -256,18 +238,13 @@ namespace Nop.Web.Framework
                         }
                     }
                 }
+
                 //create guest if not exists
-                //我的注释 从InsertGuestCustomer看到
-                //新的guest用户属性为：
-                //CustomerGuid = Guid.NewGuid(),
-                //Active = true,
-                //CreatedOnUtc = DateTime.UtcNow,
-                //LastActivityDateUtc = DateTime.UtcNow,
-                //然后该用户的CustomerGroup为Guest
                 if (customer == null || customer.Deleted || !customer.Active)
                 {
                     customer = _customerService.InsertGuestCustomer();
                 }
+
 
                 //validation
                 if (!customer.Deleted && customer.Active)
@@ -323,13 +300,13 @@ namespace Nop.Web.Framework
         /// <summary>
         /// Get or set current user working language
         /// </summary>
-        public Language WorkingLanguage
+        public virtual Language WorkingLanguage
         {
             get
             {
                 if (_cachedLanguage != null)
                     return _cachedLanguage;
-
+                
                 Language detectedLanguage = null;
                 if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
                 {
@@ -340,7 +317,7 @@ namespace Nop.Web.Framework
                 {
                     //get language from browser settings
                     //but we do it only once
-                    if (!this.CurrentCustomer.GetAttribute<bool>(SystemCustomerAttributeNames.LanguageAutomaticallyDetected,
+                    if (!this.CurrentCustomer.GetAttribute<bool>(SystemCustomerAttributeNames.LanguageAutomaticallyDetected, 
                         _genericAttributeService, _storeContext.CurrentStore.Id))
                     {
                         detectedLanguage = GetLanguageFromBrowserSettings();
@@ -351,7 +328,6 @@ namespace Nop.Web.Framework
                         }
                     }
                 }
-
                 if (detectedLanguage != null)
                 {
                     //the language is detected. now we need to save it
@@ -404,17 +380,17 @@ namespace Nop.Web.Framework
         /// <summary>
         /// Get or set current user working currency
         /// </summary>
-        public Currency WorkingCurrency
+        public virtual Currency WorkingCurrency
         {
             get
             {
                 if (_cachedCurrency != null)
                     return _cachedCurrency;
-
+                
                 //return primary store currency when we're in admin area/mode
                 if (this.IsAdmin)
                 {
-                    var primaryStoreCurrency = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId);
+                    var primaryStoreCurrency =  _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId);
                     if (primaryStoreCurrency != null)
                     {
                         //cache
@@ -436,7 +412,7 @@ namespace Nop.Web.Framework
                 }
                 if (currency == null)
                 {
-                    //if not found, then return the first (filtered by current store) found one
+                    //it not found, then return the first (filtered by current store) found one
                     currency = allCurrencies.FirstOrDefault();
                 }
                 if (currency == null)
@@ -461,11 +437,10 @@ namespace Nop.Web.Framework
             }
         }
 
-
         /// <summary>
         /// Get or set current tax display type
         /// </summary>
-        public TaxDisplayType TaxDisplayType
+        public virtual TaxDisplayType TaxDisplayType
         {
             get
             {
@@ -476,7 +451,7 @@ namespace Nop.Web.Framework
                 TaxDisplayType taxDisplayType;
                 if (_taxSettings.AllowCustomersToSelectTaxDisplayType && this.CurrentCustomer != null)
                 {
-                    taxDisplayType = (TaxDisplayType)this.CurrentCustomer.GetAttribute<int>(
+                    taxDisplayType = (TaxDisplayType) this.CurrentCustomer.GetAttribute<int>(
                         SystemCustomerAttributeNames.TaxDisplayTypeId,
                         _genericAttributeService,
                         _storeContext.CurrentStore.Id);
@@ -489,25 +464,27 @@ namespace Nop.Web.Framework
                 //cache
                 _cachedTaxDisplayType = taxDisplayType;
                 return _cachedTaxDisplayType.Value;
+
             }
             set
             {
                 if (!_taxSettings.AllowCustomersToSelectTaxDisplayType)
                     return;
 
-                _genericAttributeService.SaveAttribute(this.CurrentCustomer,
+                _genericAttributeService.SaveAttribute(this.CurrentCustomer, 
                     SystemCustomerAttributeNames.TaxDisplayTypeId,
                     (int)value, _storeContext.CurrentStore.Id);
 
                 //reset cache
                 _cachedTaxDisplayType = null;
+
             }
         }
 
         /// <summary>
         /// Get or set value indicating whether we're in admin area
         /// </summary>
-        public bool IsAdmin { get; set; }
+        public virtual bool IsAdmin { get; set; }
 
         #endregion
     }
