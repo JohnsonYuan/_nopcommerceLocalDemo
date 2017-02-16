@@ -7,6 +7,9 @@ using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3ab93250c050304c29f3cdc02d2aa51d21c13657
 using System.Web;
 using Nop.Services.Customers;
 using Nop.Services.Vendors;
