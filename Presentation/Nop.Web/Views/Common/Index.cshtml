@@ -1,0 +1,31 @@
+﻿@using Nop.Core.Infrastructure;
+@using Nop.Core;
+@{
+    ViewBag.Title = "Index";
+
+    var workContext = EngineContext.Current.Resolve<IWorkContext>();
+}
+
+<h2>Index</h2>
+
+
+
+@workContext.WorkingLanguage.Name @workContext.WorkingLanguage.Id
+
+@foreach (var item in ControllerBuilder.Current.DefaultNamespaces)
+{
+    Console.WriteLine(item);
+}
+
+@foreach (var item in GlobalFilters.Filters)
+{
+    @item <br/>
+}
+<br />
+
+@foreach (var item in ModelValidatorProviders.Providers)
+{
+    @item <br />
+}
+<br />
+@ModelMetadataProviders.Current

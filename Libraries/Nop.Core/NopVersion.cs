@@ -9,7 +9,7 @@
         {
             get
             {
-                return "3.80_Beta";
+                return "3.80";
             }
         }
     }

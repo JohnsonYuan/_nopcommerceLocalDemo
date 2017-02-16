@@ -1,0 +1,114 @@
+﻿AutoMapper: 
+~\Administration\Infrastructure\Mapper\AutoMapperConfiguration.cs 配置entity -> model, model -> entity map规则
+~\Administration\Extensions\MappingExtensions.cs	extension method entity 调用 ToModel， model可以调用ToEntity （调用Mapper 的MapTo方法）
+
+Install-Package AutoMapper
+https://github.com/AutoMapper/AutoMapper/wiki/Getting-started
+
+1. Getting Started
+https://github.com/AutoMapper/AutoMapper/wiki/Getting-started
+
+介绍一下：
+First, you need both a source and destination type to work with. 
+如果source的属性名和destination的属性名一样， 就会自动map （也可以custom map）
+If you have a source member called "FirstName", this will automatically be mapped to a destination member with the name "FirstName". 
+（map的时候 not case sensitive）
+
+1.1 The type on the left is the source type, and the type on the right is the destination type. 
+Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDto>());
+    //or
+var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderDto>());
+
+
+1.2 To perform a mapping, use the static or instance Mapper methods, depending on static or instance initialization:
+先注册才行： AutoMapper can only map type pairs it knows about, so we have explicitly register the source/destination type pair with CreateMap. 
+//得到mapper
+var mapper = config.CreateMapper();
+// or
+var mapper = new Mapper(config);
+
+OrderDto dto = mapper.Map<OrderDto>(order);
+// or
+OrderDto dto = Mapper.Map<OrderDto>(order);
+
+2. （optional） 查看是否dest所有属性都能在source找到
+// AutoMapper checks to make sure that every single Destination type member has a corresponding type member on the source type.
+Mapper.Configuration.AssertConfigurationIsValid();
+
+如果没找到，会报 Unmapped members were found ...  然后是没找到的属性详细信息
+
+2.1 destination 不需要map的属性 （比如不想map destination的StateProvinces, 相当于不初始化该属性）
+(Nop.Web\Administration\Infrastructure\Mapper\AutoMapperConfiguration.cs)
+cfg.CreateMap<CountryModel, Country>()
+        .ForMember(dest => dest.StateProvinces, mo => mo.Ignore())
+
+2.2. 或者想map到source别的属性MapFrom
+map.ForMember(d => d.Name, mo => mo.MapFrom(s => s.Publisher.Name));
+
+3. Custom value resolvers
+AutoMapper will ignore null reference exceptions when mapping your source to your target. This is by design.
+If you don't like this approach, use Custom value resolvers
+https://github.com/AutoMapper/AutoMapper/wiki/Custom-value-resolvers
+
+3 ways using customer resolver:
+ResolveUsing<TValueResolver>
+ResolveUsing(typeof(CustomValueResolver))
+ResolveUsing(aValueResolverInstance)
+
+e.g. 使用第一种ResolveUsing<TValueResolver>:
+public class CustomResolver : IValueResolver<Source, Destination, int>
+{
+    public int Resolve(Source source, Destination destination, int member, ResolutionContext context)
+    {
+        return source.Value1 + source.Value2;
+    }
+}
+
+Mapper.Initialize(cfg => 
+       cfg.CreateMap<Source, Destination>()
+         .ForMember(dest => dest.Total, opt => opt.ResolveUsing<CustomResolver>());
+Mapper.AssertConfigurationIsValid();
+
+
+3. Flattening： 默认的convention， 有点意思
+https://github.com/AutoMapper/AutoMapper/wiki/Getting-started
+Map的时候AutoMapper会先寻找source中名称一样的属性，方法
+如果没找到,　会在source中寻找的名称前加Get寻找 （比如source中没找到Total属性， 继续寻找GetTotal属性）
+如果没找到, 按大小写分隔开属性名寻找 （比如寻找CustomerName, source中没有CustomerName， 也没找到GetCustomerName, 分割成Customer, Name， 寻找source是否有Customer属性，再寻找Customer的Name属性）
+
+When you configure a source/destination type pair in AutoMapper, 
+If for any property on the destination type a property, method, or a method prefixed with "Get" 
+does not exist on the source type, 
+AutoMapper splits the destination member name into individual words (by PascalCase conventions).
+
+One of the common usages of object-object mapping is to take a complex object model and flatten it to a simpler model.
+public class Order
+{
+	public Customer Customer { get; set; }
+	public decimal GetTotal()
+    {
+        return _orderLineItems.Sum(li => li.GetTotal());
+    }
+}
+public class Customer
+{
+    public string Name { get; set; }
+}
+=》 We want to flatten this complex Order object into a simpler OrderDto that contains only the data needed for a certain scenario:
+public class OrderDto
+{
+    public string CustomerName { get; set; }
+    public decimal Total { get; set; }
+}
+
+// Configure AutoMapper
+Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDto>());
+// Perform mapping
+OrderDto dto = Mapper.Map<Order, OrderDto>(order);
+
+dto.CustomerName.ShouldEqual("George Costanza");
+dto.Total.ShouldEqual(74.85m);
+
+On the OrderDto type, 
+the Total property matched to the GetTotal() method on Order. 
+The CustomerName property matched to the Customer.Name property on Order. 

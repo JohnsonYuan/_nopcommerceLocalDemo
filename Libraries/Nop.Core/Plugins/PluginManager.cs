@@ -1,6 +1,4 @@
-﻿using Nop.Core.ComponentModel;
-using Nop.Core.Plugins;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -10,6 +8,8 @@ using System.Reflection;
 using System.Threading;
 using System.Web;
 using System.Web.Compilation;
+using Nop.Core.ComponentModel;
+using Nop.Core.Plugins;
 
 //Contributor: Umbraco (http://www.umbraco.com). Thanks a lot! 
 //SEE THIS POST for full details of what this does - http://shazwazza.com/post/Developing-a-plugin-framework-in-ASPNET-with-medium-trust.aspx
@@ -167,7 +167,6 @@ namespace Nop.Core.Plugins
                             throw fail;
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {

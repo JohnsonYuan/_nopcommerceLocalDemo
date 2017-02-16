@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Nop.Core.Tests.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,8 +34,16 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Presentation\Nop.Web.Framework\bin\Debug\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac.Integration.Mvc, Version=3.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.Mvc5.3.3.4\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper, Version=5.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -105,8 +114,35 @@
   <ItemGroup>
     <Compile Include="BaseEntity.cs" />
     <Compile Include="DataSettings.cs" />
+    <Compile Include="Helpers\AntiForgery.cs" />
+    <Compile Include="Helpers\AntiForgeryConfig.cs" />
+    <Compile Include="Helpers\AntiXsrf\AntiForgeryConfigWrapper.cs" />
+    <Compile Include="Helpers\AntiXsrf\AntiForgeryToken.cs" />
+    <Compile Include="Helpers\AntiXsrf\AntiForgeryTokenSerializer.cs" />
+    <Compile Include="Helpers\AntiXsrf\AntiForgeryTokenStore.cs" />
+    <Compile Include="Helpers\AntiXsrf\AntiForgeryWorker.cs" />
+    <Compile Include="Helpers\AntiXsrf\BinaryBlob.cs" />
+    <Compile Include="Helpers\AntiXsrf\ClaimUidExtractor.cs" />
+    <Compile Include="Helpers\AntiXsrf\IAntiForgeryConfig.cs" />
+    <Compile Include="Helpers\AntiXsrf\IAntiForgeryTokenSerializer.cs" />
+    <Compile Include="Helpers\AntiXsrf\IClaimUidExtractor.cs" />
+    <Compile Include="Helpers\AntiXsrf\ICryptoSystem.cs" />
+    <Compile Include="Helpers\AntiXsrf\ITokenStore.cs" />
+    <Compile Include="Helpers\AntiXsrf\ITokenValidator.cs" />
+    <Compile Include="Helpers\AntiXsrf\MachineKey45CryptoSystem.cs" />
+    <Compile Include="Helpers\AntiXsrf\TokenValidator.cs" />
+    <Compile Include="Helpers\Claims\Claim.cs" />
+    <Compile Include="Helpers\Claims\ClaimsIdentity.cs" />
+    <Compile Include="Helpers\Claims\ClaimsIdentityConverter.cs" />
+    <Compile Include="Helpers\CryptoUtil.cs" />
+    <Compile Include="Helpers\IAntiForgeryAdditionalDataProvider.cs" />
+    <Compile Include="Helpers\TagBuilderExtensions.cs" />
+    <Compile Include="Helpers\UnvalidatedRequestValues.cs" />
+    <Compile Include="Helpers\Validation.cs" />
     <Compile Include="HtmlHelper.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\WebPageResources.Designer.cs" />
     <Compile Include="Temp.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -114,10 +150,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj">
+      <Project>{defea0e4-7ec7-4855-81ea-f965469ddab0}</Project>
+      <Name>Nop.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj">
       <Project>{ebe6ca2f-66ed-4289-be1d-bbad49085cb1}</Project>
       <Name>Nop.Data</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\WebPageResources.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

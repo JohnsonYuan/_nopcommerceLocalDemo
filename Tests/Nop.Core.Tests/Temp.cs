@@ -17,6 +17,13 @@ using MaxMind.GeoIP2;
 using System.Net;
 using System.Collections.Specialized;
 using System.Web.Compilation;
+using System.ComponentModel;
+using System.Linq.Expressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Autofac;
+using Autofac.Core.Lifetime;
+using System.Web.Mvc;
 
 namespace Nop.Core.Tests
 {// Create a class having six properties.
@@ -228,33 +235,170 @@ namespace Nop.Core.Tests
             return Regex.IsMatch(assemblyFullName, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
-
-        static void Main(string[] args)
+        public enum Color
         {
-            Console.WriteLine(typeof(Nop.Data.Mapping.AffiliateMap.AffiliateMap).Name);
+            Red,
+            Green,
+            Blue
+        }
 
-            var t_ = Type.GetType("Nop.Data.Mapping.AffiliateMap.AffiliateMap");
-            Console.WriteLine(t_);
-            return;
-            Console.WriteLine("ass: ");
-            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+        public enum NotifyType
+        {
+            Success,
+            Error
+        }
+
+
+        /// <summary>
+        /// Represents a filter expression of Kendo DataSource.
+        /// </summary>
+        public class Filter
+        {
+            public string Name { get; set; }
+
+            /// <summary>
+            /// Gets or sets the child filter expressions. Set to <c>null</c> if there are no child expressions.
+            /// </summary>
+            public IEnumerable<Filter> Filters { get; set; }
+
+
+            /// <summary>
+            /// Get a flattened list of all child filter expressions.
+            /// </summary>
+            public IList<Filter> All()
             {
-                Console.WriteLine(item);
+                var filters = new List<Filter>();
+
+                Collect(filters);
+
+                return filters;
             }
-            Console.WriteLine();
-            Console.WriteLine("ass: 2 ");
-            foreach (var item in BuildManager.GetReferencedAssemblies())
+
+            /// <summary>
+            /// Get a flattened list of all child filter expressions.
+            /// </summary>
+            public IList<Filter> All2()
             {
-                Console.WriteLine(item);
+                return Collect();
+            }
+
+
+            private List<Filter> Collect()
+            {
+                var filters = new List<Filter>();
+                if (Filters != null && Filters.Any())
+                {
+                    foreach (Filter item in Filters)
+                    {
+                        filters.Add(item);
+                        filters.AddRange(item.Collect());
+                    }
+                }
+                else
+                {
+                    filters.Add(this);
+                }
+                return filters;
+            }
+
+
+            private void Collect(IList<Filter> filters)
+            {
+                if (Filters != null && Filters.Any())
+                {
+                    foreach (Filter filter in Filters)
+                    {
+                        filters.Add(filter);
+
+                        filter.Collect(filters);
+                    }
+                }
+                else
+                {
+                    filters.Add(this);
+                }
+            }
+        }
+
+        public class XmlDownloadResult
+        {
+            [System.Runtime.CompilerServices.SpecialName]
+            private string _hello;
+            internal int _hello2;
+            public string _hello3;
+            public int MyProperty { get; set; }
+            public string StringAttr { get; set; }
+        }
+
+        public class MyComponent
+        {
+            public MyComponent() { Console.WriteLine("default"); }
+            public MyComponent(IOutput logger) { Console.WriteLine("logger"); }
+            public MyComponent(IOutput logger, IDateWriter reader) { Console.WriteLine("logger and reader"); }
+        }
+
+        static void Main2(string[] args)
+        { 
+            IEnumerable<int> array = new List<int> { 1, 2, 3 };
+            Type arrT = array.GetType();
+            Type arrT2 = arrT.GetElementType();
+            Console.WriteLine(arrT);
+            Console.WriteLine(arrT2);
+            Console.WriteLine("The element type of {0} is {1}.", array, arrT2);
+            return;
+   
+            var builder = new ContainerBuilder(); 
+            builder.RegisterType<ConsoleOutput>().AsSelf().As<IOutput>().InstancePerRequest();
+            builder.RegisterType<TodayWriter>().As<IDateWriter>().InstancePerMatchingLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag); ;
+      
+            builder.RegisterType<MyComponent>();
+            builder.Register(c => new MyComponent());
+            var container = builder.Build();
+            using (var scopeContainer = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+               //var myComponent = scopeContainer.Resolve<MyComponent>();
+               var myComponent = scopeContainer.Resolve<ConsoleOutput>();
+            }
+
+
+            return;
+
+            using (var scope = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                IOutput output;
+                try
+                {
+                    output = scope.Resolve<IOutput>();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            return;
+
+            // Create the scope, resolve your IDateWriter,
+            // use it, then dispose of the scope.
+            using (var scope = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                var writer = scope.Resolve<IDateWriter>();
+                writer.WriteDate();
             }
 
             return;
+
+            var demoC = TypeDescriptor.GetConverter(typeof(int?));
+            Console.WriteLine(demoC);
+
+
             var _inputValues = new NameValueCollection();
 
             _inputValues.Add("a", "123123");
             _inputValues.Add("a", "hello");
             _inputValues.Add("a", "hello22");
             _inputValues.Add("sdfs", "sdfsfewr");
+
+            Console.WriteLine(_inputValues["a"]);
 
             foreach (string item in _inputValues.Keys)
             {
@@ -264,12 +408,12 @@ namespace Nop.Core.Tests
                 {
                     Console.WriteLine(v);
                 }
-                Console.WriteLine(  );
+                Console.WriteLine();
             }
 
-            return; 
+            return;
 
-            Console.WriteLine(3/(float)2); 
+            Console.WriteLine(3 / (float)2);
             return;
             List<int> all = new List<int>();
             List<int> child = new List<int>();
@@ -294,10 +438,10 @@ namespace Nop.Core.Tests
                 Console.WriteLine(pet.Name);
             }
 
-            return; 
+            return;
 
 
-            var a = new int[] { 1, 3, 4, 5, 7,99,123123 };
+            var a = new int[] { 1, 3, 4, 5, 7, 99, 123123 };
             DemoValue[] b = {
                 new DemoValue { MyProperty = 3 },
                 new DemoValue { MyProperty = 7 },

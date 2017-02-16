@@ -1,4 +1,52 @@
-﻿﻿References:
+﻿可能有问题的地方：
+Nop.Web.Framework.Kendoui\Filter.cs, Collect方中:
+如果A -> B, C, B -> B1, B2当A调用Collect方法是，
+遍历的结果是B B1 B1 B2 B2 C C
+因为轮到B1时，会把B1加入结果中, 然后调用B.Collect()， 会再次把B1加到结果中
+这样的话ToExprssion会生成重复的filter string
+？TOCHECK？ 可能影响QueryableExtensions中Filter<T>效率
+
+[FlagAttribute]的妙用
+http://stackoverflow.com/questions/8447/what-does-the-flags-enum-attribute-mean-in-c
+[Flags]
+public enum HttpVerbs
+{
+    Get = 1,
+    Post = 2,
+    Put = 4,
+    Delete = 8,
+    Head = 16,
+    Patch = 32,
+    Options = 64
+}
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/AcceptVerbsAttribute.cs
+
+		private static void AddEntryToList(HttpVerbs verbs, HttpVerbs match, List<string> verbList, string entryText)
+        {
+            if ((verbs & match) != 0)
+            {
+                verbList.Add(entryText);
+            }
+        }
+
+        internal static string[] EnumToArray(HttpVerbs verbs)
+        {
+            List<string> verbList = new List<string>();
+
+            AddEntryToList(verbs, HttpVerbs.Get, verbList, "GET");
+            AddEntryToList(verbs, HttpVerbs.Post, verbList, "POST");
+            AddEntryToList(verbs, HttpVerbs.Put, verbList, "PUT");
+            AddEntryToList(verbs, HttpVerbs.Delete, verbList, "DELETE");
+            AddEntryToList(verbs, HttpVerbs.Head, verbList, "HEAD");
+            AddEntryToList(verbs, HttpVerbs.Patch, verbList, "PATCH");
+            AddEntryToList(verbs, HttpVerbs.Options, verbList, "OPTIONS");
+
+            return verbList.ToArray();
+        }
+
+
+
+﻿References:
 Nop.Core
 Nop.Services
 
@@ -9,7 +57,8 @@ IModelAttribute
 e.g.: override DisplayName属性, 自定义显示值
 NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute, IModelAttribute
 
-ActionFilterAttribute
+IAuthorizationFilter
+ActionFilterAttribute -> FilterAttribute (Seo\WwwRequirementAttribute.cs)
 AttributedValidatorFactory (NopValidatorFactory.cs)
 ActionResult => override ExecuteResult() Enables processing of the result of an action method by a custom type that inherits from the ActionResult class.
 
@@ -40,3 +89,102 @@ public class DemoRouteConstraint : IRouteConstraint
 
 XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
 https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages
+
+
+DisplayName：
+NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute
+重写DisplayNamesh属性
+
+
+TODO: FluentValidation(Install-Package FluentValidation)：
+https://github.com/JeremySkinner/FluentValidation
+
+1. Custom validator(Nop.Web.Framework\Validators\):
+http://fluentvalidation.codeplex.com/wikipage?title=Custom
+two ways of custom validator（https://github.com/JeremySkinner/FluentValidation/wiki/e.-Custom-Validators#using-abstractvalidatorcustom）
+create a custom property validator(CreditCardPropertyValidator.cs, ValidatorExtensions.cs -》 ruleBuilder.SetValidator能够使用fulent验证方式 需要查看文档总结出来)
+make use of the Custom method on AbstractValidator(BaseNopValidator.cs)
+
+2. AttributedValidatorFactory(https://fluentvalidation.codeplex.com/wikipage?title=mvc)
+App_Start():
+FluentValidationModelValidatorProvider.Configure();
+or custom factory:
+FluentValidationModelValidatorProvider.Configure(provider => {
+  provider.ValidatorFactory = new MyCustomValidatorFactory();
+});
+
+NopCommerce 参看Global.ascx
+        DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
+        ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new NopValidatorFactory()));
+
+本质还是使用第二种方法配置（自定义validator）， FluentValidationModelValidatorProvider.Configure 源码， 可以发现调的还是这两行
+https://github.com/JeremySkinner/FluentValidation/blob/master/src/FluentValidation.Mvc4/FluentValidationModelValidatorProvider.cs
+
+DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false; 是什么作用？
+http://stackoverflow.com/questions/14452344/mvc3-removed-required-but-keeps-getting-data-val-required-attribute
+
+
+[Validator(typeof(PersonValidator))]
+public class Person { public int Id { get; set; } }
+
+public class PersonValidator : AbstractValidator<Person> {
+	public PersonValidator() { RuleFor(x => x.Id).NotNull(); }
+}
+
+UI\PageHeadBuilder.cs中GetBundleVirtualPath有SHA256生成bundle路径片段：（补充MD5加密） （TODO 比较两种加密方式区别）
+SHA256加密
+string hashInput = "file/helo/fsdfs.js";
+using (SHA256 sha = new SHA256Managed())
+{
+    byte[] input = sha.ComputeHash(Encoding.Unicode.GetBytes(hashInput));
+    string hash = HttpServerUtility.UrlTokenEncode(input);
+    Console.WriteLine(hash);
+}
+MD5加密
+using (MD5 md5Hash = MD5.Create())
+{
+    // Convert the input string to a byte array and compute the hash.
+    byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(hashInput));
+
+    // Create a new Stringbuilder to collect the bytes
+    // and create a string.
+    StringBuilder sBuilder = new StringBuilder();
+
+    // Loop through each byte of the hashed data 
+    // and format each one as a hexadecimal string.
+    for (int i = 0; i < data.Length; i++)
+    {
+        sBuilder.Append(data[i].ToString("x2"));
+    }
+    Console.WriteLine(sBuilder.ToString());
+}
+
+
+
+Custom MVC view engine:
+http://www.codeproject.com/Articles/259365/Custom-ViewEngine-in-ASP-NET-MVC
+http://www.codeproject.com/Articles/294297/Creating-your-own-MVC-View-Engine-into-MVC-Applica
+Themes\ThemeableVirtualPathProviderViewEngine.cs : VirtualPathProviderViewEngine
+The easiest approach to create custom view engine is just derive a new view engine from abstract VirtualPathProviderViewEngine Class. This base class can take care of the all low-level mechanics of finding and caching views.
+
+自定义类WebViewPage<TModel>
+此类表示呈现使用ASP.NET Razor语法的视图所需的属性和方法。
+所以每一个视图都应该继承此类。但是我们在项目中是看不到此继承的，默认情况下Razor会让视图继承自System.Web.Mvc.WebViewPage<TModel>基类。也可以通过修改视图目录（每一个asp.Net mvc项目下面都有一个~/Views/目录）下的web.config文件来更改默认基类，NopCommerce就是使用此方法实现自定义WebViewPage类的。除此之外也可以在视图文件中引入命名空间，但这种方法比较繁琐，除非一个项目中有个别视图需要自定义WebViewPage。
+
+Localization\LocalizedRoute.cs , override Route GetVirtualPath
+RouteValueDictionary parameters = new RouteValueDictionary { { "action", "show" }, { "categoryName", "bikes" } };
+VirtualPathData vpd = RouteTable.Routes.GetVirtualPath(null, parameters);
+HyperLink1.NavigateUrl = vpd.VirtualPath;
+
+LocalizedRoute重写Route, 参考Route构造函数
+GenericPathRouteExtensions.cs -> MapGenericPathRoute方法, 参考RouteCollection, MapRoute扩展方法
+调用MapGenericPathRoute
+public static void RegisterRoutes(RouteCollection routes)
+{
+ routes.MapGenericPathRoute()
+}
+
+
+好的工具 ：
+.NET Reflector FileGenerator plugin 
+http://filegenreflector.codeplex.com/

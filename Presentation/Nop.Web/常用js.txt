@@ -1,0 +1,214 @@
+﻿
+搜索框输入回车， 调用搜索方法
+    $("#@Html.FieldIdFor(model => model.SearchProductName)").keydown(function (event) {
+        if (event.keyCode == 13) {
+            $("#search-products").click();
+            return false;
+        }
+    });
+
+
+<div id="products-grid">
+    <input type="checkbox" id="mastercheckbox" />
+    <input type="checkbox" class="checkboxGroups" value="1" />
+    <input type="checkbox" class="checkboxGroups" value="2" />
+    <input type="checkbox" class="checkboxGroups" value="3" />
+</div>
+<input type="hidden" id="selectedIds" name="selectedIds" value="" />
+<input type="button" id="btnSubmit" value="Submit" />
+全选：
+   $('#mastercheckbox').click(function () {
+        $('.checkboxGroups').attr('checked', $(this).is(':checked')).change();
+    });
+跟新全选checkbox（如果当前页面的checkbox没有都被选中， 则全选checkbox不选择
+    function updateMasterCheckbox() {
+        var numChkBoxes = $('#products-grid input[type=checkbox][id!=mastercheckbox]').length;
+        var numChkBoxesChecked = $('#products-grid input[type=checkbox][id!=mastercheckbox]:checked').length;
+        $('#mastercheckbox').attr('checked', numChkBoxes == numChkBoxesChecked && numChkBoxes > 0);
+    }
+
+记录当前多个checkbox选中的值：
+nopcommerce 把kendogrid每一个选中的对象保存在selectedIds里， 当分页的时候， 选中的数据不会丢失，可以提交了!
+var selectedIds = [];
+$('#products-grid').on('change', 'input[type=checkbox]', function (e) {
+    var $check = $(this);
+    if ($check.is(':checked') == true) {
+        var checked = jQuery.inArray($check.val(), selectedIds);
+        if (checked == -1) {
+            //add id to selectedIds.
+            selectedIds.push($check.val());
+        }
+    }
+    else {
+        var checked = jQuery.inArray($check.val(), selectedIds);
+        if (checked > -1) {
+            //remove id from selectedIds. $.grep会从数组中找出满足条件的返回
+            selectedIds = $.grep(selectedIds, function (item, index) {
+                return item != $check.val();
+            });
+        }
+    }
+    updateMasterCheckbox();
+});
+
+提交checkbox选中的值
+ $(document).ready(function () {
+    $('#btnSubmit').click(function () {
+        e.preventDefault();
+        var ids = selectedIds.join(",");
+        $('#selectedIds').val(ids);
+        $('#form').submit();
+        return false;
+    });
+});   
+
+====================Start==========================================
+$.extend() 有两种形式， 返回值为target
+jQuery.extend( target [, object1 ] [, objectN ] )Returns: Object 
+jQuery.extend( [deep ], target, object1 [, objectN ] ) 
+
+第一种会修改target的值， 并且不会 recursive 寻找， 如果object1属性是object 或者 array， 不会合并， 直接用object2的属性， 参见例子中banana属性
+如var object1 = {
+  apple: 0,
+  banana: { weight: 52, price: 100 },
+  cherry: 97
+};
+
+var object2 = {
+  banana: { price: 200 },
+  durian: 100
+};
+
+// Merge object2 into object1
+var object = $.extend( object1, object2 );   // object1： {"apple":0,"banana":{"price":200},"cherry":97,"durian":100}
+
+object.durian = 1000; // object1的durian属性也会修改， 因为是shallow copy
+
+
+第二种： 第一个参数只能是true =》 merge becomes recursive (aka. deep copy).
+// Merge object2 into object1
+var object = $.extend(true, object1, object2 );   // object1： {"apple":0,"banana":{"weight":52,"price":200},"cherry":97,"durian":100}
+//因为是deep copy
+修改object的值, 不会影响object1
+====================End==========================================
+
+
+====================Start==========================================
+jQuery.proxy( function, context ) 返回一个有context函数function
+http://api.jquery.com/jQuery.proxy/
+
+jQueryUnobtrusive中使用这一方法：
+属性errorPlacement: $.proxy(onError, form);
+
+function onError(error, inputElement) {
+	var container = $(this).find("..."); // 这里的this为form
+}
+
+var me = {
+  type: "zombie",
+  test: function( event ) {
+  // this所代表的对象可以由$.proxy第二个参数来确定
+		alert(this.type);
+  }
+};
+
+var you = {
+  type: "person",
+  test: function( event ) {
+		alert(this.type);
+  }
+};
+
+
+// i.e. the `this` keyword will refer to `you`
+var youClick = $.proxy( you.test, you );
+
+
+$( "#test" )
+  // this === "zombie"; handler unbound after first click
+  .on( "click", $.proxy( me.test, me ) )
+
+  // this === "person"
+  .on( "click", youClick )
+
+  // this === "zombie"
+  .on( "click", $.proxy( you.test, me ) )
+
+  // this === "<button> element"
+  .on( "click", you.test );
+
+====================End==========================================
+
+
+====================Start==========================================
+jQuery.grep() : Finds the elements of an array which satisfy a filter function. The original array is not affected.
+var arr = [ 0, 1, 2 ];
+
+// 返回[ 1, 2 ]
+arr = jQuery.grep(arr, function( n, i ) {
+  return ( n > 0 );
+});
+
+// 返回[0]
+$.grep( [ 0, 1, 2 ], function( n, i ) {
+    return n > 0;
+}, true );
+====================End==========================================
+
+
+====================Start========================================
+添加元素到已有集合 Returns: jQuery 
+.addSelf()
+.add( selector )
+
+$( "p" ).add( "div" ).addClass( "widget" );  // 选中p和div元素， 给他们加上class widget
+$("#someForm").parents("form").addSelf()     // 选中#someForm和它所有的"form" parent 如果没有.addSelf()只会寻找所有parent "form"
+
+
+从集合中帅选符合要求的元素
+.filter( selector ) , .filter( function ) , .filter( elements ) .filter( selection ) 
+$( "li" ).filter( ":even" ).  // selector 列表  http://api.jquery.com/category/selectors/
+$( "li" )                      // 找li中只有一个strong的li， 或者使用index参数
+  .filter(function( index ) {
+    return $( "strong", this ).length === 1;
+	// return index % 3 === 2;
+  })
+$( "div" )				// 有middle属性的div
+  .filter( ".middle" )
+    .css( "border-color", "red" );
+$( "div" ).filter( $( "#unique" ) );  // 相当于$( "div[id=unique]" )
+
+
+
+.parent([selector ]) 向上找一层（ travels a single level up the DOM tree）
+.parents([selector ]) 所有的上层都找（找到<html>）
+
+.children( [selector ] )	only travels a single level down the DOM tree 
+.find( [selector ] ) 	traverse down multiple levels to select descendant elements 
+
+====================End==========================================
+
+
+====================Start========================================
+判断是否为数组
+因为typeof([]) 返回object， 所以不能判断
+1) data isinstanceof Array
+2) Array.isArray(data)
+3) $.isArray(data)
+
+====================End==========================================
+
+
+====================Start==========================================
+定义constructor， 参考jquery validation
+// constructor for validator
+$.validator = function( options, form ) {
+	this.settings = $.extend( true, {}, $.validator.defaults, options );
+	this.currentForm = form;
+	this.init();
+};
+====================End==========================================
+
+
+
+     

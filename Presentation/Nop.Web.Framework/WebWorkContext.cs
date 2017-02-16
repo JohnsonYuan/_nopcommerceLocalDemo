@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
+<<<<<<< HEAD
+using System.Web;
 using Nop.Services.Customers;
 using Nop.Services.Vendors;
-using Nop.Services.Authentication;
-using Nop.Services.Localization;
-using Nop.Services.Directory;
-using Nop.Services.Common;
-using Nop.Services.Helpers;
-using Nop.Services.Stores;
+=======
 using Nop.Core.Domain.Vendors;
+using Nop.Core.Fakes;
+>>>>>>> webframe
+using Nop.Services.Authentication;
+using Nop.Services.Common;
+using Nop.Services.Customers;
+using Nop.Services.Directory;
+using Nop.Services.Helpers;
+using Nop.Services.Localization;
+using Nop.Services.Stores;
+using Nop.Services.Vendors;
 using Nop.Web.Framework.Localization;
 
 namespace Nop.Web.Framework
@@ -172,17 +179,97 @@ namespace Nop.Web.Framework
 
         #region Properties
 
-
         /// <summary>
         /// Gets or sets the current customer
         /// </summary>
+        /// <remarks>
+        /// 我的注释 判断用户登录
+        /// 
+        /// </remarks>
         public virtual Customer CurrentCustomer
         {
             get
             {
-                throw new NotImplementedException();
-            }
+                if (_cachedCustomer != null)
+                    return _cachedCustomer;
 
+                Customer customer = null;
+                if (_httpContext == null || _httpContext is FakeHttpContext)
+                {
+                    //check whether request is made by a background task
+                    //in this case return built-in customer record for background task
+                    customer = _customerService.GetCustomerBySystemName(SystemCustomerNames.BackgroundTask);
+                }
+
+                //check whether request is made by a search engine
+                //in this case return built-in customer record for search engines 
+                //or comment the following two lines of code in order to disable this functionality
+                if (customer == null || customer.Deleted || !customer.Active)
+                {
+                    if (_userAgentHelper.IsSearchEngine())
+                        customer = _customerService.GetCustomerBySystemName(SystemCustomerNames.SearchEngine);
+                }
+
+                //registered user
+                if (customer == null || customer.Deleted || !customer.Active)
+                {
+                    customer = _authenticationService.GetAuthenticatedCustomer();
+                }
+                //impersonate user if required (currently used for 'phone order' support)
+                if (customer != null && !customer.Deleted && customer.Active)
+                {
+                    var impersonatedCustomerId = customer.GetAttribute<int?>(SystemCustomerAttributeNames.ImpersonatedCustomerId);
+                    if (impersonatedCustomerId.HasValue && impersonatedCustomerId.Value > 0)
+                    {
+                        var impersonatedCustomer = _customerService.GetCustomerById(impersonatedCustomerId.Value);
+                        if (impersonatedCustomer != null && !impersonatedCustomer.Deleted && impersonatedCustomer.Active)
+                        {
+                            //set impersonated customer
+                            _originalCustomerIfImpersonated = customer;
+                            customer = impersonatedCustomer;
+                        }
+                    }
+                }
+
+                //load guest customer
+                if (customer == null || customer.Deleted || !customer.Active)
+                {
+                    var customerCookie = GetCustomerCookie();
+                    if (customerCookie != null && !String.IsNullOrEmpty(customerCookie.Value))
+                    {
+                        Guid customerGuid;
+                        if (Guid.TryParse(customerCookie.Value, out customerGuid))
+                        {
+                            var customerByCookie = _customerService.GetCustomerByGuid(customerGuid);
+                            if (customerByCookie != null &&
+                                //this customer (from cookie) should not be registered
+                                !customerByCookie.IsRegistered())
+                                customer = customerByCookie;
+                        }
+                    }
+                }
+                //create guest if not exists
+                //我的注释 从InsertGuestCustomer看到
+                //新的guest用户属性为：
+                //CustomerGuid = Guid.NewGuid(),
+                //Active = true,
+                //CreatedOnUtc = DateTime.UtcNow,
+                //LastActivityDateUtc = DateTime.UtcNow,
+                //然后该用户的CustomerGroup为Guest
+                if (customer == null || customer.Deleted || !customer.Active)
+                {
+                    customer = _customerService.InsertGuestCustomer();
+                }
+
+                //validation
+                if (!customer.Deleted && customer.Active)
+                {
+                    SetCustomerCookie(customer.CustomerGuid);
+                    _cachedCustomer = customer;
+                }
+
+                return _cachedCustomer;
+            }
             set
             {
                 SetCustomerCookie(value.CustomerGuid);
@@ -193,7 +280,7 @@ namespace Nop.Web.Framework
         /// <summary>
         /// Gets or sets the original customer (in case the current one is impersonated)
         /// </summary>
-        public Customer OriginalCustomerIfImpersonated
+        public virtual Customer OriginalCustomerIfImpersonated
         {
             get
             {
@@ -204,50 +291,215 @@ namespace Nop.Web.Framework
         /// <summary>
         /// Gets or sets the current vendor (logged-in manager)
         /// </summary>
-        public Customer CurrentVender
+        public virtual Vendor CurrentVendor
         {
             get
             {
-                throw new NotImplementedException();
+                if (_cachedVendor != null)
+                    return _cachedVendor;
+
+                var currentCustomer = this.CurrentCustomer;
+                if (currentCustomer == null)
+                    return null;
+
+                var vendor = _vendorService.GetVendorById(currentCustomer.VendorId);
+
+                //validation
+                if (vendor != null && !vendor.Deleted && vendor.Active)
+                    _cachedVendor = vendor;
+
+                return _cachedVendor;
             }
         }
 
-        public bool IsAdmin
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public TaxDisplayType TaxDisplayType
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public Currency WorkingCurrency
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
+        /// <summary>
+        /// Get or set current user working language
+        /// </summary>
         public Language WorkingLanguage
         {
             get
             {
-                throw new NotImplementedException();
+                if (_cachedLanguage != null)
+                    return _cachedLanguage;
+
+                Language detectedLanguage = null;
+                if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
+                {
+                    //get language from URL
+                    detectedLanguage = GetLanguageFromUrl();
+                }
+                if (detectedLanguage == null && _localizationSettings.AutomaticallyDetectLanguage)
+                {
+                    //get language from browser settings
+                    //but we do it only once
+                    if (!this.CurrentCustomer.GetAttribute<bool>(SystemCustomerAttributeNames.LanguageAutomaticallyDetected,
+                        _genericAttributeService, _storeContext.CurrentStore.Id))
+                    {
+                        detectedLanguage = GetLanguageFromBrowserSettings();
+                        if (detectedLanguage != null)
+                        {
+                            _genericAttributeService.SaveAttribute(this.CurrentCustomer, SystemCustomerAttributeNames.LanguageAutomaticallyDetected,
+                                 true, _storeContext.CurrentStore.Id);
+                        }
+                    }
+                }
+
+                if (detectedLanguage != null)
+                {
+                    //the language is detected. now we need to save it
+                    if (this.CurrentCustomer.GetAttribute<int>(SystemCustomerAttributeNames.LanguageId,
+                        _genericAttributeService, _storeContext.CurrentStore.Id) != detectedLanguage.Id)
+                    {
+                        _genericAttributeService.SaveAttribute(this.CurrentCustomer, SystemCustomerAttributeNames.LanguageId,
+                            detectedLanguage.Id, _storeContext.CurrentStore.Id);
+                    }
+                }
+
+                var allLanguages = _languageService.GetAllLanguages(storeId: _storeContext.CurrentStore.Id);
+                //find current customer language
+                var languageId = this.CurrentCustomer.GetAttribute<int>(SystemCustomerAttributeNames.LanguageId,
+                    _genericAttributeService, _storeContext.CurrentStore.Id);
+                var language = allLanguages.FirstOrDefault(x => x.Id == languageId);
+                if (language == null)
+                {
+                    //it not found, then let's load the default currency for the current language (if specified)
+                    languageId = _storeContext.CurrentStore.DefaultLanguageId;
+                    language = allLanguages.FirstOrDefault(x => x.Id == languageId);
+                }
+                if (language == null)
+                {
+                    //it not specified, then return the first (filtered by current store) found one
+                    language = allLanguages.FirstOrDefault();
+                }
+                if (language == null)
+                {
+                    //it not specified, then return the first found one
+                    language = _languageService.GetAllLanguages().FirstOrDefault();
+                }
+
+                //cache
+                _cachedLanguage = language;
+                return _cachedLanguage;
+            }
+            set
+            {
+                var languageId = value != null ? value.Id : 0;
+                _genericAttributeService.SaveAttribute(this.CurrentCustomer,
+                    SystemCustomerAttributeNames.LanguageId,
+                    languageId, _storeContext.CurrentStore.Id);
+
+                //reset cache
+                _cachedLanguage = null;
             }
         }
+
+        /// <summary>
+        /// Get or set current user working currency
+        /// </summary>
+        public Currency WorkingCurrency
+        {
+            get
+            {
+                if (_cachedCurrency != null)
+                    return _cachedCurrency;
+
+                //return primary store currency when we're in admin area/mode
+                if (this.IsAdmin)
+                {
+                    var primaryStoreCurrency = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId);
+                    if (primaryStoreCurrency != null)
+                    {
+                        //cache
+                        _cachedCurrency = primaryStoreCurrency;
+                        return primaryStoreCurrency;
+                    }
+                }
+
+                var allCurrencies = _currencyService.GetAllCurrencies(storeId: _storeContext.CurrentStore.Id);
+                //find a currency previously selected by a customer
+                var currencyId = this.CurrentCustomer.GetAttribute<int>(SystemCustomerAttributeNames.CurrencyId,
+                    _genericAttributeService, _storeContext.CurrentStore.Id);
+                var currency = allCurrencies.FirstOrDefault(x => x.Id == currencyId);
+                if (currency == null)
+                {
+                    //it not found, then let's load the default currency for the current language (if specified)
+                    currencyId = this.WorkingLanguage.DefaultCurrencyId;
+                    currency = allCurrencies.FirstOrDefault(x => x.Id == currencyId);
+                }
+                if (currency == null)
+                {
+                    //if not found, then return the first (filtered by current store) found one
+                    currency = allCurrencies.FirstOrDefault();
+                }
+                if (currency == null)
+                {
+                    //it not specified, then return the first found one
+                    currency = _currencyService.GetAllCurrencies().FirstOrDefault();
+                }
+
+                //cache
+                _cachedCurrency = currency;
+                return _cachedCurrency;
+            }
+            set
+            {
+                var currencyId = value != null ? value.Id : 0;
+                _genericAttributeService.SaveAttribute(this.CurrentCustomer,
+                    SystemCustomerAttributeNames.CurrencyId,
+                    currencyId, _storeContext.CurrentStore.Id);
+
+                //reset cache
+                _cachedCurrency = null;
+            }
+        }
+
+
+        /// <summary>
+        /// Get or set current tax display type
+        /// </summary>
+        public TaxDisplayType TaxDisplayType
+        {
+            get
+            {
+                //cache
+                if (_cachedTaxDisplayType != null)
+                    return _cachedTaxDisplayType.Value;
+
+                TaxDisplayType taxDisplayType;
+                if (_taxSettings.AllowCustomersToSelectTaxDisplayType && this.CurrentCustomer != null)
+                {
+                    taxDisplayType = (TaxDisplayType)this.CurrentCustomer.GetAttribute<int>(
+                        SystemCustomerAttributeNames.TaxDisplayTypeId,
+                        _genericAttributeService,
+                        _storeContext.CurrentStore.Id);
+                }
+                else
+                {
+                    taxDisplayType = _taxSettings.TaxDisplayType;
+                }
+
+                //cache
+                _cachedTaxDisplayType = taxDisplayType;
+                return _cachedTaxDisplayType.Value;
+            }
+            set
+            {
+                if (!_taxSettings.AllowCustomersToSelectTaxDisplayType)
+                    return;
+
+                _genericAttributeService.SaveAttribute(this.CurrentCustomer,
+                    SystemCustomerAttributeNames.TaxDisplayTypeId,
+                    (int)value, _storeContext.CurrentStore.Id);
+
+                //reset cache
+                _cachedTaxDisplayType = null;
+            }
+        }
+
+        /// <summary>
+        /// Get or set value indicating whether we're in admin area
+        /// </summary>
+        public bool IsAdmin { get; set; }
 
         #endregion
     }

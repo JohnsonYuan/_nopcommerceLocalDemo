@@ -6,6 +6,179 @@ build.cmd =》 cmd格式可以学习
 
 [MethodImpl(MethodImplOptions.Synchronized)]属性加到方法 相当于lock(this)
 
+Dynamic Linq:
+Nop.Core\Dynamic.cs （）
+下载地址 https://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library
+文档 https://github.com/kahanu/System.Linq.Dynamic/wiki/Dynamic-Expressions#_Substitution_Values
+e.g.
+var query = db.Customers
+              .Where("City = @0 and Orders.Count >= @1", "London", 10)
+              .OrderBy("CompanyName")
+              .Select("new(CompanyName as Name, Phone)");
+
+nopCommerce Nop.Web.Framework\Kendoui\QueryableExtensions.cs 中 根据kendo ui生成对应筛选条件， 然后调用dynamic linq
+var values = filters.Select(f => f.Value).ToArray();
+// Create a predicate expression e.g. Field1 = @0 And Field2 > @1
+string predicate = filter.ToExprssion(filters);
+// Use the Where method of Dynamic Linq to fitler the dats
+queryable = queryable.Where(predicate, values);
+
+Autofac Registration : http://docs.autofac.org/en/latest/register/registration.html
+1. 如果注册相同的，后注册的生效
+            builder.RegisterType<Class1>().As<IInterface>; //默认AsSelf()
+            builder.RegisterType<Class2>().As<IInterface>; //这个会生效， Resolve时候出来的是这个
+
+2. builder.Register(c => new A(c.Resolve<B>()));
+Autofac can accept a delegate or lambda expression to be used as a component creator:
+The parameter c type is IComponentContext in which the component is being created, you can use it Resolve object
+
+3.Passing Parameters to Register （http://docs.autofac.org/en/latest/register/parameters.html?highlight=ResolvedParameter）
+Available Parameter Types
+·NamedParameter - match target parameters by name
+·TypedParameter - match target parameters by type (exact type match required)
+·ResolvedParameter - flexible parameter matching
+
+NamedParameter and TypedParameter只能提供固定的值
+ResolvedParameter可以获取到contaienr Resolve的值 （can be used as a way to supply values dynamically retrieved from the container, e.g. by resolving a service by name.）
+e.g. 注册一个Ctor需要参数的类
+public class ConfigReader : IConfigReader
+{
+  public ConfigReader(string configSectionName)
+  {
+    // Store config section name
+  }
+  // ...read configuration based on the section name.
+}
+You could use a lambda expression component for that:
+·builder.Register(c => new ConfigReader("sectionName")).As<IConfigReader>();
+Or you could pass a parameter to a reflection component registration:
+// Using a NAMED parameter:
+·builder.RegisterType<ConfigReader>()
+       .As<IConfigReader>()
+       .WithParameter("configSectionName", "sectionName");
+// Using a TYPED parameter:
+·builder.RegisterType<ConfigReader>()
+       .As<IConfigReader>()
+       .WithParameter(new TypedParameter(typeof(string), "sectionName"));
+
+// Using a RESOLVED parameter:
+·builder.RegisterType<ConfigReader>()
+       .As<IConfigReader>()
+       .WithParameter(
+         new ResolvedParameter(
+           (pi, ctx) => pi.ParameterType == typeof(string) && pi.Name == "configSectionName",
+           (pi, ctx) => "sectionName"));
+
+-------------------------------
+
+NopCommerce Web.Framework\DependencyRegister.cs注册是用ResolvedParameter.ForNamed这种形式，调用方法还是与上面例子相同：
+    builder.RegisterType<ProductTagService>().As<IProductTagService>()
+        .WithParameter(ResolvedParameter.ForNamed<ICacheManager>("nop_cache_static"))
+        .InstancePerLifetimeScope();
+
+ResolvedParameter.ForNamed source code:
+https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/Core/ResolvedParameter.cs
+public static ResolvedParameter ForNamed<TService>(string serviceName)
+{
+            if (serviceName == null) throw new ArgumentNullException(nameof(serviceName));
+
+            return ForKeyed<TService>(serviceName);
+}
+
+public static ResolvedParameter ForKeyed<TService>(object serviceKey)
+{
+    if (serviceKey == null) throw new ArgumentNullException(nameof(serviceKey));
+	var ks = new KeyedService(serviceKey, typeof(TService));
+    return new ResolvedParameter(
+        (pi, c) => pi.ParameterType == typeof(TService) && c.IsRegisteredService(ks),
+		(pi, c) => c.ResolveService(ks));	// Resolve本质还是会调用ResolveService
+}
+
+-------------------------------
+Passing Parameters to Resolve（http://docs.autofac.org/en/latest/resolve/parameters.html?highlight=ResolvedParameter）
+·var reader = scope.Resolve<ConfigReader>(new NamedParameter("configSectionName", "sectionName"));
+If you have more than one parameter, just pass them all in via the Resolve() method:
+·var service = scope.Resolve<AnotherService>(
+                new NamedParameter("id", "service-identifier"),
+                new TypedParameter(typeof(Guid), Guid.NewGuid()),
+                new ResolvedParameter(
+                  (pi, ctx) => pi.ParameterType == typeof(ILog) && pi.Name == "logger",
+                  (pi, ctx) => LogManager.GetLogger("service")));
+
+Parameters with Lambda Expression Register/Resolve
+// Use TWO parameters to the registration delegate:
+// c = The current IComponentContext to dynamically resolve dependencies
+// p = An IEnumerable<Parameter> with the incoming parameter set
+builder.Register((c, p) =>
+                 new ConfigReader(p.Named<string>("configSectionName")))
+       .As<IConfigReader>();
+
+var reader = scope.Resolve<IConfigReader>(new NamedParameter("configSectionName", "sectionName"));
+
+
+4. builder.RegisterType<SomeType>(); 这样注册相当于builder.RegisterType<SomeType>().AsSelf();
+AsSelf()是默认的选项， 还有AsImplementedInterface()
+Resolve<SomeType>即可
+// However, if you want BOTH services (not as common) you can say so:
+builder.RegisterType<SomeType>().AsSelf().As<IService>();
+如果没有AsSelf() Resolve<SomeType> -> throw exception
+
+// Create the builder with which components/services are registered.
+var builder = new ContainerBuilder();
+
+// Register types that expose interfaces...
+builder.RegisterType<ConsoleLogger>().As<ILogger>();
+
+// Register instances of objects you create...
+var output = new StringWriter();
+builder.RegisterInstance(output).As<TextWriter>();
+
+// Register expressions that execute to create objects... 相当于RegisterInstance
+builder.Register(c => new ConfigReader("mysection")).As<IConfigReader>();
+
+// Build the container to finalize registrations
+// and prepare for object resolution.
+var container = builder.Build();
+
+// Now you can resolve services using Autofac. For example,
+// this line will execute the lambda expression registered
+// to the IConfigReader service.
+using(var scope = container.BeginLifetimeScope())
+{
+  var reader = container.Resolve<IConfigReader>();
+}
+
+Autofac per-request lifetime scope: http://docs.autofac.org/en/latest/faq/per-request-scope.html#registering-dependencies-as-per-request
+InstancePerRequest vs InstancePerLifetimescope:
+InstancePerMatchingLifetimeScope相当于一个有名字的InstancePerLifetimescope
+InstancePerRequest 相当于一个名字为MatchingScopeLifetimeTags.RequestLifetimeScopeTag的InstancePerLifetimescope
+
+InstancePerRequest https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/RegistrationExtensions.cs
+	var tags = new[] { MatchingScopeLifetimeTags.RequestLifetimeScopeTag }.Concat(lifetimeScopeTags).ToArray();
+	return registration.InstancePerMatchingLifetimeScope(tags);
+
+Reflection Components: RegisterType 的类型必须是concrete type
+public class MyComponent
+{
+    public MyComponent() { /* ... */ }
+    public MyComponent(ILogger logger) { /* ... */ }
+    public MyComponent(ILogger logger, IConfigReader reader) { /* ... */ }
+}
+
+var builder = new ContainerBuilder();
+builder.RegisterType<MyComponent>();
+builder.RegisterType<ConsoleLogger>().As<ILogger>();
+var container = builder.Build();
+using(var scope = container.BeginLifetimeScope())
+{
+// autofac会发现ILogger已经注册， 所以resolve MyComponent的时候会选择MyComponent(ILogger logger)这个版本
+  var component = container.Resolve<MyComponent>();
+}
+
+如果builder.Register(c => new MyComponent());
+Resolve的时候是MyComponent() -》 即注册时使用的（类似于RegisterInstance)
+
+
 Autofac MVC (Install-Package  Autofac.Mvc5)
 register your controllers, and set the dependency resolver
 http://docs.autofac.org/en/latest/integration/mvc.html
@@ -13,7 +186,7 @@ demo: http://blog.csdn.net/lhfly/article/details/7450781
 http://www.codeproject.com/Articles/560798/ASP-NET-MVC-controller-dependency-injection-for-be
 (RegisterControllers, SetResolver两步都是必须的, 否则找不到constructor)
 
-1. Register Controllers(RegisterControllers同意注册， 要么单个注册):
+1. Register Controllers(RegisterControllers统一注册， 要么单个注册):
 	var builder = new ContainerBuilder();
 
 	// You can register controllers all at once using assembly scanning...
@@ -31,6 +204,23 @@ Also, if you register controllers manually and choose to specify lifetimes, you 
   // Set the dependency resolver to be Autofac.
   var container = builder.Build();
   DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+ 第一步注册Controller功能： 免去一个个注册Controller, 一次把assemblies中所有Controller注册
+ example中给的参数是typeof(MvcApplication).Assembly， 会注册所有MvcApplication Assembly下的Controller
+ NopCommerce中参数给的是typeFinder.GetAssemblies()， 会把AppDomain.Current所有引用中的Controller注册， 因为除了Nop.Web, Nop.Web.Framework还有Controller, 不能只注册web projet的assembly的controller
+ 把assemblies中继承IController的类注册RegistrationBuilder.ForType(t) 这样就能Resolve 所有的Controller了
+ 1. RegisterControllers source code: (Autofac.Mvc)
+ https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/Features/Scanning/ScanningRegistrationExtensions.cs
+ 
+ return builder.RegisterAssemblyTypes(controllerAssemblies)
+                .Where(t => typeof(IController).IsAssignableFrom(t) &&
+                    t.Name.EndsWith(nameof(Controller), StringComparison.Ordinal));
+2. builder.RegisterAssemblyTypes 在 Autofac RegistrationExtensions定义
+return ScanningRegistrationExtensions.RegisterAssemblyTypes(builder, assemblies);
+3. ScanningRegistrationExtensions source:
+https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/Features/Scanning/ScanningRegistrationExtensions.cs
+assembly中每个类型都会RegistrationBuilder.ForType(t) // 注册当前Type, 相当于RegisterType<t>().AsSelf()
+
 
 Use MemoryCache:(System.Web.Caching.Cache can only works in ASP.NET)
 http://www.codeproject.com/Articles/290935/Using-MemoryCache-in-Net-4-0
@@ -53,3 +243,238 @@ namespace Nop.WebApp.Demo
         }
     }
 }
+
+Autofac: 
+在NopEngine -> RegisterDependencies中， 每次更新Container的时候都会builder = new ContainerBuilder()
+是引文一个ContainerBuilder 的 Update， 和Build方法只能使用一次
+（//because Build() or Update() method can only be called once on a ContainerBuilder.）
+
+var builder = new ContainerBuilder();
+var container = builder.Build();
+this._containerManager = new ContainerManager(container);
+
+builder = new ContainerBuilder();
+builder.RegisterInstance(config).As<NopConfig>().SingleInstance();
+。。。
+builder.Update(container);
+
+builder = new ContainerBuilder();
+builder.Register 。。。
+。。。
+builder.Update(container);
+
+Build源代码：
+https://github.com/autofac/Autofac/blob/41044d7d1a4fa277c628021537d5a12016137c3b/src/Autofac/ContainerBuilder.cs
+Build
+private void Build(IComponentRegistry componentRegistry, bool excludeDefaultModules)
+{
+    if (componentRegistry == null) throw new ArgumentNullException(nameof(componentRegistry));
+
+	// 如果已经Build过， 就会throw BuildCanOnlyBeCalledOnce 的exception
+    if (_wasBuilt)
+        throw new InvalidOperationException(ContainerBuilderResources.BuildCanOnlyBeCalledOnce);
+
+	_wasBuilt = true;
+
+}
+
+
+Autofac.Integration.Mvc/AutofacDependencyResolver.cs
+https://github.com/autofac/Autofac.Mvc/blob/develop/src/Autofac.Integration.Mvc/AutofacDependencyResolver.cs
+NopEngine.cs中调用
+DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+Autofac 注册难点： Registration Sources
+
+实现方法（Implementing a Registration Source）：http://docs.autofac.org/en/latest/advanced/registration-sources.html?highlight=IRegistrationSource
+继承IRegistrationSource, RegistrationsFor方法中实现
+RegistrationsFor方法参数service是TypedService类型
+var ts = service as TypedService;
+比如调用scope.Scope<BaseHandler>, autofac没有找到注册的BaseHandler， 会在RegistrationSource里寻找
+属性ts.ServiceType是需要Resolve的类型， 此处ServiceType就是BaseHandler
+然后再返回BaseHandler需要Resolve的类型， 方法中可以调用RegistrationBuilder.ForDelegate, 参数c可以Resolve注册过的类型
+RegistrationBuilder.ForDelegate((c, p) => c.Resolve<> );
+
+// 混合了AnyConcreteTypeNotAlreadyRegisteredSource, autofac文档, NopCommerce Web.Framework\DependencyRegister.cs\SettingsSource
+public class [classname] : IRegistrationSource
+{
+  public IEnumerable<IComponentRegistration> RegistrationsFor(
+    Service service,
+    Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
+  {
+		// autofac中as成IServiceWithType;
+		var ts = service as TypedService;
+
+        //AnyConcreteTypeNotAlreadyRegisteredSource
+		if(swt == null || !typeof(BaseHandler).IsAssignableFrom(ts.ServiceType))
+		{
+		  // It's not a request for the base handler type, so skip it.
+		  return Enumerable.Empty<IComponentRegistration>();
+		}
+
+		// 返回Resolve成的类型 e.g. 返回HandlerA
+		var builder = RegistrationBuilder
+                .ForDelegate((c, p) =>
+        {
+			var provider = c.Resolve<IHandlerFactory>();
+			var method = provider.GetType().GetMethod("GetHandler").MakeGenericMethod(ts.ServiceType);
+            // In the end, return the object from the factory.
+            return method.Invoke(provider, null);
+        });
+
+		return new[] { builder.CreateRegistration() };
+  }
+}
+
+Autofac 自带一个AnyConcreteTypeNotAlreadyRegisteredSource， 可以把没注册的类都按注册为本身
+https://github.com/autofac/Autofac/blob/1aca241fc0e7d5535fdff23c833dcbfdaa0f02b7/src/Autofac/Features/ResolveAnything/AnyConcreteTypeNotAlreadyRegisteredSource.cs
+var builder = new ContainerBuilder();
+builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
+var container = builder.Build();
+
+如果没有注册Pet class, 可以直接调用sopce.Resolve<Pet>，得到Pet class
+Resolve实现的关键部分：
+var builder = RegistrationBuilder.ForType(ts.ServiceType); // ts.ServiceType为当前需要Resolve的type(Pet)
+return new[] { builder.CreateRegistration() };
+
+RegistrationBuilder还有ForDelegate方法， 参数c为IComponentContext, 可以调用Resolve
+
+Nopcommerce  Nop.Web.Framework\DependencyRegistrar.cs, SettingsSource  : IRegistrationSource通过实现Registration Source来完成所有继承ISettings类的注册:
+		RegistrationBuilder
+                .ForDelegate((c, p) =>
+                {
+                    var currentStoreId = c.Resolve<IStoreContext>().CurrentStore.Id;
+                    return c.Resolve<ISettingService>().LoadSetting<TSettings>(currentStoreId);
+                })
+                .InstancePerLifetimeScope()
+                .CreateRegistration();
+
+
+System.Reflection:
+
+1. GetMethod (Type class) 为例（还有GetMethods, GetProperty ...）:
+public MethodInfo GetMethod(string name) // name是该类的方法名， case-sensitive, 默认的BindingFlags是BindingFlags.Instance | BindingFlags.Public
+public MethodInfo GetMethod Method (String, BindingFlags) //
+about : BindingFlags.Instance
+•必须使用 BindingFlags.Instance 或 BindingFlags.Static in order to get a return，否则返回null
+•Specify BindingFlags.Public to include public methods in the search.
+•Specify BindingFlags.NonPublic to include non-public methods (可以得到private, internal, and protected methods) in the search.
+•Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy; private static members in inherited classes are not included.
+
+public class Person
+{
+   public String FirstName;
+   public String LastName;
+
+   public override String ToString()
+   {
+      return (FirstName + " " + LastName).Trim();
+   }
+}
+
+
+Type t = typeof(Person);
+MethodInfo m = t.GetMethod(“ToString");
+
+
+MethodInfo BuildMethod = typeof(SettingsSource).GetMethod("BuildRegistration",
+            BindingFlags.Static | BindingFlags.NonPublic);
+
+2.  MethodInfo.MakeGenericMethod : 申明Generic方法参数的类型
+https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k(System.Reflection.MethodInfo.MakeGenericMethod);k(SolutionItemsProject);k(TargetFrameworkMoniker-.NETFramework,Version%3Dv4.5.2);k(DevLang-csharp)&rd=true
+// Define a class with a generic method.
+public class HandlerFactory
+{
+    public static T GetHandler<T>() where T : struct
+    {
+        return (T)Activator.CreateInstance(typeof(T));
+    }
+}
+
+Type ex = typeof(HandlerFactory);
+
+
+MethodInfo mi = ex.GetMethod("Generic");						// mi.ToString():  T GetHandler[T]()
+
+MethodInfo miConstructed = mi.MakeGenericMethod(typeof(int));	//    ToString():  Int32 GetHandler[Int32]()
+
+// 详细比较查看文档中两个方法的比较
+
+3. MethodInfo.InvodeMethod(object obj, object[] parameters) : 调用方法
+https://msdn.microsoft.com/en-us/library/a89hcwhh(v=vs.110).aspx
+第一个参数是调用这个方法的object 如果该方法是stattic的,最好写成null, 写成别的值会忽略这个参数
+第二个参数An argument list for the invoked method or constructor、
+
+如果该方法不是static， 第一个参数必须赋值为调用这个方法的object
+
+public class MagicClass
+{
+    private int magicBaseValue;
+
+    public MagicClass()
+    {
+        magicBaseValue = 9;
+    }
+
+    public int ItsMagic(int preMagic)
+    {
+        return preMagic * magicBaseValue;
+    }
+}
+
+MethodInfo magicMethod = magicType.GetMethod("ItsMagic");
+object magicValue = magicMethod.Invoke(magicClassObject, new object[]{100}); //方法ItsMagic参数值为100
+
+Type.GetInterfaces() 会得到类型所有实现的interface
+如果需要筛选满足条件的interface用FindInterfaces
+Type.FindInterfaces (下面有source code):
+public virtual Type[] FindInterfaces(
+	TypeFilter filter,
+	object filterCriteria
+)
+TypeFilter是一个deleate， public delegate bool TypeFilter(Type m, object filterCriteria);
+第二个参数filterCriteria可以为任意类型的值, 能够在TypeFilter里判断就可以，是一个判断条件, 会用于第一个参数filter的判断 （参看下面source code）
+
+    public static void Main()
+    {
+            XmlDocument myXMLDoc = new XmlDocument();
+            Type myType = myXMLDoc.GetType();
+
+            TypeFilter myFilter = new TypeFilter(MyInterfaceFilter);
+            Type[] myInterfaces = myType.FindInterfaces(myFilter, 
+                    "System.Collections.IEnumerable");
+    }
+    public static bool MyInterfaceFilter(Type typeObj,Object criteriaObj)
+    {
+        if(typeObj.ToString() == criteriaObj.ToString())
+            return true;
+        else 
+            return false;
+    }
+
+https://referencesource.microsoft.com/#mscorlib/system/type.cs,599
+        // This method will filter the interfaces supported the class
+        public virtual Type[] FindInterfaces(TypeFilter filter,Object filterCriteria)
+        {
+            if (filter == null)
+                throw new ArgumentNullException("filter");
+            Contract.EndContractBlock();
+            Type[] c = GetInterfaces();
+            int cnt = 0;
+            for (int i = 0;i<c.Length;i++) {
+                if (!filter(c[i],filterCriteria))
+                    c[i] = null;
+                else
+                    cnt++;
+            }
+            if (cnt == c.Length)
+                return c;
+            
+            Type[] ret = new Type[cnt];
+            cnt=0;
+            for (int i=0;i<c.Length;i++) {
+                if (c[i] != null)
+                    ret[cnt++] = c[i];
+            }
+            return ret;
+        }

@@ -8,7 +8,6 @@ namespace Nop.Data
     {
         public void Execute()
         {
-            //TODO在哪里注册的DataSettings
             var settings = EngineContext.Current.Resolve<DataSettings>();
             if (settings != null && settings.IsValid())
             {

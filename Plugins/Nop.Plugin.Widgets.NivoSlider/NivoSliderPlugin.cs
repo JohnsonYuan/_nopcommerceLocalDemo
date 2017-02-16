@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Web.Routing;
 using Nop.Core;
@@ -42,7 +42,7 @@ namespace Nop.Plugin.Widgets.NivoSlider
         /// <param name="actionName">Action name</param>
         /// <param name="controllerName">Controller name</param>
         /// <param name="routeValues">Route values</param>
-        public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
+        public void GetConfigurationRoute(out string actionName, out string controllerName, out System.Web.Routing.RouteValueDictionary routeValues)
         {
             actionName = "Configure";
             controllerName = "WidgetsNivoSlider";
@@ -56,7 +56,7 @@ namespace Nop.Plugin.Widgets.NivoSlider
         /// <param name="actionName">Action name</param>
         /// <param name="controllerName">Controller name</param>
         /// <param name="routeValues">Route values</param>
-        public void GetDisplayWidgetRoute(string widgetZone, out string actionName, out string controllerName, out RouteValueDictionary routeValues)
+        public void GetDisplayWidgetRoute(string widgetZone, out string actionName, out string controllerName, out System.Web.Routing.RouteValueDictionary routeValues)
         {
             actionName = "PublicInfo";
             controllerName = "WidgetsNivoSlider";
@@ -76,19 +76,18 @@ namespace Nop.Plugin.Widgets.NivoSlider
             //pictures
             var sampleImagesPath = CommonHelper.MapPath("~/Plugins/Widgets.NivoSlider/Content/nivoslider/sample-images/");
 
-
             //settings
             var settings = new NivoSliderSettings
             {
                 Picture1Id = _pictureService.InsertPicture(File.ReadAllBytes(sampleImagesPath + "banner1.jpg"), MimeTypes.ImagePJpeg, "banner_1").Id,
-                Text1 = "",
+                Text1 = "测试图1",
                 Link1 = _webHelper.GetStoreLocation(false),
                 Picture2Id = _pictureService.InsertPicture(File.ReadAllBytes(sampleImagesPath + "banner2.jpg"), MimeTypes.ImagePJpeg, "banner_2").Id,
-                Text2 = "",
+                Text2 = "测试图2",
                 Link2 = _webHelper.GetStoreLocation(false),
-                //Picture3Id = _pictureService.InsertPicture(File.ReadAllBytes(sampleImagesPath + "banner3.jpg"), MimeTypes.ImagePJpeg, "banner_3").Id,
-                //Text3 = "",
-                //Link3 = _webHelper.GetStoreLocation(false),
+                Picture3Id = _pictureService.InsertPicture(File.ReadAllBytes(sampleImagesPath + "banner3.jpg"), MimeTypes.ImagePJpeg, "banner_3").Id,
+                Text3 = "测试图3",
+                Link3 = _webHelper.GetStoreLocation(false),
             };
             _settingService.SaveSetting(settings);
 

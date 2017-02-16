@@ -117,8 +117,6 @@ namespace Nop.Services.Localization
             return result;
         }
 
-
-
         /// <summary>
         /// Get localized property of setting
         /// </summary>
@@ -380,7 +378,7 @@ namespace Nop.Services.Localization
         {
             var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
             var languageService = EngineContext.Current.Resolve<ILanguageService>();
-             AddOrUpdatePluginLocaleResource(plugin, localizationService,
+            AddOrUpdatePluginLocaleResource(plugin, localizationService,
                  languageService, resourceName, resourceValue, languageCulture);
         }
         /// <summary>

@@ -1,0 +1,89 @@
+﻿WebGrease: Web Grease is a suite of tools for optimizing javascript, css files and images.
+Install-Package WebGrease 
+
+
+Catalog\SearchBox.cshtml, 
+http://jqueryui.com/autocomplete/
+jquery autocomplete (捎带看看<text>)
+        <text>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#small-searchterms').autocomplete({
+                        delay: 500,
+                        miniLength: @(Model.SearchTermMinimumLength.ToString()),
+                        source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+                        appendTo: '.search-box',
+                        select: function(event, ui) {
+                            $("#small-searchterms").val(ui.item.label);
+                            setLocation(ui.item.producturl);
+                            return false;
+                        }
+                    })
+                    .data("ui-autocomplete")._renderItem = function (ul, item) {
+                        var t = item.label;
+                        //html encode
+                        t = htmlEncode(t);
+                        return $("<li></li>")
+                            .data("item.autocomplete", item)
+                            .append("<a>@(Model.ShowProductImagesInSearchAutoComplete ? Html.Raw("<img src='\" + item.productpictureurl + \"'>") : null)<span>" + t + "</span></a>")
+                                .appendTo(ul);
+                    };
+                });
+            </script>
+        </text>
+
+	
+http://api.jquery.com/text-selector/
+text selector
+\Presentation\Nop.Web\Views\Poll\_Poll.cshtml
+$("input:radio[name=pollanswers]:checked")
+$(document).ready(function () {
+    $('#vote-poll-@(Model.Id)').click(function () {
+    var pollAnswerId = $("input:radio[name=pollanswers-@(Model.Id)]:checked").val();
+    if (typeof (pollAnswerId) == 'undefined') {
+        alert('@Html.Raw(HttpUtility.JavaScriptStringEncode(T("Polls.SelectAnswer").Text))');
+    }
+    else {
+        var voteProgress = $("#poll-voting-progress-@(Model.Id)");
+        voteProgress.show();
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "@(Url.RouteUrl("PollVote"))",
+            data: { "pollAnswerId": pollAnswerId },
+            success: function (data) {
+                voteProgress.hide();
+
+                if (data.error) {
+                    $("#block-poll-vote-error-@(Model.Id)").html(data.error);
+                    $('#block-poll-vote-error-@(Model.Id)').fadeIn("slow").delay(2000).fadeOut("slow");
+                }
+
+                if (data.html) {
+                    $("#poll-block-@(Model.Id)").replaceWith(data.html);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Failed to vote.');
+                voteProgress.hide();
+            }
+        });
+    }
+    return false;
+});
+
+Nop.Web\Views\Product\_ProductAttributes.cshtml
+有上传的js， 还有选择颜色框的js
+$('.attributes #color-squares-@(attribute.Id)').delegate('input', 'click', function(event) {
+                                    $('.attributes #color-squares-@(attribute.Id)').find('li').removeClass('selected-value');
+                                    $(this).closest('li').addClass('selected-value');
+                                });
+
+ 
+unobtrusive Validation 分析： 必须需要jquery.validate 和 jquery.validate.unobtrusive
+jquery.validat文档中直说给input加上class="required email"属性就可以验证， 但是发现mvc在生成的时候type属性就行了， 但是mvc在生成的属性确是data-val这些，如下
+<input data-val="true" data-val-required="The User name field is required." id="UserName" name="UserName" type="text" value="" class="valid">
+原因是因为jquery.validate.unobtrusive.js通过 扩展 jquery.validator 增加 jQuery.validator.unobtrusive.adapters属性. 来实现data-val这些属性的验证（验证规则为mvc model的验证属性）
+http://bradwilson.typepad.com/blog/2010/10/mvc3-unobtrusive-validation.html
+（很不错的分析jquery.validate.unobtrusive.js的实现）Asp.net MVC源码分析--Model Validation(Client端)实现(2)
+http://www.cnblogs.com/RobbinHan/archive/2011/12/20/2293391.html

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
-using System.IO;
 using System.Data.SqlServerCe;
+using System.IO;
 
 namespace Nop.Data.Initializers
 {
@@ -21,7 +21,7 @@ namespace Nop.Data.Initializers
             if (context.Database.Connection is SqlCeConnection)
             {
                 var builder = new SqlCeConnectionStringBuilder(context.Database.Connection.ConnectionString);
-                if (!String.IsNullOrEmpty(builder.DataSource))
+                if (!String.IsNullOrWhiteSpace(builder.DataSource))
                 {
                     builder.DataSource = ReplaceDataDirectory(builder.DataSource);
                     return new DbContext(builder.ConnectionString);

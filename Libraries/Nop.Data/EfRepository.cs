@@ -8,6 +8,9 @@ using Nop.Core.Data;
 
 namespace Nop.Data
 {
+    /// <summary>
+    /// Entity Framework repository
+    /// </summary>
     public partial class EfRepository<T> : IRepository<T> where T : BaseEntity
     {
         #region Fields
@@ -66,7 +69,7 @@ namespace Nop.Data
         /// Insert entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        public void Insert(T entity)
+        public virtual void Insert(T entity)
         {
             try
             {
@@ -86,7 +89,7 @@ namespace Nop.Data
         /// <summary>
         /// Insert entities
         /// </summary>
-        /// <param name="entity">Entities</param>
+        /// <param name="entities">Entities</param>
         public virtual void Insert(IEnumerable<T> entities)
         {
             try
@@ -109,7 +112,7 @@ namespace Nop.Data
         /// Update entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             try
             {
@@ -128,7 +131,7 @@ namespace Nop.Data
         /// Update entities
         /// </summary>
         /// <param name="entities">Entities</param>
-        public void Update(IEnumerable<T> entities)
+        public virtual void Update(IEnumerable<T> entities)
         {
             try
             {
@@ -147,7 +150,7 @@ namespace Nop.Data
         /// Delete entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
             try
             {
@@ -167,8 +170,8 @@ namespace Nop.Data
         /// <summary>
         /// Delete entities
         /// </summary>
-        /// <param name="entity">Entities</param>
-        public void Delete(IEnumerable<T> entities)
+        /// <param name="entities">Entities</param>
+        public virtual void Delete(IEnumerable<T> entities)
         {
             try
             {
@@ -193,7 +196,7 @@ namespace Nop.Data
         /// <summary>
         /// Gets a table
         /// </summary>
-        public IQueryable<T> Table
+        public virtual IQueryable<T> Table
         {
             get
             {

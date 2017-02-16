@@ -1,9 +1,0 @@
-DiscountRequirement.HadSpentAmount
-ExternalAuth.Facebook
-Pickup.PickupInStore
-Widgets.GoogleAnalytics
-Tax.FixedRate
-Shipping.FixedRate
-Shipping.ByWeight
-Payments.PayPalDirect
-Payments.PurchaseOrder

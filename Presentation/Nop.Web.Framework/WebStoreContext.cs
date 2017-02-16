@@ -1,11 +1,5 @@
 ﻿using System;
-<<<<<<< HEAD
 using System.Linq;
-=======
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
->>>>>>> webFramework
 using Nop.Core;
 using Nop.Core.Domain.Stores;
 using Nop.Services.Stores;
@@ -38,12 +32,10 @@ namespace Nop.Web.Framework
                 if (_cachedStore != null)
                     return _cachedStore;
 
-                //ty to determine the current store by HTTP_HOST
-<<<<<<< HEAD
+                //try to determine the current store by HTTP_HOST
+
                 var host = _webHelper.ServerVariables("HTTP_POST");
-=======
-                var host = _webHelper.ServerVariables("HTTP_HOST");
->>>>>>> webFramework
+
                 var allStores = _storeService.GetAllStores();
                 var store = allStores.FirstOrDefault(s => s.ContainsHostValue(host));
 
@@ -52,10 +44,7 @@ namespace Nop.Web.Framework
                     //load the first found store
                     store = allStores.FirstOrDefault();
                 }
-<<<<<<< HEAD
-=======
 
->>>>>>> webFramework
                 if (store == null)
                     throw new Exception("No store could be loaded");
 

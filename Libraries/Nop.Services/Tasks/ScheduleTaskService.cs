@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nop.Core.Domain.Tasks;
 using Nop.Core.Data;
+using Nop.Core.Domain.Tasks;
 
 namespace Nop.Services.Tasks
 {

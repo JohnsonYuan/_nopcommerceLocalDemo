@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "Antifogery";
+}
+
+<h2>Antifogery</h2>
+<br />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Response.Cookies["__RequestVerificationToken"].Value
+    <br />
+
+    <input type="submit" value="Submit" />
+}
+

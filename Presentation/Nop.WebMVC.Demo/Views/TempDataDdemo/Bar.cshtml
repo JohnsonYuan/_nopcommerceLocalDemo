@@ -1,9 +1,19 @@
 ﻿
 @{
     ViewBag.Title = "Bar";
+
+    RouteValueDictionary parameters = new RouteValueDictionary { { "action", "Index" }, { "controller", "Home" } };
+    VirtualPathData vpd = RouteTable.Routes.GetVirtualPath(null, parameters);
 }
 
 <h2>Bar</h2>
 
-Temp data is : @TempData["foo"]
+virtual path: @vpd.VirtualPath
 
+<br/>
+Temp data is : @Html.Raw(TempData["foo"])
+
+@foreach (var item in ViewEngines.Engines)
+{
+    @item
+}

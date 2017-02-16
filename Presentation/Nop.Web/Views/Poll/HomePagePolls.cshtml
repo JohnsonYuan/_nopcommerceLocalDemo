@@ -1,0 +1,14 @@
+﻿@model IList<PollModel>
+@using Nop.Web.Models.Polls;
+@if (Model.Count > 0)
+{
+    <div class="home-page-polls">
+        <div class="title">
+            <string>@T("Polls.Title")</string>
+        </div>
+        @foreach (var poll in Model)
+        {
+            @Html.Partial("_Poll", poll)
+        }
+    </div>
+}

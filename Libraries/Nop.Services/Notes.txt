@@ -10,7 +10,40 @@ s = new EuropaCheckVatService.checkVatService();
 s.checkVat(ref twoLetterIsoCode, ref vatNumber, out valid, out name, out address);
 VAT 即是 Value Added Tax/ AD VALOREM tax ，附加税，欧盟的一种税制，即购物时要另加税，是根据商品的价格而征收的。如定价是 inc vat，即已含税， excl vat 是未包税，Zero vat 是税率为0。
 
-Linq:两个from=>相当于嵌套from, e.g.:
+
+About linq join clause:
+1. Inner join
+var innerJoinQuery =
+                from category in categories
+                join prod in products on category.ID equals prod.CategoryID
+                select new { ProductName = prod.Name, Category = category.Name }; //produces flat sequence
+2. group join
+into 是把join的表保存过来（例子中是把订单保存到c_o, 文档中有不错的例子）
+var innerGroupJoinQuery =
+                from category in categories
+                join prod in products on category.ID equals prod.CategoryID into prodGroup
+                select new { CategoryName = category.Name, Products = prodGroup };
+2. left outer join:  group join 基础上增加DefaultIfEmpty()
+https://msdn.microsoft.com/en-us/library/bb311040.aspx
+//\Nop.Services\Customers\CustomerService.cs，DeleteCustomer方法
+//找出没有订单的用户
+query = from c in _customerRepository.Table
+        join o in _orderRepository.Table on c.Id equals o.CustomerId into c_o
+        from o in c_o.DefaultIfEmpty()
+        where !c_o.Any()
+        select c;
+转换为sql是
+SELECT [t0].[Id], [t0].[CustomerGuid], [t0].[Username], [t0].[Email], [t0].[Password], [t0].[PasswordFormatId], [t0].[PasswordSalt], [t0].[AdminComment], [t0].[IsTaxExempt], [t0].[AffiliateId], [t0].[VendorId], [t0].[HasShoppingCartItems], [t0].[Active], [t0].[Deleted], [t0].[IsSystemAccount], [t0].[SystemName], [t0].[LastIpAddress], [t0].[CreatedOnUtc], [t0].[LastLoginDateUtc], [t0].[LastActivityDateUtc], [t0].[BillingAddress_Id], [t0].[ShippingAddress_Id]
+FROM [Customer] AS [t0]
+LEFT OUTER JOIN [Order] AS [t1] ON [t0].[Id] = [t1].[CustomerId]
+WHERE NOT (EXISTS(
+    SELECT NULL AS [EMPTY]
+    FROM [Order] AS [t2]
+    WHERE [t0].[Id] = [t2].[CustomerId]
+    ))
+
+
+2. Linq:两个from=>相当于嵌套from, e.g.:
 char[] upperCase = { 'A', 'B', 'C'};
 char[] lowerCase = { 'x', 'y', 'z'};
 var joinQuery2 =
@@ -73,3 +106,15 @@ http://dev.maxmind.com/geoip/geoip2/geolite2/
 iTextSharp(http://developers.itextpdf.com/content/itext-7-building-blocks)
 Nop.Services.Common\PdfService.cs
 demo: http://www.4guysfromrolla.com/articles/030911-1.aspx
+
+\Helpers\UserAgentHelper.cs
+UserAgentHelper.IsSearchEngine() 读取什么文件怎么判断是SE
+
+Authentication\FormsAuthenticationService.cs
+var formsIdentity = (FormsIdentity)_httpContext.User.Identity; //得到当亲 Authenticated 用户的信息
+https://www.asp.net/web-forms/overview/older-versions-security/introduction/an-overview-of-forms-authentication-cs
+
+
+TypeConverter:
+GenericAttributeService 方法SaveAttribute, 把要保存的value用typeconverter转换为string类型
+var valueStr = CommonHelper.To<string>(value);

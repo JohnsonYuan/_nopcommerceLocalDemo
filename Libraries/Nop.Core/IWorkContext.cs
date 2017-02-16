@@ -2,6 +2,7 @@
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.Vendors;
 
 namespace Nop.Core
 {
@@ -21,20 +22,20 @@ namespace Nop.Core
         /// <summary>
         /// Gets or sets the current vender (logged-in manager)
         /// </summary>
-        Customer CurrentVender { get; }
+        Vendor CurrentVendor { get; }
 
         /// <summary>
         /// Gets or sets the current working language
         /// </summary>
-        Language WorkingLanguage { get; }
+        Language WorkingLanguage { get; set; }
         /// <summary>
         /// Gets or sets the current working currency
         /// </summary>
-        Currency WorkingCurrency { get; }
+        Currency WorkingCurrency { get; set; }
         /// <summary>
         /// Gets or sets the current tax display type
         /// </summary>
-        TaxDisplayType TaxDisplayType { get; }
+        TaxDisplayType TaxDisplayType { get; set; }
 
         /// <summary>
         /// Gets or sets value indicating whether we're in admin area

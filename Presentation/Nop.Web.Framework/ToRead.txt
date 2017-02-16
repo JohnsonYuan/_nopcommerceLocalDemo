@@ -1,14 +1,429 @@
-﻿6 Tips for ASP.NET MVC Model Binding
+﻿Anti-Forgery Tokens -- Nop.Web.Framwork\Security\PublicAntiForgeryAttribute,cs
+（好的介绍）https://www.asp.net/web-api/overview/security/preventing-cross-site-request-forgery-csrf-attacks
+http://blog.stevensanderson.com/2008/09/01/prevent-cross-site-request-forgery-csrf-using-aspnet-mvcs-antiforgerytoken-helper/
+（好的例子，1.  创建一个只在特定httpverb下验证的Anti-Forgery，nopcommerce的PublicAntiForgeryAttribute版本则是在post和配置是true验证，
+2. ajax 提交带有antiforgery 的form, nopcommerce 参考TopicDetails.cshtml）
+https://weblogs.asp.net/dixin/anti-forgery-request-recipes-for-asp-net-mvc-and-ajax
+（深度好文） https://www.codeproject.com/articles/793384/asp-net-anti-forgery-tokens-internals
+Anti-Forgery会生成一个input 和 cookie token, 两个token值不同， 会在验证的时候判断是否合法
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiForgeryConfig.cs
+1. input name 为 __RequestVerificationToken， 第二个文章js部分是错的， input name值一直是这个， 跟app name无关:
+<input name="__RequestVerificationToken" value="Dk9PdKXJENs_RXRjW-ZkWp20VcMXVXm6sT1YR1f0zkc8wxXBx62xwubC5uTNW7YJPBFzdwLfOAv8-yBOrNWEXE9wZB1AVvRLRKImifcb9O41" type="hidden">
+
+2. cookie name为 __RequestVerificationToken， 如果（applicationPath不是"/"的话 cookie name为 "__RequestVerificationToken" + "_" + HttpServerUtility.UrlTokenEncode(Encoding.UTF8.GetBytes(appPath));
+Yr6yR8d9bH6gFxN10w4IoVEzOHnDFBaSU0yBqHnkXT4v1NyIm6zZw3ELZQFG3xSGX0nBL8-Tw9IJfrR5b8_3LtHghrMRelXEo2rcasx-pDg1 
+
+使用方法：
+@using (Html.BeginForm("Manage", "Account")) {
+    @Html.AntiForgeryToken()
+}
+Controller方法加上ValidateAntiForgeryToken 属性, 就可以验证了
+
+
+生成cookie token的时候
+var cookieToken = new AntiForgeryToken()
+            {
+                // SecurityToken will be populated automatically.
+                IsSessionToken = true
+            };
+SecurityToken get 会自动赋值， 由随机算法RNGCryptoServiceProvider生成128bit的长度为16的byte[] 
+生成form token生成和cookie token一样的SecurityToken
+var formToken = new AntiForgeryToken()
+{
+    SecurityToken = cookieToken.SecurityToken,
+    IsSessionToken = false
+};
+然后AntiForgeryTokenSerializer.Serialize 这两个token， 
+Serialize根据TokenVersion, SecurityToken, IsSessionToken等属性， 先生成byte[]， 然后调用return MachineKey45CryptoSystem.Protect(stream.ToArray());
+MachineKey45CryptoSystem调用MachineKey.Protect， 每次MachineKey.Protect生成值每次的值不一样， 
+所以调用@Html.Antiforgery() 每次的值都不一样， 但MachineKey.UnProtect 值一样， 所有每次serialize的值都不一样
+
+所以如果一个页面调用多个Html.AntiforgeryToken(), ajax post时随便一个input都可以满足验证  
+public string Protect(byte[] data)
+{
+    byte[] rawProtectedBytes = MachineKey.Protect(data, _purposes);
+    return HttpServerUtility.UrlTokenEncode(rawProtectedBytes);
+}
+
+验证的时候AntiForgeryTokenSerializer.Deserialize input和cookie的值， 比较二者的SecurityToken(BinaryBlob类型)是否相等: CryptoUtil.AreByteArraysEqual 比较byte[]数组是否每个都相等
+
+
+所以nopcommerce， ajax post时候 admin页面有多个input[name=__RequestVerificationToken]取一个就可以了（tokenInput.val()返回的是第一个匹配元素的值）
+var tokenInput = $('input[name=__RequestVerificationToken]');
+    if (tokenInput.length) {
+        data.__RequestVerificationToken = tokenInput.val();
+ }
+ 
+
+
+生成token
+string cookieToken, formToken;
+AntiForgery.GetTokens(null, out cookieToken, out formToken);
+验证
+AntiForgery.Validate(cookieToken, formToken);
+
+Antifogery source:
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiForgery.cs
+
+Antifogery 生成过程(删除验证参数代码)：
+
+1. HtmlHelper.cs: (http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/HtmlHelper.cs)
+public MvcHtmlString AntiForgeryToken()
+{
+    return new MvcHtmlString(AntiForgery.GetHtml().ToString());
+}
+2. AntiForgery (System.Web.WebPages.Helper\AntiForgery.cs) http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiForgery.cs
+public static HtmlString GetHtml()
+{
+	TagBuilder retVal = _worker.GetFormInputElement(new HttpContextWrapper(HttpContext.Current));
+	return retVal.ToHtmlString(TagRenderMode.SelfClosing);
+}
+3. 生成cookie和input html, 第二步中_work为System.Web.Helpers.AntiXsrf。AntiForgeryWorker
+public TagBuilder GetFormInputElement(HttpContextBase httpContext)
+{
+    CheckSSLConfig(httpContext);
+
+    AntiForgeryToken oldCookieToken = GetCookieTokenNoThrow(httpContext);
+    AntiForgeryToken newCookieToken, formToken;
+    GetTokens(httpContext, oldCookieToken, out newCookieToken, out formToken);
+
+    if (newCookieToken != null)
+    {
+        // If a new cookie was generated, persist it.
+        _tokenStore.SaveCookieToken(httpContext, newCookieToken);
+    }
+
+    if (!_config.SuppressXFrameOptionsHeader)
+    {
+        // Adding X-Frame-Options header to prevent ClickJacking. See
+        // http://tools.ietf.org/html/draft-ietf-websec-x-frame-options-10
+        // for more information.
+        httpContext.Response.AddHeader("X-Frame-Options", "SAMEORIGIN");
+    }
+
+    // <input type="hidden" name="__AntiForgeryToken" value="..." />
+    TagBuilder retVal = new TagBuilder("input");
+    retVal.Attributes["type"] = "hidden";
+    retVal.Attributes["name"] = _config.FormFieldName;
+    retVal.Attributes["value"] = _serializer.Serialize(formToken);
+    return retVal;
+}
+3.1. 其中的GetTokens()方法中调用_validator用来生成cookie token, form token
+
+private void GetTokens(HttpContextBase httpContext, AntiForgeryToken oldCookieToken, out AntiForgeryToken newCookieToken, out AntiForgeryToken formToken)
+{
+    newCookieToken = null;
+    if (!_validator.IsCookieTokenValid(oldCookieToken))
+    {
+        // Need to make sure we're always operating with a good cookie token.
+        oldCookieToken = newCookieToken = _validator.GenerateCookieToken();
+    }
+
+    Contract.Assert(_validator.IsCookieTokenValid(oldCookieToken));
+    formToken = _validator.GenerateFormToken(httpContext, ExtractIdentity(httpContext), oldCookieToken);
+}
+生成的cookie token：
+public AntiForgeryToken GenerateCookieToken()
+{
+    return new AntiForgeryToken()
+    {
+        // SecurityToken will be populated automatically.
+        IsSessionToken = true
+    };
+}
+
+3.1.1 补充一下 AntiForgeryToken
+AntiForgeryToken 属性中有SecurityToken， AdditionalData 。。。
+SecurityToken 最为重要, 合法的一对cookie token,form token的 security token必须一样
+SecurityToken属性如果为空的get方法会返回一个token
+_securityToken = new BinaryBlob(SecurityTokenBitLength);
+
+IsSessionToken用来验证是不是cookie token（初始化的时候赋值）
+public bool IsCookieTokenValid(AntiForgeryToken cookieToken) // TokenValidator.cs
+{
+    return (cookieToken != null && cookieToken.IsSessionToken);
+}
+
+3.1.2.  => TokenValidator.cs 重要的步骤， 
+根据cookie token, 生成的form token含有SecurityToken和cookie token一样的值
+
+public AntiForgeryToken GenerateFormToken(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken cookieToken)
+{
+    Contract.Assert(IsCookieTokenValid(cookieToken));
+
+    AntiForgeryToken formToken = new AntiForgeryToken()
+    {
+        SecurityToken = cookieToken.SecurityToken,
+        IsSessionToken = false
+    };
+
+    bool requireAuthenticatedUserHeuristicChecks = false;
+    // populate Username and ClaimUid
+    if (identity != null && identity.IsAuthenticated)
+    {
+        if (!_config.SuppressIdentityHeuristicChecks)
+        {
+            // If the user is authenticated and heuristic checks are not suppressed,
+            // then Username, ClaimUid, or AdditionalData must be set.
+            requireAuthenticatedUserHeuristicChecks = true;
+        }
+
+        formToken.ClaimUid = _claimUidExtractor.ExtractClaimUid(identity);
+        if (formToken.ClaimUid == null)
+        {
+            formToken.Username = identity.Name;
+        }
+    }
+
+    // populate AdditionalData
+    if (_config.AdditionalDataProvider != null)
+    {
+        formToken.AdditionalData = _config.AdditionalDataProvider.GetAdditionalData(httpContext);
+    }
+
+    if (requireAuthenticatedUserHeuristicChecks
+        && String.IsNullOrEmpty(formToken.Username)
+        && formToken.ClaimUid == null
+        && String.IsNullOrEmpty(formToken.AdditionalData))
+    {
+        // Application says user is authenticated, but we have no identifier for the user.
+        throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture,
+            WebPageResources.TokenValidator_AuthenticatedUserWithoutUsername, identity.GetType()));
+    }
+
+    return formToken;
+}
+
+3.2 生成cookie token
+AntiForgeryTokenStore.cs http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.WebPages/Helpers/AntiXsrf/AntiForgeryTokenStore.cs
+cookie名为_config.CookieName，值为
+public void SaveCookieToken(HttpContextBase httpContext, AntiForgeryToken token)
+{
+    string serializedToken = _serializer.Serialize(token);
+    HttpCookie newCookie = new HttpCookie(_config.CookieName, serializedToken)
+    {
+        HttpOnly = true
+    };
+
+    if (_config.RequireSSL)    { newCookie.Secure = true; }
+
+    httpContext.Response.Cookies.Set(newCookie);
+}
+
+cookie 名称: 默认"__RequestVerificationToken"，
+ 如果appPath为不为空且不等于/，return AntiForgeryTokenFieldName + "_" + HttpServerUtility.UrlTokenEncode(Encoding.UTF8.GetBytes(appPath)) 
+AntiForgeryConfig.cs
+internal const string AntiForgeryTokenFieldName = "__RequestVerificationToken";
+
+
+private static string GetAntiForgeryCookieName()
+{
+    return GetAntiForgeryCookieName(HttpRuntime.AppDomainAppVirtualPath);
+}
+
+internal static string GetAntiForgeryCookieName(string appPath)
+{
+    if (String.IsNullOrEmpty(appPath) || appPath == "/")
+    {
+        return AntiForgeryTokenFieldName;
+    }
+    else
+    {
+        return AntiForgeryTokenFieldName + "_" + HttpServerUtility.UrlTokenEncode(Encoding.UTF8.GetBytes(appPath));
+    }
+}
+
+
+Antifogery 的验证
+ValidateAntiForgeryTokenAttribute.cs  http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/ValidateAntiForgeryTokenAttribute.cs
+继承FilterAttribute, IAuthorizationFilter
+public ValidateAntiForgeryTokenAttribute()
+            : this(AntiForgery.Validate)
+{
+}
+OnAuthorization 调用AntiForgery.Validate验证
+
+1.准备开始验证 AntiForgery.cs\Validate
+public static void Validate()
+{
+    if (HttpContext.Current == null)
+    {
+        throw new ArgumentException(WebPageResources.HttpContextUnavailable);
+    }
+
+    _worker.Validate(new HttpContextWrapper(HttpContext.Current));
+}
+
+2. 取得要验证的cookieToken， formToken
+public void Validate(HttpContextBase httpContext)
+{
+    CheckSSLConfig(httpContext);
+
+    // Extract cookie & form tokens
+    AntiForgeryToken cookieToken = _tokenStore.GetCookieToken(httpContext);
+    AntiForgeryToken formToken = _tokenStore.GetFormToken(httpContext);
+
+    // Validate
+    _validator.ValidateTokens(httpContext, ExtractIdentity(httpContext), cookieToken, formToken);
+}
+2.1 cookieToken
+public AntiForgeryToken GetCookieToken(HttpContextBase httpContext)
+{
+    HttpCookie cookie = httpContext.Request.Cookies[_config.CookieName];
+    if (cookie == null || String.IsNullOrEmpty(cookie.Value))
+    {
+        // did not exist
+        return null;
+    }
+
+    return _serializer.Deserialize(cookie.Value);
+}
+2.2 formToken
+public AntiForgeryToken GetFormToken(HttpContextBase httpContext)
+{
+    string value = httpContext.Request.Form[_config.FormFieldName];
+    if (String.IsNullOrEmpty(value))
+    {
+        // did not exist
+        return null;
+    }
+
+    return _serializer.Deserialize(value);
+}
+
+3. 验证， 比较cookieToken， formToken
+检查 IsSessionToken （cookie token为true， form token为false）
+cookieToken， formToken的SecurityToken是否相等
+/// 。。。。可以继续看下去
+public void ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+{
+    // Were the tokens even present at all?
+    if (sessionToken == null)
+    {
+        throw HttpAntiForgeryException.CreateCookieMissingException(_config.CookieName);
+    }
+    if (fieldToken == null)
+    {
+        throw HttpAntiForgeryException.CreateFormFieldMissingException(_config.FormFieldName);
+    }
+
+    // Do the tokens have the correct format?
+    if (!sessionToken.IsSessionToken || fieldToken.IsSessionToken)
+    {
+        throw HttpAntiForgeryException.CreateTokensSwappedException(_config.CookieName, _config.FormFieldName);
+    }
+
+    // Are the security tokens embedded in each incoming token identical?
+    if (!Equals(sessionToken.SecurityToken, fieldToken.SecurityToken))
+    {
+        throw HttpAntiForgeryException.CreateSecurityTokenMismatchException();
+    }
+
+    // Is the incoming token meant for the current user?
+    string currentUsername = String.Empty;
+    BinaryBlob currentClaimUid = null;
+
+    if (identity != null && identity.IsAuthenticated)
+    {
+        currentClaimUid = _claimUidExtractor.ExtractClaimUid(identity);
+        if (currentClaimUid == null)
+        {
+            currentUsername = identity.Name ?? String.Empty;
+        }
+    }
+
+    // OpenID and other similar authentication schemes use URIs for the username.
+    // These should be treated as case-sensitive.
+    bool useCaseSensitiveUsernameComparison = currentUsername.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+        || currentUsername.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
+
+    if (!String.Equals(fieldToken.Username, currentUsername, (useCaseSensitiveUsernameComparison) ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
+    {
+        throw HttpAntiForgeryException.CreateUsernameMismatchException(fieldToken.Username, currentUsername);
+    }
+    if (!Equals(fieldToken.ClaimUid, currentClaimUid))
+    {
+        throw HttpAntiForgeryException.CreateClaimUidMismatchException();
+    }
+
+    // Is the AdditionalData valid?
+    if (_config.AdditionalDataProvider != null && !_config.AdditionalDataProvider.ValidateAdditionalData(httpContext, fieldToken.AdditionalData))
+    {
+        throw HttpAntiForgeryException.CreateAdditionalDataCheckFailedException();
+    }
+}
+
+4. 生成和解析token用到 AntiForgeryTokenSerializer.cs 
+加密和解密用到的是MachineKey45CryptoSystem.cs
+可以看到token的值与SecurityToken(这是为什么form和cookietoken 的 securitytoken属性必须一样的原因), IsSessionToken, ClaimUid,AdditionalData 有关
+public string Serialize(AntiForgeryToken token)
+{
+    Contract.Assert(token != null);
+
+    using (MemoryStream stream = new MemoryStream())
+    {
+        using (BinaryWriter writer = new BinaryWriter(stream))
+        {
+            writer.Write(TokenVersion);
+            writer.Write(token.SecurityToken.GetData());
+            writer.Write(token.IsSessionToken);
+
+            if (!token.IsSessionToken)
+            {
+                if (token.ClaimUid != null)
+                {
+                    writer.Write(true /* isClaimsBased */);
+                    writer.Write(token.ClaimUid.GetData());
+                }
+                else
+                {
+                    writer.Write(false /* isClaimsBased */);
+                    writer.Write(token.Username);
+                }
+
+                writer.Write(token.AdditionalData);
+            }
+
+            writer.Flush();
+            return _cryptoSystem.Protect(stream.ToArray());
+        }
+    }
+}
+
+public AntiForgeryToken Deserialize(string serializedToken)
+{
+    using (MemoryStream stream = new MemoryStream(_cryptoSystem.Unprotect(serializedToken)))
+    {
+        using (BinaryReader reader = new BinaryReader(stream))
+        {
+            AntiForgeryToken token = DeserializeImpl(reader);
+            if (token != null)
+            {
+                return token;
+            }
+        }
+    }
+}
+
+
+6 Tips for ASP.NET MVC Model Binding
 http://odetocode.com/Blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx
 
-ModelBinder
+ModelBinder (Nop.Web.Framework.Mvc.NopModelBinder.cs, BaseNopModel.cs)
 https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultmodelbinder(v=vs.118).aspx
 http://www.codeproject.com/Tips/806415/Model-Binding-using-IModelBinder-and-DefaultModelB
 http://www.cnblogs.com/artech/archive/2012/05/21/model-binder-provision.html
 
-DataAnnotations and ASP.NET MVC
-http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
 
+DataAnnotations and ASP.NET MVC, NopMetadataProvider.cs => DataAnnotationsModelMetadataProvider
+http://bradwilson.typepad.com/blog/2009/04/dataannotations-and-aspnet-mvc.html
+http://buildstarted.com/2010/09/14/creating-your-own-modelmetadataprovider-to-handle-custom-attributes/
+
+Controllers/BaseController.cs -> RenderPartialViewToString
+http://www.codemag.com/article/1312081
+
+MvcRouteHandler: GenericPathRoute, LocalizedRoute
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/VirtualPathProviderViewEngine.cs
 
 XSRF/CSRF Prevention in ASP.NET MVC and Web Pages
 https://www.asp.net/mvc/overview/security/xsrfcsrf-prevention-in-aspnet-mvc-and-web-pages
@@ -18,3 +433,17 @@ http://www.tuicool.com/articles/NBbyaum 讲了下自定义生成antiforerty
 	页面生成cookie名字为_RequestVerificationToken, httpOnly, 值为A
 	提交form时验证， 如果 解密cookie[_RequestVerificationToken]值 = input[_RequestVerificationToken], 才可提交请求
 http://blog.csdn.net/cpytiger/article/details/8781457
+
+System.ServiceModel.Syndication
+
+
+看LitJson的JsonMapper代码
+http://lbv.github.io/litjson/docs/quickstart.html
+        string str = "中"; // 超过10ffff的字符 𐀀 \uD800\uDC00
+        JsonData jd = new JsonData();
+        jd["1"] = "a";
+        jd["b"] = str;
+		jd.ToJson();	// {"1":"a","b":"\u4E2D"}		// 4E2D是把中字 -> int -> hex, 得到的
+
+		JsonData jbObj = JsonMapper.ToObject(@"{""1"":""a"",""b"":""\u4E2D""}");
+        Response.Write(jbObj["b']);	// 得到的值是“中”，不是\u4E2D ===》 调查在哪里做了转换

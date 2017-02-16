@@ -1,0 +1,9 @@
+ControllerFactory:
+http://www.cnblogs.com/artech/archive/2011/12/13/asp-mvc-unity.html
+白话学习MVC(二)页面周期一 
+http://www.cnblogs.com/wupeiqi/archive/2013/03/24/2978660.html
+
+Autofac AutofacDependencyResolver source:
+var container = builder.Build();
+            //注入改为Autofac注入
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

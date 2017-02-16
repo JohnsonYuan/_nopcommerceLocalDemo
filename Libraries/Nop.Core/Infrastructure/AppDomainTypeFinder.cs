@@ -78,7 +78,7 @@ namespace Nop.Core.Infrastructure
 
         public IEnumerable<Type> FindClassesOfType<T>(IEnumerable<Assembly> assemblies, bool onlyConcreteClasses = true)
         {
-            return FindClassesOfType(typeof(T), assemblies, onlyConcreteClasses);
+            return FindClassesOfType(typeof (T), assemblies, onlyConcreteClasses);
         }
 
         public IEnumerable<Type> FindClassesOfType(Type assignTypeFrom, IEnumerable<Assembly> assemblies, bool onlyConcreteClasses = true)
@@ -93,7 +93,7 @@ namespace Nop.Core.Infrastructure
                     {
                         types = a.GetTypes();
                     }
-                    catch (Exception)
+                    catch
                     {
                         //Entity Framework 6 doesn't allow getting types (throws an exception)
                         if (!ignoreReflectionErrors)
@@ -106,18 +106,18 @@ namespace Nop.Core.Infrastructure
                     {
                         foreach (var t in types)
                         {
-                            if (assignTypeFrom.IsAssignableFrom(t)
-                                || (assignTypeFrom.IsGenericType && DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
+                            // 我的注释
+                            // 如果要找的类型是IConsumer<>, 是一个generic type
+                            // typeof(IConsumer<>).IsAssignableFrom(typeof(IConsumer<>))            // true
+                            // typeof(IConsumer<>).IsAssignableFrom(typeof(TimeConsumer<>))         // false
+                            // typeof(IConsumer<int>).IsAssignableFrom(typeof(TimeConsumer<int>))   // true
+                            if (assignTypeFrom.IsAssignableFrom(t) || (assignTypeFrom.IsGenericTypeDefinition && DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
                             {
                                 if (!t.IsInterface)
                                 {
                                     if (onlyConcreteClasses)
                                     {
                                         if (t.IsClass && !t.IsAbstract)
-                                        {
-                                            result.Add(t);
-                                        }
-                                        else
                                         {
                                             result.Add(t);
                                         }
@@ -137,6 +137,7 @@ namespace Nop.Core.Infrastructure
                 var msg = string.Empty;
                 foreach (var e in ex.LoaderExceptions)
                     msg += e.Message + Environment.NewLine;
+
                 var fail = new Exception(msg, ex);
                 Debug.WriteLine(fail.Message, fail);
 
@@ -160,6 +161,7 @@ namespace Nop.Core.Infrastructure
             if (LoadAppDomainAssemblies)
                 AddAssembliesInAppDomain(addedAssemblyNames, assemblies);
             AddConfiguredAssemblies(addedAssemblyNames, assemblies);
+
             return assemblies;
         }
 
@@ -180,8 +182,8 @@ namespace Nop.Core.Infrastructure
                 {
                     if (!addedAssemblyNames.Contains(assembly.FullName))
                     {
-                        addedAssemblyNames.Add(assembly.FullName);
                         assemblies.Add(assembly);
+                        addedAssemblyNames.Add(assembly.FullName);
                     }
                 }
             }
@@ -197,10 +199,10 @@ namespace Nop.Core.Infrastructure
             foreach (string assemblyName in AssemblyNames)
             {
                 Assembly assembly = Assembly.Load(assemblyName);
-                if (!addedAssemblyNames.Contains(assemblyName))
+                if (!addedAssemblyNames.Contains(assembly.FullName))
                 {
-                    addedAssemblyNames.Add(assemblyName);
                     assemblies.Add(assembly);
+                    addedAssemblyNames.Add(assembly.FullName);
                 }
             }
         }
@@ -217,7 +219,7 @@ namespace Nop.Core.Infrastructure
         public virtual bool Matches(string assemblyFullName)
         {
             return !Matches(assemblyFullName, AssemblySkipLoadingPattern)
-                && Matches(assemblyFullName, AssemblyRestrictToLoadingPattern);
+                   && Matches(assemblyFullName, AssemblyRestrictToLoadingPattern);
         }
 
         /// <summary>
@@ -243,25 +245,25 @@ namespace Nop.Core.Infrastructure
         /// <param name="directoryPath">
         /// The physical path to a directory containing dlls to load in the app domain.
         /// </param>
-        protected virtual void LoadMatchingAssemblies(string directoryBin)
+        protected virtual void LoadMatchingAssemblies(string directoryPath)
         {
-            var loadedAssemblies = new List<string>();
+            var loadedAssemblyNames = new List<string>();
             foreach (Assembly a in GetAssemblies())
             {
-                loadedAssemblies.Add(a.FullName);
+                loadedAssemblyNames.Add(a.FullName);
             }
 
-            if (!Directory.Exists(directoryBin))
+            if (!Directory.Exists(directoryPath))
             {
                 return;
             }
 
-            foreach (string dllPath in Directory.GetFiles(directoryBin, "*.dll"))
+            foreach (string dllPath in Directory.GetFiles(directoryPath, "*.dll"))
             {
                 try
                 {
                     var an = AssemblyName.GetAssemblyName(dllPath);
-                    if (Matches(an.FullName) && !loadedAssemblies.Contains(an.FullName))
+                    if (Matches(an.FullName) && !loadedAssemblyNames.Contains(an.FullName))
                     {
                         App.Load(an);
                     }
@@ -295,12 +297,12 @@ namespace Nop.Core.Infrastructure
                 {
                     if (!implementedInterface.IsGenericType)
                         continue;
+
                     var isMatch = genericTypeDefinition.IsAssignableFrom(implementedInterface.GetGenericTypeDefinition());
                     return isMatch;
                 }
                 return false;
-            }
-            catch
+            }catch
             {
                 return false;
             }

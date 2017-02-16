@@ -30,16 +30,16 @@ namespace Nop.Core.Data
             {
                 string str;
                 while ((str = reader.ReadLine()) != null)
-                {
                     settings.Add(str);
-                }
             }
 
             foreach (var setting in settings)
             {
                 var separatorIndex = setting.IndexOf(separator);
                 if (separatorIndex == -1)
+                {
                     continue;
+                }
                 string key = setting.Substring(0, separatorIndex).Trim();
                 string value = setting.Substring(separatorIndex + 1).Trim();
 
@@ -84,7 +84,7 @@ namespace Nop.Core.Data
         /// <returns></returns>
         public virtual DataSettings LoadSettings(string filePath = null)
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (String.IsNullOrEmpty(filePath))
             {
                 filePath = Path.Combine(CommonHelper.MapPath("~/App_Data/"), filename);
             }
@@ -95,7 +95,7 @@ namespace Nop.Core.Data
                 return ParseSettings(text);
             }
 
-            return null;
+            return new DataSettings();
         }
 
         /// <summary>

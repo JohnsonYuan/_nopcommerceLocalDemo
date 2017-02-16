@@ -1,0 +1,102 @@
+﻿@using Nop.Core.Infrastructure;
+@using Nop.Core.Domain.Localization
+@using Nop.Services.Configuration
+
+@using Nop.Services.Common;
+
+<div class="page home-page">
+    <div class="page-body">
+        @Html.Widget("home_page_top")
+    </div>
+</div>
+
+    <div>
+        @{ 
+            var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (cookie != null)
+            {
+                @cookie.Value <br/>
+
+                @cookie.Expires <br />
+            }
+        }
+        @{ 
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
+            var _storeContext = EngineContext.Current.Resolve<Nop.Core.IStoreContext>();
+            var nivoSliderSettings = _settingService.LoadSetting<Nop.Plugin.Widgets.NivoSlider.NivoSliderSettings>(_storeContext.CurrentStore.Id);
+            foreach (var item in nivoSliderSettings.GetType().GetProperties())
+            {
+                @item.Name <text> : </text> @item.GetValue(nivoSliderSettings)
+            }
+        }
+        @{
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                @item.FullName
+                <br/>
+            }
+        }
+        @{ 
+            try
+            {
+                Nop.Core.Plugins.IPluginFinder _pluginFinder = EngineContext.Current.Resolve<Nop.Core.Plugins.IPluginFinder>();
+                var pluginDescriptor = _pluginFinder.GetPluginDescriptorBySystemName("Widgets.NivoSlider", Nop.Core.Plugins.LoadPluginsMode.All);
+
+                if (pluginDescriptor != null)
+                {
+                    //pluginDescriptor.Instance().Install();
+                }
+
+                var assembly = System.Reflection.Assembly.Load(System.Reflection.AssemblyName.GetAssemblyName(Path.Combine(AppDomain.CurrentDomain.DynamicDirectory, "Nop.Plugin.Widgets.NivoSlider.dll")));
+                var test1 = assembly.GetType();
+                var test2 = assembly.GetTypes();
+                var test3 = assembly.GetType("NivoSliderPlugin");
+                var pluginType = assembly.GetType("Nop.Plugin.Widgets.NivoSlider.NivoSliderPlugin");
+                var result = EngineContext.Current.ContainerManager.ResolveUnregistered(pluginType);
+                var method = result.GetType().GetMethod("Install");
+
+                //method.Invoke(result, null);
+            }
+            catch (Exception ex)
+            {
+                @ex.Message
+            }
+            
+        }
+        <br />Referenced plugins:<br />
+        @foreach (var item in Nop.Core.Plugins.PluginManager.ReferencedPlugins)
+        {
+            @item.SystemName <br/>
+        }
+        <br />
+        Application path: @Request.ApplicationPath
+        AppDomainApp Virtual path: @HttpRuntime.AppDomainAppVirtualPath
+        @{
+            var storeContext = EngineContext.Current.Resolve<Nop.Core.IStoreContext>();
+
+            var workContext = EngineContext.Current.Resolve<Nop.Core.IWorkContext>();
+            var customer = workContext.CurrentCustomer;
+
+            if (customer != null)
+            {
+                @Html.Raw("CustomerGuid&nbsp;&nbsp;")  <b>@customer.CustomerGuid</b> <br />
+                @Html.Raw("Username&nbsp;&nbsp;") @customer.Username                <br />
+            }
+
+            var acceptCookie = customer.GetAttribute<bool>(Nop.Core.Domain.Customers.SystemCustomerAttributeNames.EuCookieLawAccepted, storeContext.CurrentStore.Id);
+
+            @Html.Raw("Accept cookie ? &nbsp;&nbsp;") @acceptCookie
+
+
+            var settingSerivce = EngineContext.Current.Resolve<ISettingService>();
+            var localizationSettings = EngineContext.Current.Resolve<LocalizationSettings>();
+            localizationSettings.SeoFriendlyUrlsForLanguagesEnabled = true;
+
+            //settingSerivce.SaveSetting<LocalizationSettings>(localizationSettings);
+            @localizationSettings.SeoFriendlyUrlsForLanguagesEnabled
+            var storeInfoSettings = EngineContext.Current.Resolve<Nop.Core.Domain.StoreInformationSettings>();
+            storeInfoSettings.DisplayEuCookieLawWarning = true;
+            settingSerivce.SaveSetting(storeInfoSettings);
+            <br /> <span>DisplayEuCookieLawWarning</span>  @storeInfoSettings.DisplayEuCookieLawWarning
+        }
+    </div>

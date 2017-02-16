@@ -30,12 +30,29 @@ namespace Nop.WebApp.Demo
         protected void check_Click(object sender, EventArgs e)
         {
             HttpCookie MyCookie = new HttpCookie("LastVisit");
-            for (int i = 0; i < 10; i++)
-            {
-                MyCookie.Values.Add("hello" + i, i + " " + DateTime.Now.ToString());
-            }
+            MyCookie.Value = DateTime.Now.Second.ToString();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    MyCookie.Values.Add("hello" + i, i + " " + DateTime.Now.ToString());
+            //}
            // MyCookie.Value = DateTime.Now.ToString();
             Response.Cookies.Add(MyCookie);
+
+
+        }
+
+        protected void check_Click2(object sender, EventArgs e)
+        {
+            HttpCookie cookie = new HttpCookie("languageCode");
+
+            cookie.Value = "en";
+            cookie.HttpOnly = true;
+            cookie.Expires = DateTime.Now.AddHours(1);
+
+            // MyCookie.Value = DateTime.Now.ToString();
+
+            Response.Cookies.Remove("languageCode");
+            Response.Cookies.Set(cookie);
         }
 
         protected void set_Click(object sender, EventArgs e)
@@ -43,6 +60,16 @@ namespace Nop.WebApp.Demo
             HttpCookie MyCookie = new HttpCookie("LastVisit");
             MyCookie.Values.Clear();
             Response.Cookies.Set(MyCookie);
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            Response.Clear();
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            Response.ClearContent();
         }
     }
 }

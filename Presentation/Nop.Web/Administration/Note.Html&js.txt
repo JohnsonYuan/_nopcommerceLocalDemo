@@ -1,0 +1,472 @@
+﻿后台页面框架 ： adminlte
+https://almsaeedstudio.com/
+Preview: https://almsaeedstudio.com/themes/AdminLTE/index2.html
+nopcommerce使用解压出来的dist文件夹, 里面有css, img, js三个文件夹
+~/Administration/Content/adminLTE =》 dist\css, dist\img
+~/Administration/Scripts/adminLTE =》 dist\js里面的app.min.js， app.js
+
+AdminLTEOptions 可以配置
+define a global options variable named AdminLTEOptions and initialize it before loading app.js
+<script>
+    var AdminLTEOptions = {
+        boxWidgetOptions: {
+            boxWidgetIcons: {
+                collapse: 'fa-minus',
+                open: 'fa-plus'
+            }
+        }
+    };
+</script>
+<script src="dist/js/app.js" type="text/javascript"></script>
+原因：
+app.js会调用extend，修改$.AdminLTE.options的值
+if (typeof AdminLTEOptions !== "undefined") {
+    $.extend(true,
+      $.AdminLTE.options,
+      AdminLTEOptions);
+}
+
+后台编辑产品显示高级设置的switch 按钮： https://proto.io/freebies/onoff/ （收费）
+nopcommerce 把css复制到了style.css中
+$("#advanced-settings-mode").is(':checked')
+
+
+标签编辑： https://goodies.pixabay.com/jquery/tag-editor/demo.html
+https://github.com/Pixabay/jQuery-tagEditor
+
+
+编辑器上传的文件管理器使用Roxy_Fileman, 配置参考 http://www.roxyfileman.com/demo, 
+编辑 conf.json to 来配置server  FILES_ROOT (根目录), DIRLIST, CREATEDIR
+需要引用System.IO.Compression.FileSystem.dll， 因为调用ZipFile.CreateFromDirectory
+代码 (nopcommerce为RoxyFilemanController来处理, 参考了\RoxyFileman-1.4.3-net\fileman\asp_net\main.ashx)
+
+
+编辑器 tinymce
+~\Administration\Views\Shared\EditorTemplates\RichEditor.cshtml
+上传配件的配置: 当toolbar 有 image , 启用上传图片功能, 需要配置file_browser_callback来上传
+file_browser_callback 文档
+https://www.tinymce.com/docs/configure/file-image-upload/#file_browser_callback
+
+
+Kendo UI收费，使用合法吗？
+nopcommerce使用开原版：（nopCommerce uses Kendo UI Web Open Source licensed under GPL v3 License. So it's legal to use it ）
+http://www.telerik.com/download/kendo-ui-core, 解压出来有 js, styles, src三个文件夹 js,styles里面的是.min版本, .min.css, .min.js
+~/Administration/Content/kendeo/2014.1.318  => styles文件夹内容（删除了.map文件）
+~/Administration/Scripts/kendeo/2014.1.318  => js文件夹内容
+
+kendoui template:
+http://docs.telerik.com/kendo-ui/framework/templates/overview
+three ways to use the hash syntax:
+    Render values as HTML: #= #.
+    Use HTML encoding to display values: #: #.
+    Execute arbitrary JavaScript code: # if (true) { # ... non-script content here ... # } #.
+
+
+kendogrid:
+http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema
+~\Administration\Views\Order\BestsellersBriefReportByQuantity.cshtml
+$("#bestsellers-byquantity-grid").kendoGrid({
+                    dataSource: {
+                        type: "json",
+                        transport: {
+                            read: {
+                                url: "@Html.Raw(Url.Action("BestsellersBriefReportByQuantityList", "Order"))",
+                                type: "POST",
+                                dataType: "json",
+                                data: addAntiForgeryToken
+                            }
+                        },
+                        schema: {
+                            data: "Data",
+                            total: "Total",
+                            errors: "Errors"
+                        },
+                        error: function(e) {
+                            display_kendoui_grid_error(e);
+                            // Cancel the changes
+                            this.cancelChanges();
+                        },
+                        pageSize: @(gridPageSize),
+                        serverPaging: true,
+                        serverFiltering: true,
+                        serverSorting: true
+                    },
+                    pageable: {
+                        refresh: true
+                    },
+                    dataBound: onDataBound,
+                    noRecords: {
+                        template: "No data available on current page. Current page is: #=this.dataSource.page()#"
+                    },
+                    editable: {
+                        confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                        mode: "inline"
+                    },
+                    scrollable: false,
+                    columns: [{
+                        field: "ProductName",
+                        title: "@T("Admin.SalesReport.Bestsellers.Fields.Name")"
+                    }, {
+                        field: "TotalQuantity",
+                        title: "@T("Admin.SalesReport.Bestsellers.Fields.TotalQuantity")"
+                    }]
+                });
+            });
+
+// selectedIds为选中的数据id的数组
+// 当数据绑定后可以把选中的数据checkbox check为true，这样换页码的时候checkbox会自动勾选
+function onDataBound(e) {
+    $('#products-grid input[type=checkbox][id!=mastercheckbox]').each(function () {
+        var currentId = $(this).val();
+        var checked = jQuery.inArray(currentId, selectedIds);
+        //set checked based on if current checkbox's value is in selectedIds.
+        $(this).attr('checked', checked > -1);
+    });
+
+    updateMasterCheckbox();
+}
+
+重要的属性
+Source, 类型为kendo.data.DataSource (api: http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema)
+    transport.create: used when the data source saves newly created data items
+
+    error: Fired when a request to the remote service fails.
+
+	
+	transport.read : loads data items from a remote service. 
+    transport.read参数会传到jQuery.ajax, 除了success, error这些callback functions, 其他ajax的参数都可以
+	transport.read.data: 额外穿的参数 比如换页的时候kendo会自动传page， pagesize 
+		Additional parameters which are sent to the remote service. 
+		The parameter names must not match reserved words
+		DataSource for sorting, filtering, paging, and grouping.（查看api看参数名称）
+
+    分页： serverPaging 为true(default: false), enable分页  如果为true, schema.total 必须赋值
+    切换页面时kendogrid会返回下面四个参数
+        page - the page of data item to return (1 means the first page).
+        pageSize - the number of items to return.
+        skip - how many data items to skip.  比如pagesize是5， 浏览第2页， skip = 5; 浏览第3页， skip = 10 （跳过前2页）
+        take - the number of data items to return (the same as pageSize).
+        
+        nopcommerce 函数的参数为DataSourceRequest， 只需要Page， PageSize即可
+        public class DataSourceRequest
+        {
+            public int Page { get; set; }
+            public int PageSize { get; set; }
+        }
+    schema 属性 The field from the server response
+        nopcommerce返回json数据为  DataSourceResult, 返回的数据在Data字段中, Total返回数据总数
+        public class DataSourceResult
+        {
+            public object ExtraData { get; set; }
+            public IEnumerable Data { get; set; }
+            public object Errors { get; set; }
+            public int Total { get; set; }
+        }
+        所以配置t
+        schema: {
+                            data: "Data",
+                            total: "Total",
+                        },
+
+
+kendo grid pageable -Boolean |Object (default: false) : pagesize的下拉框
+If set to true the grid will display a pager. By default paging is disabled.
+If a pageSize setting is provided for the data source then this value will be selected initially.
+pageable: ture 或
+pageable: {
+    pageSizes: [2, 3, 4, "all"],
+    numeric: false
+  }
+pageable.refresh Boolean (default: false)
+If set to true the pager will display the refresh button. Clicking the refresh button will refresh the grid
+
+kendo grid columns 属性
+// SPECIFY GRID COLUMNS AS ARRAY OF STRINGS
+$("#grid").kendoGrid({
+  columns: ["name", "age"], // two columns bound to the "name" and "age" fields
+  dataSource: [ { name: "Jane", age: 31 }, { name: "John", age: 33 }]
+});
+
+// SPECIFY GRID COLUMNS AS ARRAY OF OBJECTS
+$("#grid").kendoGrid({
+  columns: [{
+    field: "name",// create a column bound to the "name" field
+    title: "Name" // set its title to "Name"
+  },
+  {
+        field: "Id",
+        headerTemplate: "<input id='mastercheckbox' type='checkbox'/>",
+        headerAttributes: { style: "text-align:center" },
+        attributes: { style: "text-align:center" },
+        template: "<input type='checkbox' value='#=Id#' class='checkboxGroups'/>",
+        width: 50
+   },
+   {
+    field: "age",// create a column bound to the "age" field
+    title: "Age" // set its title to "Age"
+    width: 100,
+    template: '<span class="grid-report-item ' +
+                            '# if(OrderStatusId == 10) {# yellow #} #' +
+                            '# if(OrderStatusId == 20) {# blue #} #' +
+                            '# if(OrderStatusId == 30) {# green #} #' +
+                            '# if(OrderStatusId == 40) {# red #} #' +
+        '">#=age#</span>'
+  }],
+  dataSource: [ { name: "Jane", age: 30 }, { name: "John", age: 33 }]
+});
+
+columns.template 使用模板:
+#: [Content] # -> html encode
+#= [FieldName] # -> Field Name
+
+使用模板: 第一中方法为直接在columns中写html
+第二种方法为定义一段script:
+<script id="name-template" type="text/x-kendo-template">
+  <strong>#: name #</strong>
+</script>
+<script>
+$("#grid").kendoGrid({
+  columns: [ {
+    field: "name",
+    template: kendo.template($("#name-template").html())
+  }],
+  dataSource: [ { name: "Jane Doe" }, { name: "John Doe" } ]
+});
+
+Existing Instances
+Refer to an existing Grid instance through the jQuery.data()
+use the Grid API to control its behavior once a reference has been established (http://docs.telerik.com/kendo-ui/api/javascript/ui/grid)
+var grid = $("#grid").data("kendoGrid");
+
+例如admin/product/list中， 点击搜索按钮
+$('#search-products').click(function () {
+    //search
+    var grid = $('#products-grid').data('kendoGrid');
+    grid.dataSource.page(1); //new search. Set page size to 1
+    //grid.dataSource.read(); we already loaded the grid above using "page" function
+    return false;
+});
+
+grid.dataSource.read(); // 刷新grid
+
+
+============================================
+chartjs: http://www.chartjs.org/docs
+============================================
+以admin/index的Orders static 折线图(line)为例(~\Administration\Views\Order\OrderStatistics.cshtml ):
+1. 绘图需要在canvas中操作，然后取得context
+<canvas id="myChart" width="400" height="400"></canvas>
+
+<script src="Chart.js"></script>
+<script>
+    var ctx = document.getElementById("myChart").getContext("2d"); // document.getElementById("myChart"); 也可以
+    var myChart = new Chart(ctx, [config])
+</script>
+
+2. #Advanced usage 
+// Destroys a specific chart instance
+myLineChart.destroy();
+
+.update(duration, lazy)  // 更新
+// duration is the time for the animation of the redraw in milliseconds
+// lazy is a boolean. if true, the animation can be interrupted by other animations
+myLineChart.data.datasets[0].data[2] = 50; // Would update the first dataset's value of 'March' to be 50
+myLineChart.update(); // Calling update now animates the position of March from 90 to 50.
+
+
+
+
+3. config几个重要的属性
+* type： chart的类型
+* labels属性对应横坐标的值
+*  datasets每个元素代表一个线, 如下面的例子有2条线"My First dataset"， "My Second dataset"
+	datasets 中 label代表该元素名称， data表示数据，与data.labels对应
+* options主要配置显示的东西
+	legend.display 是否显示每隔dataset的label， 在最上方显示， OrderStatistics.cshtml设置为false
+	scales.xAxes, scales.yAxes 横坐标， 纵坐标 ticks 可以控制坐标的自定义坐标自定义
+	OrderStatistics.cshtml中来控制现实不显示
+	ticks: {
+        userCallback: function (dataLabel, index) {
+            if (window.orderStatistics && window.orderStatistics.config.data.labels.length > 12) {
+                return index % 5 === 0 ? dataLabel : '';
+            }
+            return dataLabel;
+        }
+    }
+
+
+var config = {
+            type: 'line',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [{
+                    label: "My First dataset",
+                    backgroundColor: window.chartColors.red,
+                    borderColor: window.chartColors.red,
+                    data: [75, 80, 14, 33, 44, 56, 90],
+                    fill: false,
+                }, {
+                    label: "My Second dataset",
+                    fill: false,
+                    backgroundColor: window.chartColors.blue,
+                    borderColor: window.chartColors.blue,
+                    data: [
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor(), 
+                        randomScalingFactor()
+                    ],
+                }]
+            },
+            options: {
+                responsive: true,
+				legend: {
+                    display: true
+                },
+                title:{
+                    display:true,
+                    text:'Chart.js Line Chart'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Month'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        window.onload = function() {
+            var ctx = document.getElementById("canvas").getContext("2d");
+            window.myLine = new Chart(ctx, config);
+        };
+
+
+‘return false’ vs ‘e.preventDefault()’ : 
+https://css-tricks.com/return-false-and-prevent-default/
+https://subinsb.com/jquery-return-false-vs-preventdefault
+return false; - calls e.preventDefault(); and e.stopPropagation();
+e.preventDefault(); - e.preventDefault();
+
+
+常用js操作
+#多个属性选择（包含type="hidden"和name="somename"属性）：
+	$('#SomeId input[type="hidden"][name="somename"]')
+# 所有有id属性， name属性以man结尾的input
+	$( "input[id][name$='man']" ).
+#在#order-box内button点击事件
+	$('#order-box').on('click', 'button[data-widget="collapse"]', function () {
+	});
+#.hasClass('collapsed-box')， addClass('bg-light-blue')， removeClass('bg-light-blue')
+#触发事件 .trigger('click')
+#增加，删除属性  .attr('disabled', 'disabled') .removeAttr('disabled')
+#多个按钮点击了某一个, 只给选中元素增加某个class
+	$('#@order-box button).on('click', function () { {
+		$('#order-box button').removeClass('bg-light-blue');  // 先全部remove了
+		$(this).addClass('bg-light-blue');
+	}
+
+
+js functions
+#Radom number
+	Math.random(); // [0, 1)   // e.g. 0.2884050472152568
+	Math.round(2.5); =》 3	// Round a number to the nearest integer 四舍五入
+	Math.ceil(1.4) =》 2		// rounded upwards to the nearest integer
+	Math.floor(1.4)=》 1		//rounded downwards to the nearest integer
+	例子1 Return a random number between 1 and 10 : Math.floor((Math.random() * 10) + 1);  
+	例子2 随机[-100, 100]
+	window.randomScalingFactor = function() {
+		return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+	}
+
+#Global variable //  http://stackoverflow.com/questions/4862193/difference-between-variable-declaration-syntaxes-in-javascript-including-global
+定义window.myGlobalVar或myGlobalVar，都可以通过window.myGlobalVar或myGlobalVar获取变量
+最好使用window.myGlobalVar这种方式myGlobalVar会造成误解，容易和local的变量分不清
+var iAmGlobal = "some val";  // Global variable declaration
+window.myGlobalVar = value;  // assign it as a property to the global object window
+myGlobalVar = 'Hello world'; // use it without defining it, 相当于window.myGlobalVar = 'Hello world'
+
+
+
+Prototypes - 给object 增加属性或方法（http://www.w3schools.com/js/js_object_prototypes.asp）
+JavaScript Object Prototypes: add new properties (or methods) to an existing object
+// define person class
+function Person(first, last, age, eyecolor) {
+    this.firstName = first;
+    this.lastName = last;
+    this.age = age;
+    this.eyeColor = eyecolor;
+}
+ Person.prototype.name = function() {
+    return this.firstName + " " + this.lastName;
+};
+
+var myFather = new Person("John", "Doe", 50, "blue");
+
+myFather.nationality = "English";                   // Adding a Property to an Object
+myFather.name = function () {                       // Adding a Method to an Object
+    return this.firstName + " " + this.lastName;
+}; 
+
+// Adding Properties to a Prototype
+Person.nationality = "English";   // 错误 不能直接给类型增加Properties because the prototype is not an existing object
+
+var name = myFather.name();  // 可以调用新建的方法
+
+
+
+jquery $.fn
+$.fn是指jquery的命名空间，加上fn上的方法及属性，会对jquery实例每一个有效。 
+如扩展$.fn.abc(),即$.fn.abc()是对jquery扩展了一个abc方法,那么后面你的每一个jquery实例都可以引用这个方法了. 
+查看jQuery代码
+jQuery.fn = jQuery.prototype ={ 
+　　　init: function(selector, context){//....　 
+　　　//...... 
+}; 
+--------------------------------------------------
+jQuery.fn.init.prototype = jQuery.fn = $.fn 
+this means the functionality added via jQuery.fn.whatever is immediately available on the objects returned by all jQuery calls.
+
+So for example, a simple jQuery plugin might be created and used like this:
+jQuery.fn.foo = function () { alert("foo!"); };
+jQuery(".some-selector").foo();
+--------------------------------------------------
+
+5 Different Ways to Declare Functions in jQuery
+https://www.sitepoint.com/5-ways-declare-functions-jquery/
+(funtion(){})()；立即执行函数；相当于先申明一个函数，声明完后直接调用；
+
+(function(){})(jQuery);  // 扩展jQuery对象
+其实际上是执行()(para)匿名方法,只不过是传递了jQuery对象。 相当于 
+function aa($){} 
+aa(jQuery)
+
+Nop.Admin\Scirpts\Admin.Common.js, 给jQuery增加backTop方法， 点击返回页面顶部 (TODO: 收藏)
+(function ($) {
+    $.fn.backTop = function () {
+		// ....
+	};
+})(jQuery);
+
+直接调用$('#backtop').backTop() 就可以了

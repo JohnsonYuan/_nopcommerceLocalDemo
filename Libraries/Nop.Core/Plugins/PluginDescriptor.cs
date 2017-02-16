@@ -17,7 +17,6 @@ namespace Nop.Core.Plugins
         public PluginDescriptor(Assembly referencedAssembly, FileInfo originalAssemblyFile, Type pluginType)
             : this()
         {
-
             this.ReferencedAssembly = referencedAssembly;
             this.OriginalAssemblyFile = originalAssemblyFile;
             this.PluginType = pluginType;

@@ -1,15 +1,15 @@
-﻿using Autofac;
-using Autofac.Core.Lifetime;
-using Autofac.Integration.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Autofac;
+using Autofac.Core.Lifetime;
+using Autofac.Integration.Mvc;
 
 // 我的注释 : autofac 文档
 // autofac 基本用法
 // var builder = new ContainerBuilder(); builder.RegisterType<ConsoleOutput>().As<IOutput>();
-// container = builder.Build();  //构建容器
+// IContainer container = builder.Build();  //构建容器
 // using (var scope = container.BeginLifetimeScope()) {IDateWriter datawriter = container.Resolve<IDateWriter>();}
 
 /// resolve optional
@@ -22,6 +22,9 @@ using System.Web;
 /// http://docs.autofac.org/en/latest/advanced/keyed-services.html
 namespace Nop.Core.Infrastructure.DependencyManagement
 {
+    /// <summary>
+    /// Container manager
+    /// </summary>
     public class ContainerManager
     {
         private readonly IContainer _container;
@@ -38,7 +41,13 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         /// <summary>
         /// Gets a container
         /// </summary>
-        public IContainer Container { get { return _container; } }
+        public virtual IContainer Container
+        {
+            get
+            {
+                return _container;
+            }
+        }
 
         /// <summary>
         /// Resolve
@@ -64,15 +73,14 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         /// <summary>
         /// Resolve
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">key</param>
+        /// <param name="type">Type</param>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
         /// <returns>Resolved service</returns>
         public virtual object Resolve(Type type, ILifetimeScope scope = null)
         {
             if (scope == null)
             {
-                //no socpe specified
+                //no scope specified
                 scope = Scope();
             }
             return scope.Resolve(type);
@@ -105,7 +113,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         /// <typeparam name="T">Type</typeparam>
         /// <param name="scope">Scope; pass null to automatically resolve the current scope</param>
         /// <returns>Resolved service</returns>
-        public virtual T ResolveUnregistered<T>(ILifetimeScope scope = null) where T : class
+        public virtual T ResolveUnregistered<T>(ILifetimeScope scope = null) where T:class
         {
             return ResolveUnregistered(typeof(T), scope) as T;
         }
@@ -120,25 +128,23 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         {
             if (scope == null)
             {
-                //no socpe specified
+                //no scope specified
                 scope = Scope();
             }
-
             var constructors = type.GetConstructors();
             foreach (var constructor in constructors)
             {
                 try
                 {
                     var parameters = constructor.GetParameters();
-                    var parametersInstance = new List<object>();
-
+                    var parameterInstances = new List<object>();
                     foreach (var parameter in parameters)
                     {
                         var service = Resolve(parameter.ParameterType, scope);
                         if (service == null) throw new NopException("Unknown dependency");
-                        parametersInstance.Add(service);
+                        parameterInstances.Add(service);
                     }
-                    return Activator.CreateInstance(type, parametersInstance.ToArray());
+                    return Activator.CreateInstance(type, parameterInstances.ToArray());
                 }
                 catch (NopException)
                 {
@@ -147,7 +153,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
             }
             throw new NopException("No constructor  was found that had all the dependencies satisfied.");
         }
-
+        
         /// <summary>
         /// Try to resolve srevice
         /// </summary>
@@ -159,7 +165,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         {
             if (scope == null)
             {
-                //no socpe specified
+                //no scope specified
                 scope = Scope();
             }
             return scope.TryResolve(serviceType, out instance);
@@ -175,7 +181,7 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         {
             if (scope == null)
             {
-                //no socpe specified
+                //no scope specified
                 scope = Scope();
             }
             return scope.IsRegistered(serviceType);
@@ -191,22 +197,24 @@ namespace Nop.Core.Infrastructure.DependencyManagement
         {
             if (scope == null)
             {
-                //no socpe specified
+                //no scope specified
                 scope = Scope();
             }
             return scope.ResolveOptional(serviceType);
         }
-
+        
         /// <summary>
         /// Get current scope
         /// </summary>
         /// <returns>Scope</returns>
-        public ILifetimeScope Scope()
+        public virtual ILifetimeScope Scope()
         {
             try
             {
                 // 我的注释：AutofacDependencyResolver.Current.RequestLifetimeScope
                 // https://github.com/autofac/Autofac.Mvc/blob/develop/src/Autofac.Integration.Mvc/AutofacDependencyResolver.cs
+                // 参考 Autofac.Integration.Mvc/RequestLifetimeScopeProvider.cs
+                // 本质还是会创建ApplicationContainer.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag)， 但 HttpContext.Current == null throw new InvalidOperationException
                 if (HttpContext.Current != null)
                     return AutofacDependencyResolver.Current.RequestLifetimeScope;
 

@@ -1,17 +1,18 @@
-﻿using Nop.Core.ComponentModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using Nop.Core.ComponentModel;
+using Nop.Core.Domain.Shipping;
+using System.Linq;
 using System.Web.Hosting;
+using System.IO;
+using System.Net;
 
 namespace Nop.Core
 {
@@ -55,10 +56,10 @@ namespace Nop.Core
         }
 
         /// <summary>
-        /// Verifies that string is an valid IP-address
+        /// Verifies that string is an valid IP-Address
         /// </summary>
         /// <param name="ipAddress">IPAddress to verify</param>
-        /// <returns>true if the string a valid IpAddress and false if it's not</returns>
+        /// <returns>true if the string is a valid IpAddress and false if it's not</returns>
         public static bool IsValidIpAddress(string ipAddress)
         {
             IPAddress ip;
@@ -130,7 +131,7 @@ namespace Nop.Core
         }
 
         /// <summary>
-        /// Ensures that a string is not null
+        /// Ensure that a string is not null
         /// </summary>
         /// <param name="str">Input string</param>
         /// <returns>Result</returns>
@@ -150,7 +151,7 @@ namespace Nop.Core
         }
 
         /// <summary>
-        /// Compare two arrays
+        /// Compare two arrasy
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="a1">Array 1</param>
@@ -201,7 +202,7 @@ namespace Nop.Core
                     {
                         new AspNetHostingPermission(trustLevel).Demand();
                         _trustLevel = trustLevel;
-                        break;  //we've set the highest permission we can
+                        break; //we've set the highest permission we can
                     }
                     catch (System.Security.SecurityException)
                     {
@@ -213,9 +214,9 @@ namespace Nop.Core
         }
 
         /// <summary>
-        /// Sets a property on an object to a value.
+        /// Sets a property on an object to a valuae.
         /// </summary>
-        /// <param name="instance">The object whose proeprty to set.</param>
+        /// <param name="instance">The object whose property to set.</param>
         /// <param name="propertyName">The name of the property to set.</param>
         /// <param name="value">The value to set the property to.</param>
         public static void SetProperty(object instance, string propertyName, object value)
@@ -273,9 +274,9 @@ namespace Nop.Core
         /// <param name="destinationType">The type to convert the value to.</param>
         /// <param name="culture">Culture</param>
         /// <returns>The converted value.</returns>
-        private static object To(object value, Type destinationType, CultureInfo culture)
+        public static object To(object value, Type destinationType, CultureInfo culture)
         {
-            if (value == null)
+            if (value != null)
             {
                 var sourceType = value.GetType();
 
@@ -358,7 +359,7 @@ namespace Nop.Core
         /// <returns>The physical path. E.g. "c:\inetpub\wwwroot\bin"</returns>
         public static string MapPath(string path)
         {
-            if(HostingEnvironment.IsHosted)
+            if (HostingEnvironment.IsHosted)
             {
                 //hosted
                 return HostingEnvironment.MapPath(path);
@@ -366,7 +367,7 @@ namespace Nop.Core
 
             //not hosted. For example, run in unit tests
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            path = path.Replace("~/", "").TrimStart('/').Replace("/", "\\");
+            path = path.Replace("~/", "").TrimStart('/').Replace('/', '\\');
             return Path.Combine(baseDirectory, path);
         }
     }

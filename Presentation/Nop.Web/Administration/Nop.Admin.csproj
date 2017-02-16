@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -29,7 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -43,11 +44,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper, Version=5.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation.Mvc, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\FluentValidation.MVC5.6.2.1.0\lib\Net45\FluentValidation.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -64,44 +91,445 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web.Razor">
-      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Webpages">
-      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Webpages.Deployment">
-      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Webpages.Razor">
-      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Helpers">
-      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
-      <HintPath>..\..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc">
-      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Global.asax" />
+    <Content Include="Content\adminLTE\AdminLTE-2.3.0.css" />
+    <Content Include="Content\adminLTE\AdminLTE-2.3.0.min.css" />
+    <Content Include="Content\adminLTE\AdminLTE-2.3.0.rtl.css" />
+    <Content Include="Content\adminLTE\img\avatar.png" />
+    <Content Include="Content\adminLTE\img\avatar04.png" />
+    <Content Include="Content\adminLTE\img\avatar2.png" />
+    <Content Include="Content\adminLTE\img\avatar3.png" />
+    <Content Include="Content\adminLTE\img\avatar5.png" />
+    <Content Include="Content\adminLTE\img\boxed-bg.jpg" />
+    <Content Include="Content\adminLTE\img\boxed-bg.png" />
+    <Content Include="Content\adminLTE\img\credit\american-express.png" />
+    <Content Include="Content\adminLTE\img\credit\cirrus.png" />
+    <Content Include="Content\adminLTE\img\credit\mastercard.png" />
+    <Content Include="Content\adminLTE\img\credit\mestro.png" />
+    <Content Include="Content\adminLTE\img\credit\paypal.png" />
+    <Content Include="Content\adminLTE\img\credit\paypal2.png" />
+    <Content Include="Content\adminLTE\img\credit\visa.png" />
+    <Content Include="Content\adminLTE\img\default-50x50.gif" />
+    <Content Include="Content\adminLTE\img\icons.png" />
+    <Content Include="Content\adminLTE\img\photo1.png" />
+    <Content Include="Content\adminLTE\img\photo2.png" />
+    <Content Include="Content\adminLTE\img\photo3.jpg" />
+    <Content Include="Content\adminLTE\img\photo4.jpg" />
+    <Content Include="Content\adminLTE\img\user1-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user2-160x160.jpg" />
+    <Content Include="Content\adminLTE\img\user3-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user4-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user5-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user6-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user7-128x128.jpg" />
+    <Content Include="Content\adminLTE\img\user8-128x128.jpg" />
+    <Content Include="Content\adminLTE\skins\skin-black-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-black-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-black.css" />
+    <Content Include="Content\adminLTE\skins\skin-black.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue.css" />
+    <Content Include="Content\adminLTE\skins\skin-blue.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-green-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-green-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-green.css" />
+    <Content Include="Content\adminLTE\skins\skin-green.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple.css" />
+    <Content Include="Content\adminLTE\skins\skin-purple.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-red-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-red-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-red.css" />
+    <Content Include="Content\adminLTE\skins\skin-red.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow-light.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow-light.min.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow.css" />
+    <Content Include="Content\adminLTE\skins\skin-yellow.min.css" />
+    <Content Include="Content\adminLTE\skins\_all-skins.css" />
+    <Content Include="Content\adminLTE\skins\_all-skins.min.css" />
+    <Content Include="Content\styles.css" />
+    <Content Include="Content\styles.rtl.css" />
+    <Content Include="Note.Html&amp;js.txt" />
+    <Content Include="Notes.txt" />
+    <Content Include="Scripts\admin.common.js" />
+    <Content Include="Scripts\admin.navigation.js" />
+    <Content Include="Scripts\admin.search.js" />
+    <Content Include="Scripts\farbtastic.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-migrate-1.2.1.js" />
+    <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.custom.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.custom.min.js" />
+    <Content Include="Scripts\jquery.tmpl.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="nop的定义.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
+    <Compile Include="AdminAreaRegistration.cs" />
+    <Compile Include="Controllers\BaseAdminController.cs" />
+    <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\PreferencesController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\RoxyFilemanController.cs" />
+    <Compile Include="Controllers\SecurityController.cs" />
+    <Compile Include="Controllers\SettingController.cs" />
+    <Compile Include="Controllers\WidgetController.cs" />
+    <Compile Include="Extensions\AttributeParserHelper.cs" />
+    <Compile Include="Extensions\MappingExtensions.cs" />
+    <Compile Include="Helpers\SelectListHelper.cs" />
+    <Compile Include="Infrastructure\DependencyRegistrar.cs" />
+    <Compile Include="Infrastructure\Mapper\AutoMapperConfiguration.cs" />
+    <Compile Include="Infrastructure\Mapper\AutoMapperStartupTask.cs" />
+    <Compile Include="Infrastructure\Mapper\Cache\ModelCacheEventConsumer.cs" />
+    <Compile Include="Models\Affiliates\AffiliatedOrderListModel.cs" />
+    <Compile Include="Models\Affiliates\AffiliateListModel.cs" />
+    <Compile Include="Models\Affiliates\AffiliateModel.cs" />
+    <Compile Include="Models\Blogs\BlogCommentModel.cs" />
+    <Compile Include="Models\Blogs\BlogPostModel.cs" />
+    <Compile Include="Models\Catalog\AddProductAttributeCombinationModel.cs" />
+    <Compile Include="Models\Catalog\BulkEditListModel.cs" />
+    <Compile Include="Models\Catalog\BulkEditProductModel.cs" />
+    <Compile Include="Models\Catalog\CategoryListModel.cs" />
+    <Compile Include="Models\Catalog\CategoryModel.cs" />
+    <Compile Include="Models\Catalog\CopyProductModel.cs" />
+    <Compile Include="Models\Catalog\LowStockProductModel.cs" />
+    <Compile Include="Models\Catalog\ManufacturerListModel.cs" />
+    <Compile Include="Models\Catalog\ManufacturerModel.cs" />
+    <Compile Include="Models\Catalog\ProductAttributeConditionModel.cs" />
+    <Compile Include="Models\Catalog\ProductAttributeModel.cs" />
+    <Compile Include="Models\Catalog\ProductListModel.cs" />
+    <Compile Include="Models\Catalog\ProductModel.cs" />
+    <Compile Include="Models\Catalog\ProductReviewListModel.cs" />
+    <Compile Include="Models\Catalog\ProductReviewModel.cs" />
+    <Compile Include="Models\Catalog\ProductSpecificationAttributeModel.cs" />
+    <Compile Include="Models\Catalog\ProductTagModel.cs" />
+    <Compile Include="Models\Catalog\SpecificationAttributeModel.cs" />
+    <Compile Include="Models\Catalog\SpecificationAttributeOptionModel.cs" />
+    <Compile Include="Models\Cms\RenderWidgetModel.cs" />
+    <Compile Include="Models\Cms\WidgetModel.cs" />
+    <Compile Include="Models\Common\AddressAttributeModel.cs" />
+    <Compile Include="Models\Common\AddressAttributeValueModel.cs" />
+    <Compile Include="Models\Common\AddressModel.cs" />
+    <Compile Include="Models\Common\LanguageSelectorModel.cs" />
+    <Compile Include="Models\Common\MaintenanceModel.cs" />
+    <Compile Include="Models\Common\SearchTermReportLineModel.cs" />
+    <Compile Include="Models\Common\SystemInfoModel.cs" />
+    <Compile Include="Models\Common\SystemWarningModel.cs" />
+    <Compile Include="Models\Common\UrlRecordListModel.cs" />
+    <Compile Include="Models\Common\UrlRecordModel.cs" />
+    <Compile Include="Models\Customers\BestCustomerReportLineModel.cs" />
+    <Compile Include="Models\Customers\BestCustomersReportModel.cs" />
+    <Compile Include="Models\Customers\CustomerAddressModel.cs" />
+    <Compile Include="Models\Customers\CustomerAttributeModel.cs" />
+    <Compile Include="Models\Customers\CustomerAttributeValueModel.cs" />
+    <Compile Include="Models\Customers\CustomerListModel.cs" />
+    <Compile Include="Models\Customers\CustomerModel.cs" />
+    <Compile Include="Models\Customers\CustomerReportsModel.cs" />
+    <Compile Include="Models\Customers\CustomerRoleModel.cs" />
+    <Compile Include="Models\Customers\OnlineCustomerModel.cs" />
+    <Compile Include="Models\Customers\RegisteredCustomerReportLineModel.cs" />
+    <Compile Include="Models\Directory\CountryModel.cs" />
+    <Compile Include="Models\Directory\CurrencyModel.cs" />
+    <Compile Include="Models\Directory\MeasureDimensionModel.cs" />
+    <Compile Include="Models\Directory\MeasureWeightModel.cs" />
+    <Compile Include="Models\Directory\StateProvinceModel.cs" />
+    <Compile Include="Models\Discounts\DiscountListModel.cs" />
+    <Compile Include="Models\Discounts\DiscountModel.cs" />
+    <Compile Include="Models\ExternalAuthentication\AuthenticationMethodModel.cs" />
+    <Compile Include="Models\Forums\ForumGroupModel.cs" />
+    <Compile Include="Models\Forums\ForumModel.cs" />
+    <Compile Include="Models\Home\CommonStatisticsModel.cs" />
+    <Compile Include="Models\Home\DashboardModel.cs" />
+    <Compile Include="Models\Home\NopCommerceNewsModel.cs" />
+    <Compile Include="Models\Localization\LanguageModel.cs" />
+    <Compile Include="Models\Localization\LanguageResourceModel.cs" />
+    <Compile Include="Models\Localization\LanguageResourcesListModel.cs" />
+    <Compile Include="Models\Logging\ActivityLogModel.cs" />
+    <Compile Include="Models\Logging\ActivityLogSearchModel.cs" />
+    <Compile Include="Models\Logging\ActivityLogTypeModel.cs" />
+    <Compile Include="Models\Logging\LogListModel.cs" />
+    <Compile Include="Models\Logging\LogModel.cs" />
+    <Compile Include="Models\Messages\CampaignListModel.cs" />
+    <Compile Include="Models\Messages\CampaignModel.cs" />
+    <Compile Include="Models\Messages\EmailAccountModel.cs" />
+    <Compile Include="Models\Messages\MessageTemplateListModel.cs" />
+    <Compile Include="Models\Messages\MessageTemplateModel.cs" />
+    <Compile Include="Models\Messages\NewsLetterSubscriptionListModel.cs" />
+    <Compile Include="Models\Messages\NewsLetterSubscriptionModel.cs" />
+    <Compile Include="Models\Messages\QueuedEmailListModel.cs" />
+    <Compile Include="Models\Messages\QueuedEmailModel.cs" />
+    <Compile Include="Models\Messages\TestMessageTemplateModel.cs" />
+    <Compile Include="Models\News\NewsCommentModel.cs" />
+    <Compile Include="Models\News\NewsItemListModel.cs" />
+    <Compile Include="Models\News\NewsItemModel.cs" />
+    <Compile Include="Models\Orders\BestsellersReportLineModel.cs" />
+    <Compile Include="Models\Orders\BestsellersReportModel.cs" />
+    <Compile Include="Models\Orders\CheckoutAttributeModel.cs" />
+    <Compile Include="Models\Orders\CheckoutAttributeValueModel.cs" />
+    <Compile Include="Models\Orders\CountryReportLineModel.cs" />
+    <Compile Include="Models\Orders\CountryReportModel.cs" />
+    <Compile Include="Models\Orders\GiftCardListModel.cs" />
+    <Compile Include="Models\Orders\GiftCardModel.cs" />
+    <Compile Include="Models\Orders\NeverSoldReportLineModel.cs" />
+    <Compile Include="Models\Orders\NeverSoldReportModel.cs" />
+    <Compile Include="Models\Orders\OrderAddressModel.cs" />
+    <Compile Include="Models\Orders\OrderAverageReportLineSummaryModel.cs" />
+    <Compile Include="Models\Orders\OrderIncompleteReportLineModel.cs" />
+    <Compile Include="Models\Orders\OrderListModel.cs" />
+    <Compile Include="Models\Orders\OrderModel.cs" />
+    <Compile Include="Models\Orders\RecurringPaymentModel.cs" />
+    <Compile Include="Models\Orders\ReturnRequestModel.cs" />
+    <Compile Include="Models\Orders\ShipmentListModel.cs" />
+    <Compile Include="Models\Orders\ShipmentModel.cs" />
+    <Compile Include="Models\Payments\PaymentMethodModel.cs" />
+    <Compile Include="Models\Payments\PaymentMethodRestrictionModel.cs" />
+    <Compile Include="Models\Plugins\MiscPluginModel.cs" />
+    <Compile Include="Models\Plugins\OfficialFeedListModel.cs" />
+    <Compile Include="Models\Plugins\PluginListModel.cs" />
+    <Compile Include="Models\Plugins\PluginModel.cs" />
+    <Compile Include="Models\Polls\PollAnswerModel.cs" />
+    <Compile Include="Models\Polls\PollModel.cs" />
+    <Compile Include="Models\Security\PermissionMappingModel.cs" />
+    <Compile Include="Models\Security\PermissionRecordModel.cs" />
+    <Compile Include="Models\Settings\AllSettingsListModel.cs" />
+    <Compile Include="Models\Settings\BlogSettingsModel.cs" />
+    <Compile Include="Models\Settings\CatalogSettingsModel.cs" />
+    <Compile Include="Models\Settings\CustomerUserSettingsModel.cs" />
+    <Compile Include="Models\Settings\ForumSettingsModel.cs" />
+    <Compile Include="Models\Settings\GeneralCommonSettingsModel.cs" />
+    <Compile Include="Models\Settings\MediaSettingsModel.cs" />
+    <Compile Include="Models\Settings\ModeModel.cs" />
+    <Compile Include="Models\Settings\NewsSettingsModel.cs" />
+    <Compile Include="Models\Settings\OrderSettingsModel.cs" />
+    <Compile Include="Models\Settings\ProductEditorSettingsModel.cs" />
+    <Compile Include="Models\Settings\ReturnRequestActionModel.cs" />
+    <Compile Include="Models\Settings\ReturnRequestReasonModel.cs" />
+    <Compile Include="Models\Settings\RewardPointsSettingsModel.cs" />
+    <Compile Include="Models\Settings\SettingModel.cs" />
+    <Compile Include="Models\Settings\ShippingSettingsModel.cs" />
+    <Compile Include="Models\Settings\ShoppingCartSettingsModel.cs" />
+    <Compile Include="Models\Settings\SortOptionModel.cs" />
+    <Compile Include="Models\Settings\StoreScopeConfigurationModel.cs" />
+    <Compile Include="Models\Settings\TaxSettingsModel.cs" />
+    <Compile Include="Models\Settings\VendorSettingsModel.cs" />
+    <Compile Include="Models\Shipping\DeliveryDateModel.cs" />
+    <Compile Include="Models\Shipping\PickupPointProviderModel.cs" />
+    <Compile Include="Models\Shipping\ShippingMethodModel.cs" />
+    <Compile Include="Models\Shipping\ShippingMethodRestrictionModel.cs" />
+    <Compile Include="Models\Shipping\ShippingRateComputationMethodModel.cs" />
+    <Compile Include="Models\Shipping\WarehouseModel.cs" />
+    <Compile Include="Models\ShoppingCart\ShoppingCartItemModel.cs" />
+    <Compile Include="Models\ShoppingCart\ShoppingCartModel.cs" />
+    <Compile Include="Models\Stores\StoreModel.cs" />
+    <Compile Include="Models\Tasks\ScheduleTaskModel.cs" />
+    <Compile Include="Models\Tax\TaxCategoryModel.cs" />
+    <Compile Include="Models\Tax\TaxProviderModel.cs" />
+    <Compile Include="Models\Templates\CategoryTemplateModel.cs" />
+    <Compile Include="Models\Templates\ManufacturerTemplateModel.cs" />
+    <Compile Include="Models\Templates\ProductTemplateModel.cs" />
+    <Compile Include="Models\Templates\TopicTemplateModel.cs" />
+    <Compile Include="Models\Topics\TopicListModel.cs" />
+    <Compile Include="Models\Topics\TopicModel.cs" />
+    <Compile Include="Models\Vendors\VendorListModel.cs" />
+    <Compile Include="Models\Vendors\VendorModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\Blogs\BlogPostValidator.cs" />
+    <Compile Include="Validators\Catalog\CategoryValidator.cs" />
+    <Compile Include="Validators\Catalog\ManufacturerValidator.cs" />
+    <Compile Include="Validators\Catalog\PredefinedProductAttributeValueModelValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductAttributeValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductAttributeValueModelValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductReviewValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductTagValidator.cs" />
+    <Compile Include="Validators\Catalog\ProductValidator.cs" />
+    <Compile Include="Validators\Catalog\SpecificationAttributeOptionValidator.cs" />
+    <Compile Include="Validators\Catalog\SpecificationAttributeValidator.cs" />
+    <Compile Include="Validators\Common\AddressAttributeValidator.cs" />
+    <Compile Include="Validators\Common\AddressAttributeValueValidator.cs" />
+    <Compile Include="Validators\Common\AddressValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerAttributeValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerAttributeValueValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerRoleValidator.cs" />
+    <Compile Include="Validators\Customers\CustomerValidator.cs" />
+    <Compile Include="Validators\Directory\CountryValidator.cs" />
+    <Compile Include="Validators\Directory\CurrencyValidator.cs" />
+    <Compile Include="Validators\Directory\MeasureDimensionValidator.cs" />
+    <Compile Include="Validators\Directory\MeasureWeightValidator.cs" />
+    <Compile Include="Validators\Directory\StateProvinceValidator.cs" />
+    <Compile Include="Validators\Discounts\DiscountValidator.cs" />
+    <Compile Include="Validators\Forums\ForumGroupValidator.cs" />
+    <Compile Include="Validators\Forums\ForumValidator.cs" />
+    <Compile Include="Validators\Localization\LanguageResourceValidator.cs" />
+    <Compile Include="Validators\Localization\LanguageValidator.cs" />
+    <Compile Include="Validators\Messages\CampaignValidator.cs" />
+    <Compile Include="Validators\Messages\EmailAccountValidator.cs" />
+    <Compile Include="Validators\Messages\MessageTemplateValidator.cs" />
+    <Compile Include="Validators\Messages\NewsLetterSubscriptionValidator.cs" />
+    <Compile Include="Validators\Messages\QueuedEmailValidator.cs" />
+    <Compile Include="Validators\Messages\TestMessageTemplateValidator.cs" />
+    <Compile Include="Validators\News\NewsItemValidator.cs" />
+    <Compile Include="Validators\Orders\CheckoutAttributeValidator.cs" />
+    <Compile Include="Validators\Orders\CheckoutAttributeValueValidator.cs" />
+    <Compile Include="Validators\Orders\ReturnRequestValidator.cs" />
+    <Compile Include="Validators\Plugins\PluginValidator.cs" />
+    <Compile Include="Validators\Polls\PollAnswerValidator.cs" />
+    <Compile Include="Validators\Polls\PollValidator.cs" />
+    <Compile Include="Validators\Settings\OrderSettingsValidator.cs" />
+    <Compile Include="Validators\Settings\ReturnRequestActionValidator.cs" />
+    <Compile Include="Validators\Settings\ReturnRequestReasonValidator.cs" />
+    <Compile Include="Validators\Settings\RewardPointsSettingsValidator.cs" />
+    <Compile Include="Validators\Settings\SettingValidator.cs" />
+    <Compile Include="Validators\Shipping\DeliveryDateValidator.cs" />
+    <Compile Include="Validators\Shipping\ShippingMethodValidator.cs" />
+    <Compile Include="Validators\Shipping\WarehouseValidator.cs" />
+    <Compile Include="Validators\Stores\StoreValidator.cs" />
+    <Compile Include="Validators\Tasks\ScheduleTaskValidator.cs" />
+    <Compile Include="Validators\Tax\TaxCategoryValidator.cs" />
+    <Compile Include="Validators\Templates\CategoryTemplateValidator.cs" />
+    <Compile Include="Validators\Templates\ManufacturerTemplateValidator.cs" />
+    <Compile Include="Validators\Templates\ProductTemplateValidator.cs" />
+    <Compile Include="Validators\Templates\TopicTemplateValidator.cs" />
+    <Compile Include="Validators\Topics\TopicValidator.cs" />
+    <Compile Include="Validators\ValidatorUtilities.cs" />
+    <Compile Include="Validators\Vendors\VendorValidator.cs" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\NopCommerceNews.cshtml" />
+    <Content Include="Views\Home\CommonStatistics.cshtml" />
+    <Content Include="Views\Common\AclDisabledWarning.cshtml" />
+    <Content Include="Views\Common\Maintenance.cshtml" />
+    <Content Include="Views\Common\MultistoreDisabledWarning.cshtml" />
+    <Content Include="Views\Common\PopularSearchTermsReport.cshtml" />
+    <Content Include="Views\Common\SeNames.cshtml" />
+    <Content Include="Views\Common\SystemInfo.cshtml" />
+    <Content Include="Views\Common\Warnings.cshtml" />
+    <Content Include="Views\Order\AddProductToOrder.cshtml" />
+    <Content Include="Views\Order\AddProductToOrderDetails.cshtml" />
+    <Content Include="Views\Order\AddressEdit.cshtml" />
+    <Content Include="Views\Order\AddShipment.cshtml" />
+    <Content Include="Views\Order\BestsellersBriefReportByAmount.cshtml" />
+    <Content Include="Views\Order\BestsellersBriefReportByQuantity.cshtml" />
+    <Content Include="Views\Order\BestsellersReport.cshtml" />
+    <Content Include="Views\Order\CountryReport.cshtml" />
+    <Content Include="Views\Order\Edit.cshtml" />
+    <Content Include="Views\Order\LatestOrders.cshtml" />
+    <Content Include="Views\Order\List.cshtml" />
+    <Content Include="Views\Order\NeverSoldReport.cshtml" />
+    <Content Include="Views\Order\OrderAverageReport.cshtml" />
+    <Content Include="Views\Order\OrderIncompleteReport.cshtml" />
+    <Content Include="Views\Order\OrderStatistics.cshtml" />
+    <Content Include="Views\Order\PartiallyRefundOrderPopup.cshtml" />
+    <Content Include="Views\Order\ShipmentDetails.cshtml" />
+    <Content Include="Views\Order\ShipmentList.cshtml" />
+    <Content Include="Views\Order\UploadLicenseFilePopup.cshtml" />
+    <Content Include="Views\Order\_CreateOrUpdateAddress.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Billing.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Info.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Notes.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Products.cshtml" />
+    <Content Include="Views\Order\_OrderDetails.Shipping.cshtml" />
+    <Content Include="Views\Order\_ProductAddAttributes.cshtml" />
+    <Content Include="Views\Order\_ProductAddGiftCardInfo.cshtml" />
+    <Content Include="Views\Order\_ProductAddRentalInfo.cshtml" />
+    <Content Include="Views\Customer\AddressCreate.cshtml" />
+    <Content Include="Views\Customer\AddressEdit.cshtml" />
+    <Content Include="Views\Customer\Create.cshtml" />
+    <Content Include="Views\Customer\CustomerStatistics.cshtml" />
+    <Content Include="Views\Customer\Edit.cshtml" />
+    <Content Include="Views\Customer\List.cshtml" />
+    <Content Include="Views\Customer\ReportRegisteredCustomers.cshtml" />
+    <Content Include="Views\Customer\Reports.cshtml" />
+    <Content Include="Views\Customer\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Customer\_CreateOrUpdateAddress.cshtml" />
+    <Content Include="Views\Customer\_CustomerAttributes.cshtml" />
+    <Content Include="Views\Customer\_ReportBestCustomersByNumberOfOrders.cshtml" />
+    <Content Include="Views\Customer\_ReportBestCustomersByOrderTotal.cshtml" />
+    <Content Include="Views\Product\List.cshtml" />
+    <Content Include="Views\Product\Edit.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.Info.cshtml" />
+    <Content Include="Views\Product\CrossSellProductAddPopup.cshtml" />
+    <Content Include="Views\Product\RelatedProductAddPopup.cshtml" />
+    <Content Include="Views\Product\RequiredProductAddPopup.cshtml" />
+    <Content Include="Views\Product\AssociatedProductAddPopup.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.SEO.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.Pictures.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.ProductAttributes.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.SpecificationAttributes.cshtml" />
+    <Content Include="Views\Product\_CreateOrUpdate.PurchasedWithOrders.cshtml" />
+    <Content Include="Views\Category\List.cshtml" />
+    <Content Include="Views\Category\ProductAddPopup.cshtml" />
+    <Content Include="Views\Category\Create.cshtml" />
+    <Content Include="Views\Category\Edit.cshtml" />
+    <Content Include="Views\Category\_CreateOrUpdate.cshtml" />
+    <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_AdminLayout.cshtml" />
+    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Shared\_AdminPopupLayout.cshtml" />
+    <Content Include="Views\Common\LanguageSelector.cshtml" />
+    <Content Include="Views\Shared\Menu.cshtml" />
+    <Content Include="Views\Shared\Notifications.cshtml" />
+    <Content Include="sitemap.config" />
+    <Content Include="Views\Widget\ConfigureWidget.cshtml" />
+    <Content Include="Views\Widget\List.cshtml" />
+    <Content Include="Views\Widget\WidgetsByZone.cshtml" />
+    <Content Include="Views\Setting\Mode.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RichEditor.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DecimalNullable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Int32Nullable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Int32.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTimeNullable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\MultiSelect.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Download.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Decimal.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Picture.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -111,8 +539,40 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
+    <Folder Include="Content\bootstrap\" />
+    <Folder Include="Content\fontAwesome\" />
+    <Folder Include="Content\images\" />
+    <Folder Include="Content\ionicons\" />
+    <Folder Include="Content\jquery-ui-themes\" />
+    <Folder Include="Content\kendo\" />
+    <Folder Include="Content\typeahead\" />
+    <Folder Include="Scripts\adminLTE\" />
+    <Folder Include="Scripts\bootstrap\" />
+    <Folder Include="Scripts\chartjs\" />
+    <Folder Include="Scripts\fineuploader\" />
+    <Folder Include="Scripts\kendo\" />
+    <Folder Include="Scripts\tagEditor\" />
+    <Folder Include="Scripts\typeahead\" />
+    <Folder Include="Views\ProductController\" />
+    <Folder Include="Views\RoxyFileman\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Nop.Core\Nop.Core.csproj">
+      <Project>{defea0e4-7ec7-4855-81ea-f965469ddab0}</Project>
+      <Name>Nop.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Nop.Data\Nop.Data.csproj">
+      <Project>{ebe6ca2f-66ed-4289-be1d-bbad49085cb1}</Project>
+      <Name>Nop.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Nop.Services\Nop.Services.csproj">
+      <Project>{0497bf9c-e18f-4fb5-9c18-1a76493c0a41}</Project>
+      <Name>Nop.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Nop.Web.Framework\Nop.Web.Framework.csproj">
+      <Project>{c5cefe74-65a7-4783-a950-d780adbf94b1}</Project>
+      <Name>Nop.Web.Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -143,8 +603,9 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

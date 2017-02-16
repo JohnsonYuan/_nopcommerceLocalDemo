@@ -1,0 +1,384 @@
+﻿@Html.LabelFor(n=>Model.Img,new{width = "100px"} ) , 属性new{width = "100px"}是如何传递的？
+
+Nop.Web.Framework\HtmlExtensions.cs:
+NopDropDownListFor 扩展方法
+中使用var attrs = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
+HtmlHelper.AnonymousObjectToHtmlAttributes介绍 ()
+http://www.cnblogs.com/stoneniqiu/p/5631694.html
+=> 把object转换为RouteValueDictionary类型（TypeDescripto.GetProperties读取object属性)
+
+
+
+得到生成时的id (EditorFor第二个参数为viewdata)
+@Html.EditorFor(model => model.SelectedCategoryIds, new { SelectList = Model.AvailableCategories })
+得到上面生成html的id
+@Html.FieldIdFor(model => model.SelectedCategoryIds)  ======> "SelectedCategoryIds"
+如果SelectedCategoryIds有属性UIHint， 在模板中：
+@Html.ListBoxFor(model => model, (IEnumerable<SelectListItem>)ViewData["SelectList"])
+
+@ViewData.TemplateInfo.GetFullHtmlFieldId(string.Empty) 可以得到id  ======> "SelectedCategoryIds"
+
+如果在模板中,下面代码生成　id为"SelectedCategoryIds_tetstest"
+@Html.ListBox("tetstest", (IEnumerable<SelectListItem>)ViewData["SelectList"])
+@ViewData.TemplateInfo.GetFullHtmlFieldId("tetstest")   ====> "SelectedCategoryIds_tetstest"
+
+
+Display templates and editor templates
+可以有DisplayTemplates, EditorTemplates
+目的是为了可以重复使用, 有点类似与user control
+http://www.telerik.com/blogs/diving-into-asp.net-mvc-templates (比较好)
+http://www.growingwiththeweb.com/2012/12/aspnet-mvc-display-and-editor-templates.html
+http://bradwilson.typepad.com/blog/2009/10/aspnet-mvc-2-templates-part-3-default-templates.html
+
+在调用Html.DisplayFor, Html.EditorFor的时候可以指定模板来生成, template 中 model 均为类型， 如 @model decimal, @model string, @model DateTime 
+~/Areas/AreaName/Views/ControllerName/DisplayTemplates/TemplateName.aspx & .ascx
+~/Areas/AreaName/Views/Shared/DisplayTemplates/TemplateName.aspx & .ascx
+~/Views/ControllerName/DisplayTemplates/TemplateName.aspx & .ascx
+~/Views/Shared/DisplayTemplates/TemplateName.aspx & .ascx
+
+@Html.DisplayFor(e => e.Username)
+可以自定义生成时调用的模板, 相当于partial view
+
+1. 根据类型(文件名为类型名), 不指定template， 默认会按类型找, 缺点是所有类型都会使用这个template
+	1)  Model
+	public class TestModel
+	{
+		public decimal Money { get; set; }
+	}
+
+	2) Model为当前类型的template：  Views/Shared/DisplayTemplates/decimal.cshtml
+	@model decimal
+	@{
+		IFormatProvider formatProvider =
+			new System.Globalization.CultureInfo("en-US");
+		<span class="currency">@Model.ToString("C", formatProvider)</span>
+	}
+
+	3) View
+	@model TestModel
+	@Html.DisplayFor(e => e.Money)
+
+	3) Output
+	<span class="currency">$3.50</span>
+
+2. 申明使用哪个模板: UIHint attribute
+	1) 修改为Currency， 这样就会找Views/Shared/DisplayTemplates/Currency.cshtml
+	public class TestModel
+	{
+		[UIHint("Currency")]
+		public decimal Money { get; set; }
+	}
+
+	2) 或者在调用的时候写出调用的模板： （nopcommerce: @Html.EditorFor(x => x.FullDescription, "RichEditor") )
+	@model TestModel
+	@Html.DisplayFor(e => e.Money, "Currecy")
+
+3. 调用EditorFor, DisplayFor时写出模板，如
+   @Html.EditorFor(x => x.FullDescription, "RichEditor")
+   会找到Views/Shared/EditorTemplates/RichEditor.cshtml模板
+
+
+
+cshtml 可以调用自定义函数 @functions, @helper
+1) @helper 用来生成html， 可以调用@functions里定义的函数
+
+@functions {
+    public bool HasChild(CategorySimpleModel category)
+    {
+    }
+}
+
+@helper RenderSubCategoryLine(CategorySimpleModel category)
+{
+    @if(HasChild(category))
+    {
+        // ...
+    }
+    <li>category.Name<li>
+}
+
+2) @helper 的返回值类型为 HelperResult， nopcommerce/admin/product/edit使用这一方法：
+在RenderBootstrapTabContent 函数中 content.ToHtmlString() 可以获得 HelperResult 的值
+@helper TabInfo()
+{
+    @Html.Partial("_CreateOrUpdate.Info", Model)
+}
+@Html.RenderBootstrapTabContent("tab-info", @TabInfo(), true)
+Nop.Web.Framwork.Extensions 定义为:
+public static MvcHtmlString RenderBootstrapTabContent(this HtmlHelper helper, string currentTabName, HelperResult content) {}
+
+关于HtmlHelper的小技巧： 传递HelperResult为参数， 可使用special magic parameter "@item"
+参考文章 Templated Razor Delegates
+http://haacked.com/archive/2011/02/27/templated-razor-delegates.aspx/ (介绍)
+http://vibrantcode.com/blog/2010/8/2/inside-razor-part-3-templates.html (原理)
+
+比如定义函数: 
+@using System.Text;
+@functions {
+      public static IHtmlString Repeat(int times, Func<int, object> template) {
+           StringBuilder builder = new StringBuilder();
+          for(int i = 0; i < times; i++) {
+              builder.Append(template(i));
+          }
+          return new HtmlString(builder.ToString());
+      }
+}
+如果调用@Repeat(10, @<li>List Item</li>);
+动态编译生成的内容为:  (AppDomain.CurrentDomain.DynamicDirectory 注意item为asp.net自动生成的)
+this.Write(Repeat(10,item => new Microsoft.WebPages.Helpers.HelperResult(__writer => {
+     @__writer.Write(" ");
+     @__writer.Write("<li>List Item</li>");
+})));
+
+所以调用的时候可以这样：
+@Repeat(10, @<li>List Item #@item</li>)   // 此处的item对应Func<int, object> 的int
+
+==> 本质相当于 @Repeat(10, item => new HelperResult( // .. ));
+
+
+如果Func需要多个参数的时候好像就不能这样子了：
+@Repeat(10, (x, y) => Render(x, y) )
+
+@heleper Render(int x, int y) {
+    // ...
+}
+
+Product/Edit 生成多语言的Locales时\Administration\Views\Product\_CreateOrUpdate.Info.cshtml
+ @(Html.LocalizedEditor<ProductModel, ProductLocalizedModel>("product-info-localized", 
+
+ Nop.Web.Framework\HtmlExtensions定义LocalizedEditor<T, TLocalizedModelLocal>(this HtmlHelper<T> helper, 
+ string name,
+ Func<int, HelperResult> localizedTemplate,
+ Func<T, HelperResult> standardTemplate,
+ bool ignoreIfSeveralStores = false)
+ {
+    return new HelperResult(writer => {
+    
+    });
+ }
+ 
+ 在调用的时候第二个参数中 item 是asp.net dynamic compile 自动生成的， 此处代表int
+ 在调用的时候第3个参数中 item  代表函数定义中T
+ (""product-info-localized"", 
+ @<div>
+  @Html.NopLabelFor(model => model.Locales[item].FullDescription)
+ </div>, 
+ @<div>
+  @item
+ </div>
+ )
+
+
+
+ActionMethodSelectorAttribute 属性的作用： 当有多个actio相同的方法时，决定选择哪个action
+例如nopcommerce, FormValueRequiredAttribute继承ActionMethodSelectorAttribute 
+admin/product/list中 GoToSku 和到处xml action名称都是List，如果不加ActionMethodSelector， 就会报错：
+
+The current request for action 'List' on controller type 'ProductController' is ambiguous between the following action methods:
+System.Web.Mvc.ActionResult GoToSku(Nop.Admin.Models.Catalog.ProductListModel) on type Nop.Admin.Controllers.ProductController
+System.Web.Mvc.ActionResult ExportXmlAll(Nop.Admin.Models.Catalog.ProductListModel) on type Nop.Admin.Controllers.ProductController 
+
+
+[HttpPost, ActionName("List")]
+[FormValueRequired("go-to-product-by-sku")]
+public ActionResult GoToSku(ProductListModel model) {}
+
+
+
+
+可以总结:
+DataAnnotationsModelMetadataProvider http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/DataAnnotationsModelMetadataProvider.cs
+作用是读取属性HiddenInput, UIHint, Editable, DataType, DisplayFormat, SetFromDataTypeAndDisplay, ScaffoldColumn, Display,DisplayName, Required属性, 赋值到 DataAnnotationsModelMetadata result
+如:
+DisplayNameAttribute displayNameAttribute = attributeList.OfType<DisplayNameAttribute>().FirstOrDefault();
+                if (displayNameAttribute != null)
+                {
+                    result.DisplayName = displayNameAttribute.DisplayName;
+                }
+
+
+ModelMetadataProviders.Current = new NopMetadataProvider();
+NopMetadataProvider继承DataAnnotationsModelMetadataProvider,会把属性中是类型IModelAttribute的属性找出来,
+metadata.AdditionalValues.Add(additionalValue.Name, additionalValue);
+例如:
+Nop.Web.Framework有属性:
+NopResourceDisplayName : System.ComponentModel.DisplayNameAttribute, IModelAttribute
+
+某个model属性
+[NopResourceDisplayName("Admin.Catalog.Products.List.SearchProductName")]
+public string SearchProductName { get; set; }
+
+使用的时候调用:
+@Html.NopLabelFor(model => model.SearchProductName)
+可以取得属性(Nop.Web.Framework\HtmlExtensions.cs):
+metadata.AdditionalValues.TryGetValue("NopResourceDisplayName", out value)
+生成自定义的html
+<div class="label-wrapper">
+    <label class="control-label" for="SearchProductName" title="">Product name</label>
+    <!--如果resourcekey + ".Hint" 可以在localization 中找到则生成下面这行-->
+    <div class="ico-help" title="A product name."><i class="fa fa-question-circle"></i>
+    </div>
+</div>
+
+Action:
+NonAction
+ChildAcion
+
+Nop.Web.Framework.Seo、GenericPathRoute.cs中
+data.Values["controller"] = "Product";
+data.Values["action"] = "ProductDetails";
+data.Values["productid"] = urlRecord.EntityId;
+data.Values["SeName"] = urlRecord.Slug;
+当前razor view中获取controller，action
+Url.RequestContext.RouteData.Values["controller"].ToString()
+Url.RequestContext.RouteData.Values["action"].ToString()
+Url.RequestContext.RouteData.Values["categoryId"]
+
+Filter:
+
+_ViewStart.cshtml
+
+View Vs Partial View (最下方有总结的比较表格):
+http://www.c-sharpcorner.com/UploadFile/ff2f08/partial-view-in-mvc/
+
+
+@Html.Partial 调用的RenderPartialInternal ==> FindPartialView是当前viewengine的方法
+http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/HtmlHelper.cs
+internal virtual void RenderPartialInternal(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection)
+        {
+            if (String.IsNullOrEmpty(partialViewName))
+            {
+                throw new ArgumentException(MvcResources.Common_NullOrEmpty, "partialViewName");
+            }
+
+            ViewDataDictionary newViewData = null;
+
+            if (model == null)
+            {
+                if (viewData == null)
+                {
+                    newViewData = new ViewDataDictionary(ViewData);
+                }
+                else
+                {
+                    newViewData = new ViewDataDictionary(viewData);
+                }
+            }
+            else
+            {
+                if (viewData == null)
+                {
+                    newViewData = new ViewDataDictionary(model);
+                }
+                else
+                {
+                    newViewData = new ViewDataDictionary(viewData) { Model = model };
+                }
+            }
+
+            ViewContext newViewContext = new ViewContext(ViewContext, ViewContext.View, newViewData, ViewContext.TempData, writer);
+            IView view = FindPartialView(newViewContext, partialViewName, viewEngineCollection);
+            view.Render(newViewContext, writer);
+        }
+
+得到input的id
+@Html.HiddenFor(model => model.Id)
+可以调用：
+@Html.IdFor(model => model.Id)
+NopCommerce中使用@Html.FieldIdFor(model => model.Id), 扩展了HtmlHelper<T>
+二者没有本质差别， nopcommerce替换了[, ] (不知道有什么用)
+
+public static string FieldIdFor<T, TResult>(this HtmlHelper<T> html, Expression<Func<T, TResult>> expression)
+{
+    var id = html.ViewData.TemplateInfo.GetFullHtmlFieldId(ExpressionHelper.GetExpressionText(expression));
+    // because "[" and "]" aren't replaced with "_" in GetFullHtmlFieldId
+    return id.Replace('[', '_').Replace(']', '_');
+}
+
+和IdFor源码对比 http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/Html/NameExtensions.cs
+public static MvcHtmlString Id(this HtmlHelper html, string name)
+{
+    return MvcHtmlString.Create(html.AttributeEncode(html.ViewData.TemplateInfo.GetFullHtmlFieldId(name)));
+}
+public static MvcHtmlString IdFor<TModel, TProperty>(this HtmlHelper<TModel> html, Expression<Func<TModel, TProperty>> expression)
+{
+    return Id(html, ExpressionHelper.GetExpressionText(expression));
+}
+
+ViewBag 如何 wrap ViewData
+WebViewPage.cs http://aspnetwebstack.codeplex.com/SourceControl/latest#src/System.Web.Mvc/WebViewPage.cs
+private ViewDataDictionary _viewData;
+private DynamicViewDataDictionary _dynamicViewData;
+public dynamic ViewBag
+{
+    get
+    {
+        if (_dynamicViewData == null)
+        {
+            _dynamicViewData = new DynamicViewDataDictionary(() => ViewData);
+        }
+        return _dynamicViewData;
+    }
+}
+再看DynamicViewDataDictionary : 继承DynamicObject, 重写TryGetMember，TrySetMember 实现对ViewData操作
+    internal sealed class DynamicViewDataDictionary : DynamicObject
+    {
+        private readonly Func<ViewDataDictionary> _viewDataThunk;
+
+        public DynamicViewDataDictionary(Func<ViewDataDictionary> viewDataThunk)
+        {
+            _viewDataThunk = viewDataThunk;
+        }
+
+        private ViewDataDictionary ViewData
+        {
+            get
+            {
+                ViewDataDictionary viewData = _viewDataThunk();
+                Debug.Assert(viewData != null);
+                return viewData;
+            }
+        }
+
+        // Implementing this function improves the debugging experience as it provides the debugger with the list of all
+        // the properties currently defined on the object
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return ViewData.Keys;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = ViewData[binder.Name];
+            // since ViewDataDictionary always returns a result even if the key does not exist, always return true
+            return true;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            ViewData[binder.Name] = value;
+            // you can always set a key in the dictionary so return true
+            return true;
+        }
+    }
+可以学习
+Dynamic in C# 4.0: Creating Wrappers with DynamicObject
+https://blogs.msdn.microsoft.com/csharpfaq/2009/10/19/dynamic-in-c-4-0-creating-wrappers-with-dynamicobject/
+
+
+ShoppingCartController里面更新购物车, 继续购物， 结算等action都有属性ActionName("Cart")]， 默认情况下如果直接post， 会报错（多个action，不知道选择哪个）：
+The current request for action 'Cart' on controller type 'ShoppingCartController' is ambiguous between the following action methods:
+System.Web.Mvc.ActionResult UpdateCart(System.Web.Mvc.FormCollection) on type Nop.Web.Controllers.ShoppingCartController
+System.Web.Mvc.ActionResult ContinueShopping() on type Nop.Web.Controllers.ShoppingCartController
+System.Web.Mvc.ActionResult StartCheckout(System.Web.Mvc.FormCollection) on type Nop.Web.Controllers.ShoppingCartController
+====》 用ActionMethodSelectorAttribute可以解决该问题, 继承该类, 重写IsValidForRequest
+如 Nop.Web.Framework.Controllers, FormValueRequiredAttribute : ActionMethodSelectorAttribute
+给相同的action， 加上该属性即可
+[HttpPost, ActionName("Cart")]
+[FormValueRequired("updatecart")]
+public ActionResult UpdateCart(FormCollection form)
+
+[HttpPost, ActionName("Cart")]
+[FormValueRequired("continueshopping")]
+public ActionResult ContinueShopping()
+http://www.dotnetcurry.com/aspnet-mvc/724/handle-multiple-submit-buttons-aspnet-mvc-action-methods

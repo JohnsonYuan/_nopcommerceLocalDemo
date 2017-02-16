@@ -20,14 +20,11 @@ namespace Nop.Core.Infrastructure
         /// </summary>
         public static T Instance
         {
-            get
-            {
-                return instance;
-            }
+            get { return instance; }
             set
             {
                 instance = value;
-                AllSingletons[typeof(T)] = instance;
+                AllSingletons[typeof(T)] = value;
             }
         }
     }
@@ -61,7 +58,7 @@ namespace Nop.Core.Infrastructure
     {
         static SingletonDictionary()
         {
-            Singleton<IDictionary<TKey, TValue>>.Instance = new Dictionary<TKey, TValue>();
+            Singleton<Dictionary<TKey, TValue>>.Instance = new Dictionary<TKey, TValue>();
         }
 
         /// <summary>
@@ -69,7 +66,7 @@ namespace Nop.Core.Infrastructure
         /// </summary>
         public new static IDictionary<TKey, TValue> Instance
         {
-            get { return Singleton<IDictionary<TKey, TValue>>.Instance; }
+            get { return Singleton<Dictionary<TKey, TValue>>.Instance; }
         }
     }
 
@@ -89,10 +86,7 @@ namespace Nop.Core.Infrastructure
         /// <summary>Dictionary of type to singleton instances.</summary>
         public static IDictionary<Type, object> AllSingletons
         {
-            get
-            {
-                return allSingletons;
-            }
+            get { return allSingletons; }
         }
     }
 }

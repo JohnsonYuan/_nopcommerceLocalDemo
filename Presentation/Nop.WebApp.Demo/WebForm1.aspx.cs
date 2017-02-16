@@ -1,4 +1,5 @@
 ﻿using Nop.WebApp.Demo;
+using StackExchange.Profiling;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Web.Compilation;
 
@@ -19,10 +21,10 @@ namespace Nop.WebApp.Demo
     {
         public static void Initialize()
         {
-            var path = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Libraries\Nop.Core\bin\Debug\Nop.Core.dll";
-            var an = AssemblyName.GetAssemblyName(path);
-            //BuildManager.AddReferencedAssembly(Assembly.Load(an));
-            var a = PerformFileDeploy(new FileInfo(path));
+            //var path = @"C:\Users\Administrator\Source\Repos\_nopcommerceLocalDemo\Libraries\Nop.Core\bin\Debug\Nop.Core.dll";
+            //var an = AssemblyName.GetAssemblyName(path);
+            ////BuildManager.AddReferencedAssembly(Assembly.Load(an));
+            //var a = PerformFileDeploy(new FileInfo(path));
         }
         private static Assembly PerformFileDeploy(FileInfo plug)
         {
@@ -179,7 +181,14 @@ namespace Nop.WebApp.Demo
 
         protected void Page_Load(object sender, EventArgs e)
         {
-<<<<<<< HEAD
+
+            MiniProfiler.Start();
+            using (MiniProfiler.Current.Step("I'm doing stuff"))
+            {
+                Thread.Sleep(300);
+            }
+            MiniProfiler.Stop();
+
             HttpCookie MyCookie = new HttpCookie("LastVisit");
             MyCookie.Value = DateTime.Now.ToString();
             Response.Cookies.Set(MyCookie);
@@ -197,7 +206,7 @@ namespace Nop.WebApp.Demo
                 Response.Write("null");
             }
             Response.Write("<br/>");
-=======
+
             WriteLine("appdomain: ");
             foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -219,7 +228,6 @@ namespace Nop.WebApp.Demo
             {
                 WriteLine(item.ToString());
             }
->>>>>>> webFramework
         }
     }
 }

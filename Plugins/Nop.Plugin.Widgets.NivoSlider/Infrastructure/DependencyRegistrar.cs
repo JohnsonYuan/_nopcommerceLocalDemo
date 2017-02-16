@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using Autofac.Core;
 using Nop.Core.Caching;
 using Nop.Core.Configuration;
@@ -19,7 +19,7 @@ namespace Nop.Plugin.Widgets.NivoSlider.Infrastructure
         /// <param name="builder">Container builder</param>
         /// <param name="typeFinder">Type finder</param>
         /// <param name="config">Config</param>
-        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
+        public void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
         {
             //we cache presentation models between requests
             builder.RegisterType<WidgetsNivoSliderController>()

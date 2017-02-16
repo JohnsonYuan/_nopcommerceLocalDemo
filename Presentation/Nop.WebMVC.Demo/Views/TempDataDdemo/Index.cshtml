@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@{  
+    RouteValueDictionary parameters = new RouteValueDictionary { { "action", "Foo" }, { "controller", "TempDataDdemo" } };
+    var vpath = RouteTable.Routes.GetVirtualPath(null, parameters);
+
+    var hpInput = Html.TextBox("honeypot");
+    var str = MvcHtmlString.Create("<script>alert('hello');</script>");
+
+}
+
+<h2>Index</h2>
+
+virtual path: @System.Security.Principal.WindowsIdentity.GetCurrent()
+
+<br />
+hp: @hpInput.ToString()
+<br/>
+hp html: @hpInput.ToHtmlString()
+<br />
+
+@HttpContext.Current.Request.IsLocal 
+
+<br/>
+@HttpContext.Current.Request.RawUrl
+<br />
+
+@HttpContext.Current.Request.CurrentExecutionFilePath
+<br />
+@HttpContext.Current.Request.CurrentExecutionFilePathExtension
+<br />
+@HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath
+<br />
