@@ -208,9 +208,11 @@
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\ManufacturerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\ProductReviewController.cs" />
     <Compile Include="Controllers\RoxyFilemanController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
@@ -502,6 +504,17 @@
     <Content Include="Views\Category\Create.cshtml" />
     <Content Include="Views\Category\Edit.cshtml" />
     <Content Include="Views\Category\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Manufacturer\Create.cshtml" />
+    <Content Include="Views\Manufacturer\Edit.cshtml" />
+    <Content Include="Views\Manufacturer\List.cshtml" />
+    <Content Include="Views\Manufacturer\ProductAddPopup.cshtml" />
+    <Content Include="Views\Manufacturer\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Product\_ProductEditorSettingsModal.cshtml" />
+    <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\Product\BulkEdit.cshtml" />
+    <Content Include="Views\ProductReview\List.cshtml" />
+    <Content Include="Views\ProductReview\Edit.cshtml" />
+    <Content Include="Views\ProductReview\_CreateOrUpdate.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -531,6 +544,7 @@
     <Content Include="Views\Shared\EditorTemplates\Decimal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Picture.cshtml" />
     <Content Include="Views\Shared\Delete.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateNullable.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -539,7 +553,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Content\bootstrap\" />
     <Folder Include="Content\fontAwesome\" />
     <Folder Include="Content\images\" />
