@@ -7,6 +7,10 @@ using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Tax;
 <<<<<<< HEAD
+using Nop.Core.Domain.Vendors;
+using Nop.Core.Fakes;
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> 3ab93250c050304c29f3cdc02d2aa51d21c13657
@@ -17,6 +21,7 @@ using Nop.Services.Vendors;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Fakes;
 >>>>>>> webframe
+>>>>>>> master
 using Nop.Services.Authentication;
 using Nop.Services.Common;
 using Nop.Services.Customers;
