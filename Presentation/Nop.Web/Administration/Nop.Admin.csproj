@@ -530,7 +530,10 @@
     <Content Include="Views\Shared\EditorTemplates\Download.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Decimal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Picture.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Shared\Delete.cshtml" />
+=======
+>>>>>>> master
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
