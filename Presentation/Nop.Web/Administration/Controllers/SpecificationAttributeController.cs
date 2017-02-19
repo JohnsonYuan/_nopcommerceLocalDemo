@@ -116,6 +116,7 @@ namespace Nop.Admin.Controllers
             var model = new SpecificationAttributeModel();
             //locales
             AddLocales(_languageService, model.Locales);
+
             return View(model);
         }
 

@@ -1,4 +1,43 @@
-﻿@Html.LabelFor(n=>Model.Img,new{width = "100px"} ) , 属性new{width = "100px"}是如何传递的？
+﻿多语言时调用@Html.LocalizedEditor， @Html.NopLabelFor(model => model.Locales[0].Name) 生成的html为
+<input name="Locales[0].Name" class="form-control text-box single-line" id="Locales_0__Name" type="text" value="">
+
+post方式传递数组参数的示例:
+http://www.cnblogs.com/huatao/p/4688147.html
+    在ASP.NET MVC中以post方式传递数组参数的关键在于json对象的写法，这里总结一下：
+
+    先定义空对象：var data = {};
+
+    针对List<string>、List<int>等简单类型，data["a[0]"] = "dd"; data["a[1]"] = "d2"; ....
+
+    针对复杂类型，如List<UserInfo>, UserInfo[]，data["b[0].UserId"] = 1; ....
+
+[HttpPost]
+public ActionResult TestPost(List<string> a, UserInfo[] b)
+{
+    var result = new {IsSuccess = true, ErrMsg = "你错了"};
+    return Json(result, JsonRequestBehavior.AllowGet);
+}
+
+    <script type="text/javascript">
+        $(function() {
+            $('#btnTest').click(function() {
+                var data = {};
+                data["a[0]"] = "Test";
+                data["a[1]"] = "Just";
+                data["b[0].UserId"] = 1;            // 相当于 <input name="b[0].UserId" />
+                data["b[0].UserName"] = "Zhang";
+                data["b[1].UserName"] = "黄Sir";
+                $.post('@Url.Action("TestPost")', data, function(res) {
+                    alert('Result: ' + res.IsSuccess + ', Error: ' + res.ErrMsg);
+                });
+            });
+        });
+    </script>
+
+
+
+
+@Html.LabelFor(n=>Model.Img,new{width = "100px"} ) , 属性new{width = "100px"}是如何传递的？
 
 Nop.Web.Framework\HtmlExtensions.cs:
 NopDropDownListFor 扩展方法
