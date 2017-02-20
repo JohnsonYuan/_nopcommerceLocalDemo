@@ -323,7 +323,7 @@ namespace Nop.Web.Controllers
                 AvailableCurrencies = availableCurrencies
             };
 
-            if (model.AvailableCurrencies.Count == 2)
+            if (model.AvailableCurrencies.Count == 1)
                 return Content("");
 
             return PartialView(model);

@@ -218,8 +218,11 @@
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CheckoutAttributeController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\CustomerRoleController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\GiftCardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\ManufacturerController.cs" />
@@ -228,9 +231,12 @@
     <Compile Include="Controllers\ProductAttributeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductReviewController.cs" />
+    <Compile Include="Controllers\RecurringPaymentController.cs" />
+    <Compile Include="Controllers\ReturnRequestController.cs" />
     <Compile Include="Controllers\RoxyFilemanController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
+    <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\SpecificationAttributeController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Extensions\AttributeParserHelper.cs" />
@@ -547,6 +553,17 @@
     <Content Include="Views\CheckoutAttribute\ValueEditPopup.cshtml" />
     <Content Include="Views\CheckoutAttribute\_CreateOrUpdate.cshtml" />
     <Content Include="Views\CheckoutAttribute\_CreateOrUpdateValue.cshtml" />
+    <Content Include="Views\ReturnRequest\List.cshtml" />
+    <Content Include="Views\ReturnRequest\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\ReturnRequest\Edit.cshtml" />
+    <Content Include="Views\RecurringPayment\Edit.cshtml" />
+    <Content Include="Views\RecurringPayment\List.cshtml" />
+    <Content Include="Views\RecurringPayment\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\GiftCard\Create.cshtml" />
+    <Content Include="Views\GiftCard\Edit.cshtml" />
+    <Content Include="Views\GiftCard\List.cshtml" />
+    <Content Include="Views\GiftCard\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\CustomerRole\List.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -584,6 +601,9 @@
     <Content Include="Views\SpecificationAttribute\OptionCreatePopup.cshtml" />
     <Content Include="Views\SpecificationAttribute\OptionEditPopup.cshtml" />
     <Content Include="Views\SpecificationAttribute\_CreateOrUpdateOption.cshtml" />
+    <Content Include="Views\Shared\Confirm.cshtml" />
+    <Content Include="Views\ShoppingCart\CurrentCarts.cshtml" />
+    <Content Include="Views\ShoppingCart\CurrentWishlists.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
