@@ -50,6 +50,7 @@ using Nop.Services.Seo;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Pickup;
 using Nop.Services.Tax;
+using Nop.Web.Framework.Security.Captcha;
 
 namespace Nop.Admin.Infrastructure.Mapper
 {
@@ -643,13 +644,20 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
                 cfg.CreateMap<StoreModel, Store>();
 
+
                 //Settings
+                cfg.CreateMap<CaptchaSettings, GeneralCommonSettingsModel.CaptchaSettingsModel>()
+                    .ForMember(dest => dest.AvailableReCaptchaVersions, mo => mo.Ignore())
+                    .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
+                cfg.CreateMap<GeneralCommonSettingsModel.CaptchaSettingsModel, CaptchaSettings>()
+                    .ForMember(dest => dest.ReCaptchaTheme, mo => mo.Ignore())
+                    .ForMember(dest => dest.ReCaptchaLanguage, mo => mo.Ignore());
                 cfg.CreateMap<TaxSettings, TaxSettingsModel>()
                     .ForMember(dest => dest.DefaultTaxAddress, mo => mo.Ignore())
                     .ForMember(dest => dest.TaxDisplayTypeValues, mo => mo.Ignore())
                     .ForMember(dest => dest.TaxBasedOnValues, mo => mo.Ignore())
                     .ForMember(dest => dest.PaymentMethodAdditionalFeeTaxCategories, mo => mo.Ignore())
-                    .ForMember(dest => dest.ShippingTaxCategories, mo => mo.Ignore())
+                    .ForMember(dest => dest.TaxCategories, mo => mo.Ignore())
                     .ForMember(dest => dest.EuVatShopCountries, mo => mo.Ignore())
                     .ForMember(dest => dest.ActiveStoreScopeConfiguration, mo => mo.Ignore())
                     .ForMember(dest => dest.PricesIncludeTax_OverrideForStore, mo => mo.Ignore())
@@ -660,6 +668,7 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.HideZeroTax_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.HideTaxInOrderSummary_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ForceTaxExclusionFromOrderSubtotal_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.DefaultTaxCategoryId_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.TaxBasedOn_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.DefaultTaxAddress_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ShippingIsTaxable_OverrideForStore, mo => mo.Ignore())
@@ -766,6 +775,7 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.EstimateShippingEnabled_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.DisplayShipmentEventsToCustomers_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.DisplayShipmentEventsToStoreOwner_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.HideShippingTotal_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.BypassShippingMethodSelectionIfOnlyOne_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ShippingOriginAddress_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
@@ -779,7 +789,8 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.AllowViewUnpublishedProductPage_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.DisplayDiscontinuedMessageForUnpublishedProducts_OverrideForStore,
                         mo => mo.Ignore())
-                    .ForMember(dest => dest.ShowProductSku_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.ShowSkuOnProductDetailsPage_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.ShowSkuOnCatalogPages_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ShowManufacturerPartNumber_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ShowGtin_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ShowFreeShippingNotification_OverrideForStore, mo => mo.Ignore())
@@ -794,6 +805,7 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.PageShareCode_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ProductReviewsMustBeApproved_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.AllowAnonymousUsersToReviewProduct_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.ProductReviewPossibleOnlyAfterPurchasing_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.NotifyStoreOwnerAboutNewProductReviews_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.ShowProductReviewsPerStore_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.EmailAFriendEnabled_OverrideForStore, mo => mo.Ignore())
@@ -831,7 +843,8 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.DisplayTaxShippingInfoOrderDetailsPage_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.CustomProperties, mo => mo.Ignore())
                     .ForMember(dest => dest.ShowProductReviewsOnAccountPage_OverrideForStore, mo => mo.Ignore())
-                    .ForMember(dest => dest.ProductReviewsPageSizeOnAccountPage_OverrideForStore, mo => mo.Ignore());
+                    .ForMember(dest => dest.ProductReviewsPageSizeOnAccountPage_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.ExportImportProductAttributes_OverrideForStore, mo => mo.Ignore());
                 cfg.CreateMap<CatalogSettingsModel, CatalogSettings>()
                     .ForMember(dest => dest.PublishBackProductWhenCancellingOrders, mo => mo.Ignore())
                     .ForMember(dest => dest.DefaultViewMode, mo => mo.Ignore())
@@ -846,7 +859,8 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.DefaultManufacturerPageSizeOptions, mo => mo.Ignore())
                     .ForMember(dest => dest.DefaultManufacturerPageSize, mo => mo.Ignore())
                     .ForMember(dest => dest.ProductSortingEnumDisabled, mo => mo.Ignore())
-                    .ForMember(dest => dest.ProductSortingEnumDisplayOrder, mo => mo.Ignore());
+                    .ForMember(dest => dest.ProductSortingEnumDisplayOrder, mo => mo.Ignore())
+                    .ForMember(dest => dest.ExportImportUseDropdownlistsForAssociatedEntities, mo => mo.Ignore());
                 cfg.CreateMap<RewardPointsSettings, RewardPointsSettingsModel>()
                     .ForMember(dest => dest.PrimaryStoreCurrencyCode, mo => mo.Ignore())
                     .ForMember(dest => dest.ActiveStoreScopeConfiguration, mo => mo.Ignore())
@@ -871,6 +885,7 @@ namespace Nop.Admin.Infrastructure.Mapper
                     .ForMember(dest => dest.MinOrderSubtotalAmount_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.MinOrderSubtotalAmountIncludingTax_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.MinOrderTotalAmount_OverrideForStore, mo => mo.Ignore())
+                    .ForMember(dest => dest.AutoUpdateOrderTotalsOnEditingOrder_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.AnonymousCheckoutAllowed_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.TermsOfServiceOnShoppingCartPage_OverrideForStore, mo => mo.Ignore())
                     .ForMember(dest => dest.TermsOfServiceOnOrderConfirmPage_OverrideForStore, mo => mo.Ignore())
