@@ -217,6 +217,7 @@
     <Compile Include="Controllers\ActivityLogController.cs" />
     <Compile Include="Controllers\AffiliateController.cs" />
     <Compile Include="Controllers\BaseAdminController.cs" />
+    <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CheckoutAttributeController.cs" />
@@ -226,14 +227,18 @@
     <Compile Include="Controllers\CustomerRoleController.cs" />
     <Compile Include="Controllers\DiscountController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\GiftCardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\ManufacturerController.cs" />
+    <Compile Include="Controllers\MessageTemplateController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\NewsLetterSubscriptionController.cs" />
     <Compile Include="Controllers\OnlineCustomerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\ProductAttributeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
@@ -248,6 +253,7 @@
     <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\SpecificationAttributeController.cs" />
     <Compile Include="Controllers\TemplateController.cs" />
+    <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Extensions\AttributeParserHelper.cs" />
@@ -605,6 +611,31 @@
     <Content Include="Views\QueuedEmail\Edit.cshtml" />
     <Content Include="Views\QueuedEmail\_CreateOrUpdate.cshtml" />
     <Content Include="Views\ScheduleTask\List.cshtml" />
+    <Content Include="Views\MessageTemplate\Edit.cshtml" />
+    <Content Include="Views\MessageTemplate\List.cshtml" />
+    <Content Include="Views\MessageTemplate\TestTemplate.cshtml" />
+    <Content Include="Views\MessageTemplate\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Poll\Create.cshtml" />
+    <Content Include="Views\Poll\Edit.cshtml" />
+    <Content Include="Views\Poll\List.cshtml" />
+    <Content Include="Views\Poll\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Forum\CreateForum.cshtml" />
+    <Content Include="Views\Forum\CreateForumGroup.cshtml" />
+    <Content Include="Views\Forum\EditForum.cshtml" />
+    <Content Include="Views\Forum\EditForumGroup.cshtml" />
+    <Content Include="Views\Forum\List.cshtml" />
+    <Content Include="Views\Forum\_CreateOrUpdateForum.cshtml" />
+    <Content Include="Views\Forum\_CreateOrUpdateForumGroup.cshtml" />
+    <Content Include="Views\Blog\Comments.cshtml" />
+    <Content Include="Views\Blog\Create.cshtml" />
+    <Content Include="Views\Blog\Edit.cshtml" />
+    <Content Include="Views\Blog\List.cshtml" />
+    <Content Include="Views\Blog\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\News\Comments.cshtml" />
+    <Content Include="Views\News\Create.cshtml" />
+    <Content Include="Views\News\Edit.cshtml" />
+    <Content Include="Views\News\List.cshtml" />
+    <Content Include="Views\News\_CreateOrUpdate.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -679,6 +710,10 @@
     <Content Include="Views\Template\ManufacturerTemplates.cshtml" />
     <Content Include="Views\Template\ProductTemplates.cshtml" />
     <Content Include="Views\Template\TopicTemplates.cshtml" />
+    <Content Include="Views\Topic\Create.cshtml" />
+    <Content Include="Views\Topic\Edit.cshtml" />
+    <Content Include="Views\Topic\List.cshtml" />
+    <Content Include="Views\Topic\_CreateOrUpdate.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
