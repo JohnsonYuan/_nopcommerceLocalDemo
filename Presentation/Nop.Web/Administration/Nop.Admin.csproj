@@ -229,6 +229,7 @@
     <Compile Include="Controllers\GiftCardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\ManufacturerController.cs" />
     <Compile Include="Controllers\NewsLetterSubscriptionController.cs" />
     <Compile Include="Controllers\OnlineCustomerController.cs" />
@@ -237,13 +238,16 @@
     <Compile Include="Controllers\ProductAttributeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductReviewController.cs" />
+    <Compile Include="Controllers\QueuedEmailController.cs" />
     <Compile Include="Controllers\RecurringPaymentController.cs" />
     <Compile Include="Controllers\ReturnRequestController.cs" />
     <Compile Include="Controllers\RoxyFilemanController.cs" />
+    <Compile Include="Controllers\ScheduleTaskController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\SpecificationAttributeController.cs" />
+    <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Extensions\AttributeParserHelper.cs" />
@@ -595,6 +599,12 @@
     <Content Include="Views\Campaign\List.cshtml" />
     <Content Include="Views\Campaign\_CreateOrUpdate.cshtml" />
     <Content Include="Views\NewsLetterSubscription\List.cshtml" />
+    <Content Include="Views\Log\List.cshtml" />
+    <Content Include="Views\Log\View.cshtml" />
+    <Content Include="Views\QueuedEmail\List.cshtml" />
+    <Content Include="Views\QueuedEmail\Edit.cshtml" />
+    <Content Include="Views\QueuedEmail\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\ScheduleTask\List.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -665,6 +675,10 @@
     <Content Include="Views\Setting\_CreateOrUpdate.ReturnRequestReason.cshtml" />
     <Content Include="Views\Setting\_ReturnRequestActions.cshtml" />
     <Content Include="Views\Setting\_ReturnRequestReasons.cshtml" />
+    <Content Include="Views\Template\CategoryTemplates.cshtml" />
+    <Content Include="Views\Template\ManufacturerTemplates.cshtml" />
+    <Content Include="Views\Template\ProductTemplates.cshtml" />
+    <Content Include="Views\Template\TopicTemplates.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
