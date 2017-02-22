@@ -192,7 +192,7 @@ namespace Nop.Services.Messages
                     sb.AppendLine(rentalInfo);
                 }
                 //sku
-                if (_catalogSettings.ShowProductSku)
+                if (_catalogSettings.ShowSkuOnProductDetailsPage)
                 {
                     var sku = product.FormatSku(orderItem.AttributesXml, _productAttributeParser);
                     if (!String.IsNullOrEmpty(sku))
@@ -498,7 +498,7 @@ namespace Nop.Services.Messages
                     sb.AppendLine(rentalInfo);
                 }
                 //sku
-                if (_catalogSettings.ShowProductSku)
+                if (_catalogSettings.ShowSkuOnProductDetailsPage)
                 {
                     var sku = product.FormatSku(orderItem.AttributesXml, _productAttributeParser);
                     if (!String.IsNullOrEmpty(sku))
