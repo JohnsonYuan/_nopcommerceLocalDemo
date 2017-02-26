@@ -147,38 +147,38 @@ namespace Nop.Web.Framework.UI.Paging
                     {
                         links.Append(CreatePageLink(model.PageIndex, localizationService.GetResource("Pager.Previous"), "previous-page"));
                     }
-                    if (showIndividualPages)
+                }
+                if (showIndividualPages)
+                {
+                    //individual pages
+                    int firstIndividualPageIndex = GetFirstIndividualPageIndex();
+                    int lastIndividualPageIndex = GetLastIndividualPageIndex();
+                    for (int i = firstIndividualPageIndex; i <= lastIndividualPageIndex; i++)
                     {
-                        //individual pages
-                        int firstIndividualPageIndex = GetFirstIndividualPageIndex();
-                        int lastIndividualPageIndex = GetLastIndividualPageIndex();
-                        for (int i = firstIndividualPageIndex; i <= lastIndividualPageIndex; i++)
+                        if (model.PageIndex == i)
                         {
-                            if (model.PageIndex == i)
-                            {
-                                links.AppendFormat("<li class=\"current-page\"><span>{0}</span></li>", (i + 1));
-                            }
-                            else
-                            {
-                                links.Append(CreatePageLink(i + 1, (i + 1).ToString(), "individual-page"));
-                            }
+                            links.AppendFormat("<li class=\"current-page\"><span>{0}</span></li>", (i + 1));
+                        }
+                        else
+                        {
+                            links.Append(CreatePageLink(i + 1, (i + 1).ToString(), "individual-page"));
                         }
                     }
-                    if (showNext)
+                }
+                if (showNext)
+                {
+                    //next page
+                    if ((model.PageIndex + 1) < model.TotalPages)
                     {
-                        //next page
-                        if ((model.PageIndex + 1) < model.TotalPages)
-                        {
-                            links.Append(CreatePageLink(model.PageIndex + 2, localizationService.GetResource("Pager.Next"), "next-page"));
-                        }
+                        links.Append(CreatePageLink(model.PageIndex + 2, localizationService.GetResource("Pager.Next"), "next-page"));
                     }
-                    if (showLast)
+                }
+                if (showLast)
+                {
+                    //last page
+                    if (((model.PageIndex + 3) < model.TotalPages) && (model.TotalPages > individualPagesDisplayedCount))
                     {
-                        //last page
-                        if (((model.PageIndex + 3) < model.TotalPages) && (model.TotalPages > individualPagesDisplayedCount))
-                        {
-                            links.Append(CreatePageLink(model.TotalPages, localizationService.GetResource("Pager.Last"), "last-page"));
-                        }
+                        links.Append(CreatePageLink(model.TotalPages, localizationService.GetResource("Pager.Last"), "last-page"));
                     }
                 }
             }
@@ -256,12 +256,12 @@ namespace Nop.Web.Framework.UI.Paging
             var parametersWithEmptyValues = new List<string>();
             foreach (var key in viewContext.RequestContext.HttpContext.Request.QueryString.AllKeys.Where(key => key != null))
             {
-                var value = viewContext.RequestContext.HttpContext.Request[key];
+                var value = viewContext.RequestContext.HttpContext.Request.QueryString[key];
                 if (renderEmptyParameters && String.IsNullOrEmpty(value))
                 {
                     //we store query string parameters with empty values separately
                     //we need to do it because they are not properly processed in the UrlHelper.GenerateUrl method (dropped for some reasons)
-                    parametersWithEmptyValues.Add(value);
+                    parametersWithEmptyValues.Add(key);
                 }
                 else
                 {
@@ -273,21 +273,21 @@ namespace Nop.Web.Framework.UI.Paging
                         {
                             value = "true";
                         }
-                        routeValues[key] = value;
                     }
+                    routeValues[key] = value;
                 }
+            }
 
-                if (pageNumber > 1)
+            if (pageNumber > 1)
+            {
+                routeValues[pageQueryName] = pageNumber;
+            }
+            else
+            {
+                //SEO. we do not render pageindex query string parameter for the first page
+                if (routeValues.ContainsKey(pageQueryName))
                 {
-                    routeValues[pageQueryName] = pageNumber;
-                }
-                else
-                {
-                    //SEO. we do not render pageindex query string parameter for the first page
-                    if (routeValues.ContainsKey(pageQueryName))
-                    {
-                        routeValues.Remove(pageQueryName);
-                    }
+                    routeValues.Remove(pageQueryName);
                 }
             }
 

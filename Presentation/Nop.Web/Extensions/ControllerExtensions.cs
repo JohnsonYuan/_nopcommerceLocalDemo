@@ -157,42 +157,42 @@ namespace Nop.Web.Extensions
                                                 Product minPriceProduct = null;
                                                 foreach (var associatedProduct in associatedProducts)
                                                 {
-                                                    //` for the maximum quantity (in case if we have tier prices)
+                                                    //calculate for the maximum quantity (in case if we have tier prices)
                                                     var tmpPrice = priceCalculationService.GetFinalPrice(associatedProduct,
-                                                            workContext.CurrentCustomer, decimal.Zero, true, int.MaxValue);
+                                                        workContext.CurrentCustomer, decimal.Zero, true, int.MaxValue);
                                                     if (!minPossiblePrice.HasValue || tmpPrice < minPossiblePrice.Value)
                                                     {
                                                         minPriceProduct = associatedProduct;
                                                         minPossiblePrice = tmpPrice;
                                                     }
-                                                    if (minPriceProduct != null && !minPriceProduct.CustomerEntersPrice)
+                                                }
+                                                if (minPriceProduct != null && !minPriceProduct.CustomerEntersPrice)
+                                                {
+                                                    if (minPriceProduct.CallForPrice)
                                                     {
-                                                        if (minPriceProduct.CallForPrice)
-                                                        {
-                                                            priceModel.OldPrice = null;
-                                                            priceModel.Price = localizationService.GetResource("Products.CallForPrice");
-                                                        }
-                                                        else if (minPossiblePrice.HasValue)
-                                                        {
+                                                        priceModel.OldPrice = null;
+                                                        priceModel.Price = localizationService.GetResource("Products.CallForPrice");
+                                                    }
+                                                    else if (minPossiblePrice.HasValue)
+                                                    {
+                                                        //calculate prices
+                                                        decimal taxRate;
+                                                        decimal finalPriceBase = taxService.GetProductPrice(minPriceProduct, minPossiblePrice.Value, out taxRate);
+                                                        decimal finalPrice = currencyService.ConvertFromPrimaryStoreCurrency(finalPriceBase, workContext.WorkingCurrency);
 
-                                                            //calculate prices
-                                                            decimal taxRate;
-                                                            decimal finalPriceBase = taxService.GetProductPrice(minPriceProduct, minPossiblePrice.Value, out taxRate);
-                                                            decimal finalPrice = currencyService.ConvertFromPrimaryStoreCurrency(finalPriceBase, workContext.WorkingCurrency);
-                                                            priceModel.OldPrice = null;
-                                                            priceModel.Price = String.Format(localizationService.GetResource("Products.PriceRangeFrom"), priceFormatter.FormatPrice(finalPrice));
-                                                            priceModel.PriceValue = finalPrice;
+                                                        priceModel.OldPrice = null;
+                                                        priceModel.Price = String.Format(localizationService.GetResource("Products.PriceRangeFrom"), priceFormatter.FormatPrice(finalPrice));
+                                                        priceModel.PriceValue = finalPrice;
 
-                                                            //PAngV baseprice (used in Germany)
-                                                            priceModel.BasePricePAngV = product.FormatBasePrice(finalPrice,
-                                                                localizationService, measureService, currencyService, workContext, priceFormatter);
-                                                        }
-                                                        else
-                                                        {
-                                                            //Actually it's not possible (we presume that minimalPrice always has a value)
-                                                            //We never should get here
-                                                            Debug.WriteLine("Cannot calculate minPrice for product #{0}", product.Id);
-                                                        }
+                                                        //PAngV baseprice (used in Germany)
+                                                        priceModel.BasePricePAngV = product.FormatBasePrice(finalPrice,
+                                                            localizationService, measureService, currencyService, workContext, priceFormatter);
+                                                    }
+                                                    else
+                                                    {
+                                                        //Actually it's not possible (we presume that minimalPrice always has a value)
+                                                        //We never should get here
+                                                        Debug.WriteLine("Cannot calculate minPrice for product #{0}", product.Id);
                                                     }
                                                 }
                                             }
@@ -292,33 +292,40 @@ namespace Nop.Web.Extensions
                                                     priceModel.Price = priceFormatter.FormatPrice(finalPrice);
                                                     priceModel.PriceValue = finalPrice;
                                                 }
-                                                if (product.IsRental)
+                                                else
                                                 {
-                                                    //rental product
-                                                    priceModel.OldPrice = priceFormatter.FormatRentalProductPeriod(product, priceModel.OldPrice);
-                                                    priceModel.Price = priceFormatter.FormatRentalProductPeriod(product, priceModel.Price);
+                                                    priceModel.OldPrice = null;
+                                                    priceModel.Price = priceFormatter.FormatPrice(finalPrice);
+                                                    priceModel.PriceValue = finalPrice;
                                                 }
-
-                                                //property for German market
-                                                //we display tax/shipping info only with "shipping enabled" for this product
-                                                //we also ensure this it's not free shipping
-                                                priceModel.DisplayTaxShippingInfo = catalogSettings.DisplayTaxShippingInfoProductBoxes
-                                                    && product.IsShipEnabled &&
-                                                    !product.IsFreeShipping;
-
-
-                                                //PAngV baseprice (used in Germany)
-                                                priceModel.BasePricePAngV = product.FormatBasePrice(finalPrice,
-                                                    localizationService, measureService, currencyService, workContext, priceFormatter);
                                             }
+                                            if (product.IsRental)
+                                            {
+                                                //rental product
+                                                priceModel.OldPrice = priceFormatter.FormatRentalProductPeriod(product, priceModel.OldPrice);
+                                                priceModel.Price = priceFormatter.FormatRentalProductPeriod(product, priceModel.Price);
+                                            }
+
+
+                                            //property for German market
+                                            //we display tax/shipping info only with "shipping enabled" for this product
+                                            //we also ensure this it's not free shipping
+                                            priceModel.DisplayTaxShippingInfo = catalogSettings.DisplayTaxShippingInfoProductBoxes
+                                                && product.IsShipEnabled &&
+                                                !product.IsFreeShipping;
+
+
+                                            //PAngV baseprice (used in Germany)
+                                            priceModel.BasePricePAngV = product.FormatBasePrice(finalPrice,
+                                                localizationService, measureService, currencyService, workContext, priceFormatter);
                                         }
                                     }
-                                    else
-                                    {
-                                        //hide prices
-                                        priceModel.OldPrice = null;
-                                        priceModel.Price = null;
-                                    }
+                                }
+                                else
+                                {
+                                    //hide prices
+                                    priceModel.OldPrice = null;
+                                    priceModel.Price = null;
                                 }
 
                                 #endregion
@@ -330,6 +337,7 @@ namespace Nop.Web.Extensions
 
                     #endregion
                 }
+
 
                 //picture
                 if (preparePictureModel)

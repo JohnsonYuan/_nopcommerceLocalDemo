@@ -965,7 +965,7 @@ namespace Nop.Web.Controllers
                 return InvokeHttp404();
 
             //visible individually?
-            // 我的注释 ： VisibleIndividually属性用在grouped product中
+            //是否在搜索结果中出现， 或者catalog页面出现 (catalog下的product调用_productService.SearchProducts方法中VisibleIndividually=true
             // 如果VisibleIndividually是false, 该产品只能在ParentGroupedProduct中浏览
             if (!product.VisibleIndividually)
             {
