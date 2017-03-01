@@ -112,6 +112,7 @@
             </div>
         }
         @Html.Widget("categorydetails_after_featured_products", Model.Id)
+
         @if (Model.Products.Count > 0)
         {
             @Html.Partial("_CatalogSelectors", Model.PagingFilteringContext, new ViewDataDictionary())

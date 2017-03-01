@@ -945,7 +945,6 @@
     <Content Include="Views\Customer\Login.cshtml" />
     <Content Include="Views\Customer\_ExternalAuthentication.AssociateMessage.cshtml" />
     <Content Include="Views\Customer\_ExternalAuthentication.Errors.cshtml" />
-    <Content Include="Views\Product\ProductTemplate.cshtml" />
     <Content Include="Views\Product\ProductTemplate.Grouped.cshtml" />
     <Content Include="Views\Product\_AddToCart.cshtml" />
     <Content Include="Views\Product\_AddToWishlist.cshtml" />
