@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "~/Themes/GFashion/Views/Shared/_ColumnsOne.cshtml";
+}
+<!-- HOMEPAGE SLIDER -->
+<div id="home-slider">
+@Html.Widget("home_page_top")
+</div>
+<!-- // HOMEPAGE SLIDER -->
+<section class="section promos">
+    @Html.Action("HomepageCategories", "Catalog")
+</section>
+@Html.Action("HomepageProducts", "Product")
+@Html.Action("HomepageBestSellers", "Product")
+@Html.Action("HomePageNews", "News")
+@Html.Action("HomePagePolls", "Poll")
+@Html.Action("TopicBlock", "Topic", new { systemName = "HomePageText" })
+@Html.Widget("home_page_bottom")

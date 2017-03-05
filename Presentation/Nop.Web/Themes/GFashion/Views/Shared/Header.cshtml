@@ -1,0 +1,113 @@
+﻿<!-- SITE HEADER -->
+<header id="site-header" role="banner">
+    <!-- HEADER TOP -->
+    <div class="header-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-7">
+                    <!-- CONTACT INFO -->
+                    <div class="contact-info">
+                        <i class="fa fa-phone round-icon"></i> 13691514695
+                        <i class="fa fa-envelope round-icon"></i> 285575495@qq.com
+                        @Html.Widget("header_selectors")
+                    </div>
+                    <!-- // CONTACT INFO -->
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-5">
+                    <ul class="actions unstyled clearfix">
+                        <li>
+                            <!-- SEARCH BOX -->
+                            <div class="search-box">
+                                @*TODO*@
+                                @*@Html.Action("SearchBox", "Catalog")*@
+                                <form action="#" method="post">
+                                    <div class="input-iconed prepend">
+                                        <button class="input-icon"><i class="iconfont-search"></i></button>
+                                        <label for="input-search" class="placeholder">Search here…</label>
+                                        <input type="text" name="q" id="input-search" class="round-input full-width" required />
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- // SEARCH BOX -->
+                        </li>
+                        <li data-toggle="sub-header" data-target="#sub-social">
+                            <!-- SOCIAL ICONS -->
+                            <a href="javascript:void(0);" id="social-icons">
+                                <i class="iconfont-share round-icon"></i>
+                            </a>
+
+                            <div id="sub-social" class="sub-header">
+                                <ul class="social-list unstyled text-center">
+                                    <li><a href="#"><i class="iconfont-facebook round-icon"></i></a></li>
+                                    <li><a href="#"><i class="iconfont-twitter round-icon"></i></a></li>
+                                    <li><a href="#"><i class="iconfont-google-plus round-icon"></i></a></li>
+                                    <li><a href="#"><i class="iconfont-pinterest round-icon"></i></a></li>
+                                    <li><a href="#"><i class="iconfont-rss round-icon"></i></a></li>
+                                </ul>
+                            </div>
+                            <!-- // SOCIAL ICONS -->
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD TO CART MESSAGE -->
+        <div class="cart-notification">
+            <ul class="unstyled"></ul>
+        </div>
+        <!-- // ADD TO CART MESSAGE -->
+    </div>
+    <!-- // HEADER TOP -->
+    <!-- MAIN HEADER -->
+    <div class="main-header-wrapper">
+        <div class="container">
+            <div class="main-header">
+                <!-- CURRENCY / LANGUAGE / USER MENU -->
+                <!-- // CURRENCY / LANGUAGE / USER MENU -->
+                <div class="row">
+                    <!-- SITE LOGO -->
+                    <div class="col-sm-4">
+                        @Html.Action("Logo", "Common")
+                        <div class="btn-group pull-right">
+                            <!-- LANGUAGES -->
+                            @Html.Action("LanguageSelector", "Common")
+                            <!-- // LANGUAGES -->
+                            <!-- CURRENCY -->
+                            @Html.Action("CurrencySelector", "Common")
+                            <!-- // CURRENCY -->
+                            <!-- TaxType -->
+                            @Html.Action("TaxTypeSelector", "Common")
+                            <!-- // TaxType -->
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <!-- // SITE LOGO -->
+                    <div class="col-sm-8">
+                        @Html.Action("HeaderLinks", "Common")
+                    </div>
+                </div>
+                <!-- SITE NAVIGATION MENU -->
+                @Html.Action("TopMenu", "Catalog")
+                <!-- // SITE NAVIGATION MENU -->
+            </div>
+        </div>
+    </div>
+    <!-- // MAIN HEADER -->
+</header>
+<!-- // SITE HEADER -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Partial("_Notifications")
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

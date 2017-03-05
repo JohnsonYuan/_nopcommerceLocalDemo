@@ -1,0 +1,60 @@
+﻿@using Nop.Core;
+@using Nop.Core.Infrastructure
+@using Nop.Web.Framework.Themes
+@using Nop.Web.Framework.UI
+@{
+    var supportRtl = EngineContext.Current.Resolve<IWorkContext>().WorkingLanguage.Rtl;
+    var themeName = EngineContext.Current.Resolve<IThemeContext>().WorkingThemeName;
+
+    if (supportRtl)
+    {
+        //DONT Support Rtl
+    }
+    else
+    {
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/minified.css", themeName));
+
+        <!--[if IE 8]>
+        <script src="~/Themes/GFashion/Scripts/respond.min.js"></script>
+        <script src="~/Themes/GFashion/Scripts/selectivizr-min.js"></script>
+        <![endif]-->
+
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/font-awosome-4.0.3/css/font-awesome.min.css", themeName));
+
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/responsive.css", themeName));
+        <!-- PARTICULAR PAGES CSS FILES -->
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/owl.theme.css", themeName));
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/owl.carousel.css", themeName));
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/innerpage.css", themeName));
+        <!-- // PARTICULAR PAGES CSS FILES -->
+
+        Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/styles.css", themeName));
+    }
+
+    @*<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>*@
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    //add browser specific CSS files
+    var browser = Request.Browser;
+    if (browser.Browser == "IE" && browser.MajorVersion == 6)
+    {
+        Html.AppendCssFileParts("~/Themes/DefaultClean/Content/ie6.css");
+    }
+    else if (browser.Browser == "IE" && browser.MajorVersion == 7)
+    {
+        Html.AppendCssFileParts("~/Themes/DefaultClean/Content/ie7.css");
+    }
+
+    ////add main CSS file
+    //var supportRtl = EngineContext.Current.Resolve<IWorkContext>().WorkingLanguage.Rtl;
+    //if (supportRtl)
+    //{
+    //    Html.AppendCssFileParts("~/Themes/DefaultClean/Content/styles.rtl.css");
+    //}
+    //else
+    //{
+    //    Html.AppendCssFileParts("~/Themes/DefaultClean/Content/styles.css");
+    //}
+}

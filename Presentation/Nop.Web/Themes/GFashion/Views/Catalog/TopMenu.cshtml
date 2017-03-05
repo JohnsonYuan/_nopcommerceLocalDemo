@@ -1,0 +1,146 @@
+﻿@model TopMenuModel
+@using Nop.Web.Models.Catalog;
+
+@functions{
+    public bool BreadCrumbContainsCurrentCategoryId(CategorySimpleModel category, int activeCategoryId)
+    {
+        if (category.Id == 0)
+            return false;
+
+        if (category.Id == activeCategoryId)
+            return true;
+
+        foreach (var subCategory in category.SubCategories)
+        {
+            if (BreadCrumbContainsCurrentCategoryId(subCategory, activeCategoryId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+@helper RenderCategoryLine(CategorySimpleModel category, int level, bool responsiveMobileMenu)
+{
+    bool requestHomePage = ViewContext.RouteData.Values.ContainsKey("controller") && ViewContext.RouteData.Values["controller"].ToString().Equals("Home", StringComparison.InvariantCultureIgnoreCase)
+                        && ViewContext.RouteData.Values.ContainsKey("action") && ViewContext.RouteData.Values["action"].ToString().Equals("Index", StringComparison.InvariantCultureIgnoreCase);
+    string controllerName = ViewContext.RouteData.Values.ContainsKey("controller") ? ViewContext.RouteData.Values["controller"] as string : string.Empty;
+    int? requestedCategoryId = null;
+
+    if (!string.IsNullOrEmpty(controllerName) && controllerName.Equals("Catalog", StringComparison.InvariantCultureIgnoreCase))
+    {
+        requestedCategoryId = ViewContext.RouteData.Values["categoryid"] as int?;
+    }
+    bool active = false;
+    if (requestedCategoryId.HasValue)
+    {
+        active = (category.Id == requestedCategoryId.Value) || category.SubCategories.Count(x => BreadCrumbContainsCurrentCategoryId(x, requestedCategoryId.Value)) > 0; 
+    }  
+    string liClass = active ? "active" : "inactive";
+
+    <li class="@liClass">
+        <a href="@Url.RouteUrl("Category", new { SeName = category.SeName })">@category.Name
+        @if (category.NumberOfProducts.HasValue)
+        {
+            <text> </text>@T("Categories.TotalProducts", category.NumberOfProducts.Value)
+        }
+        </a>
+        @{
+            //subcategories
+            var subCategories = responsiveMobileMenu ?
+                //responsive (all categories)
+                category.SubCategories :
+                //standard design (only categories with "IncludeInTopMenu")
+                category.SubCategories.Where(x => x.IncludeInTopMenu).ToList();
+
+            var levelClass = "";
+            if (level == 0)
+            {
+                levelClass = "first-level";
+            }
+            if (subCategories.Count > 0)
+            { 
+                    <ul class="sublist  @levelClass">
+                        @foreach (var subCategory in subCategories)
+                        {
+                            @RenderCategoryLine(subCategory, level + 1, responsiveMobileMenu)
+                        }
+                    </ul> 
+            }
+        }
+    </li>
+}
+
+<nav id="site-menu" role="navigation">
+    <ul class="main-menu hidden-sm hidden-xs">
+        @Html.Widget("header_menu_before")
+        @{
+            var rootCategories = Model.Categories.Where(x => x.IncludeInTopMenu).ToList();
+        }
+
+        @foreach (var category in rootCategories)
+        {
+            @RenderCategoryLine(category, 0, false)
+        }
+
+        @foreach (var topic in Model.Topics)
+        {
+            <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+        }
+    </ul>
+
+    <!-- MOBILE MENU -->
+    <div id="mobile-menu" class="dl-menuwrapper visible-xs visible-sm">
+        <button class="dl-trigger"><i class="iconfont-reorder round-icon"></i></button>
+        <ul class="dl-menu">
+            <li class="active">
+                <a href="javsacript:void(0);">Home</a>
+            </li>
+            <li>
+                <a href="javsacript:void(0);">Women</a>
+            </li>
+            <li>
+                <a href="javsacript:void(0);">Men</a>
+
+                <ul class="dl-submenu">
+                    <li>
+                        <a href="products.html">Clothing</a>
+                        <ul class="dl-submenu">
+                            <li><a href="products.html">Casual Wear</a></li>
+                            <li><a href="products.html">Evening Wear</a></li>
+                            <li><a href="products.html">Formal Attire</a></li>
+                            <li><a href="products.html">Womens Jeans</a></li>
+                            <li><a href="products.html">Mens Jeans</a></li>
+                            <li><a href="products.html">Fall Styles</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="products.html">Accessories</a>
+                        <ul class="dl-submenu">
+                            <li><a href="products.html">Casual Wear</a></li>
+                            <li><a href="products.html">Evening Wear</a></li>
+                            <li><a href="products.html">Formal Attire</a></li>
+                            <li><a href="products.html">Womens Jeans</a></li>
+                            <li><a href="products.html">Mens Jeans</a></li>
+                            <li><a href="products.html">Fall Styles</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="products.html">Brands</a>
+                        <ul class="dl-submenu">
+                            <li><a href="products.html">Casual Wear</a></li>
+                            <li><a href="products.html">Evening Wear</a></li>
+                            <li><a href="products.html">Formal Attire</a></li>
+                            <li><a href="products.html">Womens Jeans</a></li>
+                            <li><a href="products.html">Mens Jeans</a></li>
+                            <li><a href="products.html">Fall Styles</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- // MOBILE MENU -->
+</nav>

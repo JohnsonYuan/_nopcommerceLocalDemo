@@ -238,6 +238,7 @@
     <Compile Include="Controllers\NewsLetterSubscriptionController.cs" />
     <Compile Include="Controllers\OnlineCustomerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\PluginController.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\ProductAttributeController.cs" />
@@ -636,6 +637,11 @@
     <Content Include="Views\News\Edit.cshtml" />
     <Content Include="Views\News\List.cshtml" />
     <Content Include="Views\News\_CreateOrUpdate.cshtml" />
+    <Content Include="Views\Plugin\ConfigureMiscPlugin.cshtml" />
+    <Content Include="Views\Plugin\EditPopup.cshtml" />
+    <Content Include="Views\Plugin\List.cshtml" />
+    <Content Include="Views\Plugin\OfficialFeed.cshtml" />
+    <Content Include="Views\Plugin\_CreateOrUpdatePlugin.cshtml" />
     <None Include="Views\Security\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>

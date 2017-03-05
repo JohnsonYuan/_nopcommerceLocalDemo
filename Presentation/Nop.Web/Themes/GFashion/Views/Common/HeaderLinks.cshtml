@@ -1,0 +1,96 @@
+﻿@model HeaderLinksModel
+@using Nop.Web.Models.Common;
+
+<div class="actions">
+    <!-- USER RELATED MENU -->
+    <nav id="tiny-menu" class="clearfix">
+        <ul class="user-menu">
+            @if (Model.IsAuthenticated)
+            {
+                <li><a href="@Url.RouteUrl("CustomerInfo")"><i class="fa fa-user round-icon"></i> @Model.CustomerEmailUsername</a></li>
+                <li><a href="@Url.RouteUrl("Logout")"><i class="fa fa-power-off round-icon"></i> @T("Account.Logout")</a></li>
+            }
+            else
+            {
+                <li><a href="@Url.RouteUrl("Register")"><i class="fa fa-cog round-icon"></i> @T("Account.Register")</a></li>
+                <li><a href="@Url.RouteUrl("Login")"><i class="fa fa-power-off round-icon"></i> @T("Account.Login")</a></li>
+            }
+            @if (Model.AllowPrivateMessages)
+            {
+                <li>
+                    <a href="@Url.RouteUrl("PrivateMessages", new { tab = "" })"><i class="fa fa-envelope"></i> @T("PrivateMessages.Inbox")</a>
+                    @Model.UnreadPrivateMessages
+                </li>
+                if (!string.IsNullOrEmpty(Model.AlertMessage))
+                {
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            displayPopupNotification('@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.AlertMessage))', 'success', false);
+                        });
+                    </script>
+                }
+            }
+            @if (Model.WishlistEnabled)
+            {
+                <li>
+                    <a href="@Url.RouteUrl("Wishlist")" class="ico-wishlist">
+                        <span class="cart-label"><i class="fa fa-star round-icon"></i> @T("Wishlist")</span>
+                        <span class="wishlist-qty">@T("Wishlist.HeaderQuantity", Model.WishlistItems)</span>
+                    </a>
+                </li>
+            }
+            @if (Model.ShoppingCartEnabled)
+            {
+                //TODO
+                @*<li id="topcartlink" class="dropdown">
+                @if (!String.IsNullOrWhiteSpace(@Html.Action("FlyoutShoppingCart", "ShoppingCart").ToString()))
+                {
+                        <a href="@Url.RouteUrl("ShoppingCart")" class="ico-cart dropdown-toggle minicart-anchor" data-toggle="dropdown" data-hover="dropdown">
+                            <span class="cart-label"><i class="fa fa-shopping-cart"></i> @T("ShoppingCart")</span>
+                            <span class="cart-qty">@T("ShoppingCart.HeaderQuantity", Model.ShoppingCartItems)</span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="minicart-dropdown-menu dropdown">
+                            <li>@Html.Action("FlyoutShoppingCart", "ShoppingCart")</li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <a href="@Url.RouteUrl("ShoppingCart")" class="ico-cart">
+                            <span class="cart-label"><i class="fa fa-shopping-cart"></i> @T("ShoppingCart")</span>
+                            <span class="cart-qty">@T("ShoppingCart.HeaderQuantity", Model.ShoppingCartItems)</span>
+                        </a>
+                    }
+                </li>*@
+
+                <li data-toggle="sub-header" data-target="#sub-cart">
+                    <!-- SHOPPING CART -->
+
+                    <a href="javascript:void(0);" id="total-cart">
+                        <i class="iconfont-shopping-cart round-icon"></i>@T("ShoppingCart")
+                    </a>
+
+                    <div id="sub-cart" class="sub-header">
+                        <div class="cart-header">
+                            <span>Your cart is currently empty.</span>
+                            <small><a href="cart.html">(See All)</a></small>
+                        </div>
+                        <ul class="cart-items product-medialist unstyled clearfix"></ul>
+                        <div class="cart-footer">
+                            <div class="cart-total clearfix">
+                                <span class="pull-left uppercase">Total</span>
+                                <span class="pull-right total">$ 0</span>
+                            </div>
+                            <div class="text-right">
+                                <a href="cart.html" class="btn btn-default btn-round view-cart">View Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- // SHOPPING CART -->
+                </li>
+            }
+        </ul>
+    </nav>
+    <!-- // USER RELATED MENU -->
+</div>
+
